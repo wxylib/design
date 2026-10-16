@@ -1,6 +1,6 @@
 # 04: The landscape: related work, what to leverage, what to track
 
-Status: draft for gate 4, 2026-10-16
+Status: gate 4 passed 2026-10-16 (decisions in section 18)
 Builds on: [01 module survey](01-module-survey.md), [02 data model](02-data-model.md),
 [03 architecture](03-architecture.md) and their gate decisions.
 Checked: crate, PyPI, npm and CRAN versions were read from the registries on
@@ -621,3 +621,23 @@ feeds above, written into this document's section 15 as a dated delta.
 - Whether gribberish exposes GRIB message byte offsets as a public Rust API.
 - Whether MapLibre reprojects rasters natively.
 - The completeness of proj-wasm's PROJ build.
+
+## 18. Gate 4 decisions (2026-10-16)
+
+1. **Upstream georeferencing (G1, LS1): later.** Michael will raise it with
+   Development Seed when he can. Until then, `wxy-tiff` keeps its own
+   GeoKeys-to-mapping code, written so it can move upstream as one piece.
+2. **Icechunk as the reference store (LS3): yes**, with kerchunk JSON or
+   Parquet export for interop. This comes with an open topic to keep
+   exploring: the simpler, flat view of references as a table (one row
+   per chunk: key, url, offset, length, checksum, as in kerchunk Parquet
+   or rasteret). That is enough when there are no versions, no
+   transactions and one writer. The questions to answer are when Icechunk
+   is overkill, and whether `wxy-virtual` should produce a table first,
+   with Icechunk as one place to write it.
+3. **Browser CRS (LS4): proj-wasm**, behind rwarp-wasm's JS callbacks.
+4. **Conventions work (G3, G4): yes, both.** wxylib takes part in the GeoZarr
+   SWG, proposes the "lookup" and "rpc" transform types for `spatial:`, and
+   publishes a small Rust crate for the zarr geo conventions.
+5. **Watch cadence: monthly.** A scheduled check of the section 15 feeds
+   adds a dated delta to this document.
