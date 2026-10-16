@@ -36,6 +36,15 @@ revise or reject before the next document starts.
 | 2 | [One data model, from raster to vector](docs/02-data-model.md) | Accept core types and traits (provisional) |
 | 3 | [Architecture and staged roadmap](docs/03-architecture.md) | Pick the first implementation stage (S1 chosen, provisional) |
 
+## Musings
+
+Blue-sky side notes, not plans and not gated. A musing becomes work only
+by being picked up into a numbered document.
+
+- [m01: Downstream UX](docs/m01-downstream-ux.md): what front ends (a
+  modular QGIS among them) could do with the core's pieces, and which
+  doors the core should keep open for them.
+
 ## Related repositories
 
 - [hypertidy/rwarp](https://github.com/hypertidy/rwarp): the warp core
