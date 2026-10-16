@@ -27,8 +27,8 @@ revise or reject before the next document starts.
 
 | Step | Document | Gate |
 |------|----------|------|
-| 1 | [Module survey](docs/01-module-survey.md) | Agree the module map |
-| 2 | Data model: classic raster vs mdim (to come) | Accept core types and traits |
+| 1 | [Module survey](docs/01-module-survey.md) | Agree the module map (passed 2026-10-16) |
+| 2 | [One data model, from raster to vector](docs/02-data-model.md) | Accept core types and traits |
 | 3 | Architecture around rwarp and a staged roadmap (to come) | Pick the first implementation stage |
 
 ## Related repositories
@@ -36,6 +36,9 @@ revise or reject before the next document starts.
 - [hypertidy/rwarp](https://github.com/hypertidy/rwarp): the warp core
   (transformers, source window planning, kernels). No I/O. A candidate for
   transfer into wxylib, pending.
+- [hypertidy/regular-in-what](https://github.com/hypertidy/regular-in-what)
+  and [hypertidy/playproj](https://github.com/hypertidy/playproj): the
+  grid concepts (regular in a frame, the ladder, index space) behind doc 02.
 - [mdsumner/rust-proj-capability](https://github.com/mdsumner/rust-proj-capability):
   the survey of CRS crates. The CRS backend decision defers to it.
 - [hypertidy/vaster-rs](https://github.com/hypertidy/vaster-rs): grid

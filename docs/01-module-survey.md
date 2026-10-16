@@ -1,6 +1,6 @@
 # 01: The modules implicit in GDAL
 
-Status: draft for review (gate 1)
+Status: gate 1 passed 2026-10-16 (decisions in section 8)
 Sources read: GDAL `master` at `aa6c524` (2026-10-16), hypertidy/rwarp at
 `20572c3`, async-tiff 0.4.0, zarrs (workspace head), zarrista 0.1.0, and
 mdsumner/rust-proj-capability at `5a0ce79` for everything about CRS.
@@ -99,13 +99,23 @@ layers. That rule is the main thing this map proposes.
 | M24 | Algorithm registry, CLI, pipelines | `gcore/gdalalgorithm*.cpp`, `apps/gdalalg_*.cpp` | High | `clap` | own, designed last |
 | M25 | Bindings: Python, R, wasm | `swig/` | n/a | `pyo3`, `extendr-api` 0.9, `savvy` 0.11, `wasm-bindgen` (rwarp-wasm already uses it) | own, thin per crate |
 
+### Added at gate 1: meshes (the MDAL concept)
+
+| # | Module | Inspiration | Coupling | Rust today | Verdict |
+|---|--------|-------------|----------|------------|---------|
+| M26 | Meshes: vertices, edges, faces, layered volumes, and datasets defined on each of them, over time | MDAL (the mesh library under QGIS, separate from GDAL), UGRID, SGRID | n/a (not in GDAL) | no general crate | own, as part of the one data model (doc 02), not as a third mode |
+
+MDAL predates GDAL's multidimensional API and does not align with it. Rather
+than bridge the two, doc 02 treats classic raster, multidimensional arrays,
+meshes and vector features as points on one spectrum.
+
 ### Out of scope for now
 
-OGR vector (geometry, features, SQL, ~80 vector drivers), GNM networks, PAM
-`.aux.xml` sidecars, metadata domains, raster attribute tables, colour tables.
-georust (`geo`, `geo-types`), `geoarrow` and `geozero` cover much of the vector
-side already. When a raster module needs vector input (cutlines, rasterize,
-GTI footprints) it takes `geo-types` or GeoArrow values and nothing more.
+Vector drivers and SQL (~80 OGR drivers), GNM networks, PAM `.aux.xml`
+sidecars, metadata domains, raster attribute tables, colour tables. Vector
+*data* is not out of scope: it sits at one end of the raster to vector
+spectrum in doc 02. georust (`geo`, `geo-types`), `geoarrow` and `geozero`
+cover vector geometry and formats, and we use them rather than rebuild them.
 
 ## 4. Dependency sketch
 
@@ -289,3 +299,20 @@ through the `gdal` crate.**
 
 Once these are settled, step 2 takes M3, M14, M15 and M16 and designs the
 data model, starting from F1 and F5.
+
+## 8. Gate 1 decisions (2026-10-16)
+
+1. **Layer rule: hard.** A module depends only on lower layers. VRT sits
+   above the data model and consumes it like any other client.
+2. **Resampling: its own crate.** rwarp and overview building both depend on
+   it; neither depends on the other.
+3. **Zarr georeferencing: both GeoZarr and CF**, but only as far as existing
+   crate support goes. No significant new convention work of our own.
+4. **Byte views (archives, kerchunk references): later.**
+5. **Missing concepts: meshes (MDAL)**, added as M26. Two further principles
+   came with this answer and shape doc 02:
+   - classic raster, mdim and mesh should be reimagined together, informed
+     by [regular-in-what](https://github.com/hypertidy/regular-in-what) and
+     [playproj](https://github.com/hypertidy/playproj);
+   - raster and vector are a spectrum, and the core is organised around that
+     spectrum rather than around distinct modes.
