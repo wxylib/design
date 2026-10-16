@@ -36,9 +36,9 @@ Each entry has an id, the pain, its source, and where it lands.
 
 | Id | Pain | Src | Lands in |
 |----|------|-----|----------|
-| W1 | Extent heuristics. `GDALSuggestedWarpOutput` densifies edges and hits singularities at exactly the boundary that matters. gdalwarp clamps latitude for Mercator but `AutoCreateWarpedVRT` does not. Per-projection special cases are whack-a-mole. | M | S4 `wxy-warp`: the target grid is always explicit (extent, dimension, CRS). Suggesting one is a separate, optional helper, anchored at the centre where the transform is well behaved, with an ncol/nrow budget and resolution from the local scale factor. No per-projection cases. |
+| W1 | Extent heuristics. `GDALSuggestedWarpOutput` densifies edges and hits singularities at exactly the boundary that matters. gdalwarp clamps latitude for Mercator but `AutoCreateWarpedVRT` does not. Per-projection special cases are whack-a-mole. | M S4 `wxy-warp` (done): the target grid is already explicit (`GridSpec`: extent, size, CRS). Keep it so: suggesting one is a separate, optional helper, anchored at the centre where the transform is well behaved, with an ncol/nrow budget and resolution from the local scale factor. No per-projection cases. |
 | W2 | No plain kernel when downsampling. The kernel always scales its support to the source/destination ratio and nothing turns it off; `-ovr NONE` only picks the band read. Overview choice is baked into gdalwarp and picks one level for the whole output. rwarp matches GDAL bit for bit at 1:1; this scaling is the only divergence. | M | S5 `wxy-resample`: support scaling is a parameter (scaled or plain), and overview choice is part of the plan, per output tile, not one level for the whole output. |
-| W3 | Low-power mdim warp. mdim to classic (`AsClassicDataset`) then the warper works, but "warp this time x lat x lon store slice by slice" is not a first-class operation, and the completeness of `GDALMDArray::GetResampled()` is unclear. | M | S4: warp a `Domain`'s spatial dims, carry the rest through, plan once and apply the plan to every slice. A gate criterion, see section 12. |
+| W3 | Low-power mdim warp. mdim to classic (`AsClassicDataset`) then the warper works, but "warp this time x lat x lon store slice by slice" is not a first-class operation, and the completeness of `GDALMDArray::GetResampled()` is unclear. | M S4 (done) already plans once for a 2D or 3D domain with one leading dim, but reads that dim whole. Next: any number of non-spatial dims, carried through and streamed slice by slice under the one plan (section 12). |
 | W4 | Geolocation arrays (R3) are side metadata (RFC 4). The backmap inversion is approximate and struggles at poles, the antimeridian and swath edges. | C | R3 as a first-class `Mapping`; curvilinear warp is "later" in doc 03 and is a candidate to move earlier (section 12). |
 | W5 | Warp planning is opaque: source windows from edge sampling can miss poles, and there is no API to ask which source tiles a view needs. | C | rwarp's planner exposed as a plan value (S2 plan, fetch, decode; S4). |
 | W6 | Longitude 0..360 versus -180..180 and antimeridian crossing need ad hoc options per tool. | C | Wrap as a property of the mapping or frame in `wxy-domain`, honoured by the planner. |
@@ -47,7 +47,7 @@ Each entry has an id, the pain, its source, and where it lands.
 
 | Id | Pain | Src | Lands in |
 |----|------|-----|----------|
-| D1 | Chunk location. `gdal mdim get-refs` (GDAL PR 14677) lists per-chunk path, offset, size and info as a no-geometry vector layer; rework and rename pending. | M, upstream | `wxy-virtual`'s scanners already emit the same table (key, url, offset, length, checksum). Align the column names and types with get-refs so GDAL's output is a wxylib reference table and back. This is the flat tabular reference store open in gate 4. |
+| D1 | Chunk location. `gdal mdim get-refs` (GDAL PR 14677) lists per-chunk path, offset, size and info as a no-geometry vector layer; rework and rename pending. | M, upstream Already aligned in principle: [mdim-refs/0.2](../specs/mdim-refs-0.2.md) takes its column names from the get-refs draft, and the [m02 pilot](m02-pilot-mdimrefs.md) reads that table through `wxy-virtual`. Keep `wxy-virtual`'s own scanner rows in the same columns, so GDAL's output, mdim-refs and wxylib's table are one shape. |
 | D2 | GeoTIFF is not in mdim. GTiff has no mdim capability, and a mdim VRT over GeoTIFFs fails `GetRawBlockInfo`, although TileOffsets and TileByteCounts already are the chunk manifest. "Virtualizing GeoTIFF" is wasteful: a tiled TIFF is already virtualized. | M, upstream | `wxy-tiff` already serves tiles as a `ChunkSource` straight from the tile index, and is the native-reader exception in A6. Writing TIFF refs to Icechunk (S3b) is for composition and versioning, not a prerequisite for reading. See section 12. |
 | D3 | 2D to mdim promotion. A `vrt://` decorator that promotes a 2D raster to a singleton mdim slice feeding `gdal mdim mosaic`, or a `gdal mdim stack` with gdalbuildvrt's validation conventions (check all, skip with warning, `--strict`, explicit allow flags). | M, upstream | No promotion step exists in wxylib: a 2D raster is a `Domain` with two dims, and adding a singleton dim is a domain operation. Stacking is S7's combine along a new dim, adopting the same validation conventions. |
 | D4 | `mdim mosaic` breaks on dims without an indexing variable (CF `bnds`). It needs a pass-through state (size check only), not synthetic start and increment values. | M, upstream | A dim with no positions is an R0 dim in `wxy-domain`: legal, carried through, checked by size. Never synthesise coordinates. |
@@ -125,18 +125,21 @@ a numbered document picks them up.
   links to sources, derived layers, view states (CRS, extent, zoom) and
   accoutrements (graticule, scale bar, legend, insets), that the recipient
   can open, explore and modify. Recipe, not payload: it is S7's virtual
-  description extended with views and presentation. A candidate m02.
+  description extended with views and presentation. A candidate m03.
 
 ## 12. Findings for the roadmap
 
 These change doc 03. They are sent to the planning thread, which owns 03;
 nothing here edits it.
 
-1. **S4 gate adds mdim (W3) and explicit targets (W1).** The warp carries
-   non-spatial dims and plans once per spatial slice; the target grid is
-   always explicit, with extent suggestion as a separate helper.
-   Get: Michael's headline pain answered in the first end-to-end tool.
-   Cost: a larger S4. Without it: wxylib repeats GDAL's classic-only warp.
+1. **An S4b: mdim warp (W3), and explicit targets kept (W1).** S4 is done
+   for 2D and one leading dim read whole. S4b carries any number of
+   non-spatial dims and streams them slice by slice under one plan, so a
+   time x depth x lat x lon store warps without loading it. Extent
+   suggestion, if added, is a separate helper.
+   Get: Michael's headline pain answered while the warp code is fresh.
+   Cost: chunk-aware slicing in `wxy-warp`. Without it: wxylib repeats
+   GDAL's slice-by-hand mdim warp.
 2. **S5 adds a plain/scaled kernel switch, per-tile overview choice, and
    overviews through derived fields (W2, V3).** Get: rwarp's one known
    divergence becomes an option rather than a bug. Cost: harder bit
@@ -153,8 +156,8 @@ nothing here edits it.
    GDAL's config precedence problem, again.
 5. **S7 covers features and mesh, written by the library, with
    gdalbuildvrt-style validation for combine (V1, V5, D3).**
-6. **Reference table columns aligned with `gdal mdim get-refs` (D1).**
-   Feeds the flat tabular reference store topic from gate 4.
+6. **One reference-table shape (D1).** `wxy-virtual` scanner rows use the
+   mdim-refs/get-refs columns; the m02 pilot is the trial.
 7. **TIFF stays read natively; Icechunk refs for TIFF are optional (D2).**
    A clarification of A6 and S3b, not a reversal.
 8. **A new candidate stage after S4: planned extraction (E1).**
@@ -168,13 +171,13 @@ reported in Michael's notes.
 
 ## 14. Questions for gate 5
 
-1. Align `wxy-virtual`'s reference table with `gdal mdim get-refs`
-   columns (D1)? Recommended: yes, it serves both projects.
+1. Add S4b, mdim warp streamed under one plan (finding 1)? Recommended:
+   yes, next after S5 or before it if you want it sooner.
 2. Move curvilinear warp to just after S5 (finding 3)? Recommended: yes.
 3. Add planned extraction as a stage after S4 (E1)? Recommended: yes, as a
    small stage on the existing seam.
 4. Should overlay and similar algorithms run on the kept mesh form (F1), or
    is the mesh only a conversion target at first? Recommended: conversion
    first, algorithms on it once S8's topology module exists.
-5. Presentation and the map format (section 11): an m02 musing now, or
-   leave until S7? Recommended: m02 now, since it shapes S7's description.
+5. Presentation and the map format (section 11): an m03 musing now, or
+   leave until S7? Recommended: m03 now, since it shapes S7's description.
