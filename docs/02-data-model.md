@@ -504,3 +504,37 @@ them can be revisited; doc 03 and the code treat them as current.
 4. **R6 geometry is GeoArrow**, in an optional module.
 5. **First slice: R0 to R3** over COG and Zarr with rwarp; then explicit
    meshes; then implicit meshes (DGGS) and features.
+
+## 13. Open question: is "warp" the common reprojection verb?
+
+Raised by Michael, 2026-10-16, without a view yet. Recorded here as
+open; nothing below is decided.
+
+In GDAL, "warp" means one thing: resample a grid's values onto another
+grid. Across the spectrum, what people call reprojection is really two
+separable steps:
+
+1. **Transform positions.** Compose a mapping with a CRS (or any)
+   transform. This works on every rung: feature coordinates, mesh nodes,
+   and grids. A regular grid transformed this way stays the same data with
+   a new, curvilinear mapping in the target frame (regular-in-what's view:
+   reprojection without resampling). Nothing is resampled and nothing is
+   lost.
+2. **Resample values onto a target domain.** Move a field from one domain
+   to another: grid to grid (warp), mesh or features to grid (rasterise,
+   regrid), grid to mesh (sample). Only this step needs kernels, and only
+   this step loses information.
+
+Proposal to weigh: call step 1 `transform` (one verb, all rungs), and
+keep `warp` for step 2 when the target is a grid, with `regrid` or
+`sample` for other targets. rwarp's own split already matches this: its
+`Transformer` is step 1, and its kernels are step 2.
+- Get: one reprojection concept across modes, a lossless default (a
+  transformed mapping) with resampling as an explicit, reported choice,
+  and a CLI where `wxy warp` keeps its GDAL meaning for grid users.
+- Cost: two verbs where GDAL users expect one, and a transformed-mapping
+  domain needs consumers that can use curvilinear positions (rwarp's
+  transformer seam already can).
+- Without it: "warp" stretches to mean both, and mesh and feature
+  reprojection either get forced through resampling or get a separate,
+  mode-specific API: the split the spectrum is meant to remove.
