@@ -180,6 +180,25 @@ use tracks.
 | Browser | wasm build behind rwarp's slippy-map app | with the web repo | `Send`/`Sync` bounds; C codecs on wasm; CORS for HTTP range reads; no local files |
 | Cloud | the CLI or Python next to the data (object_store backends) | S4 | credentials and region; egress cost |
 
+**Beyond Python and R.** Most other languages are reachable through two
+shared layers, so those come first and each binding stays thin:
+
+- **A C ABI** (one `wxy-ffi` crate, like zarrs_ffi). Get: Julia (`ccall`),
+  Go, C/C++ and others from one surface. Cost: a stable, versioned C API
+  to maintain. Without it: each language binds Rust its own way.
+- **Arrow interchange** (the Arrow C Data Interface, GeoArrow for R6
+  features, Arrow tables for chunk indexes and virtual references). Get:
+  zero-copy handoff to anything that speaks Arrow (pyarrow, R's nanoarrow,
+  DuckDB, Polars, JS) without a binding per host. Cost: shaping our
+  outputs as Arrow. Without it: copies and per-host adapters.
+
+| Binding | Route | Becomes timely | Notes |
+|---------|-------|----------------|-------|
+| TypeScript / JS | wasm-bindgen over the browser build | with the web repo | sits beside deck.gl-raster (DevSeed) rather than competing: rwarp's exact warp and the domain model are what we add |
+| DuckDB | a Rust extension (DuckDB's extension template) | once virtual references or features exist | tables of chunk references, domains or warp plans to query with SQL; DuckDB's spatial extension already covers vector work, so we would not repeat it |
+| Julia | the C ABI | when the C ABI exists | Julia's own geospatial stack (Rasters.jl, ArchGDAL.jl) is a user, not a target to replace |
+| Command line | `wxy-cli` | S4 | the binding every other track can shell out to |
+
 **The hard one: PROJ.** Real CRS work needs PROJ (C++, SQLite, grid
 files), which is the main cross-platform cost in GDAL-based stacks. wxylib
 defers it to mdsumner/rust-proj-capability; until that settles, frames are
