@@ -28,8 +28,8 @@ revise or reject before the next document starts.
 | Step | Document | Gate |
 |------|----------|------|
 | 1 | [Module survey](docs/01-module-survey.md) | Agree the module map (passed 2026-10-16) |
-| 2 | [One data model, from raster to vector](docs/02-data-model.md) | Accept core types and traits |
-| 3 | Architecture around rwarp and a staged roadmap (to come) | Pick the first implementation stage |
+| 2 | [One data model, from raster to vector](docs/02-data-model.md) | Accept core types and traits (provisional) |
+| 3 | [Architecture and staged roadmap](docs/03-architecture.md) | Pick the first implementation stage (S1 chosen, provisional) |
 
 ## Related repositories
 

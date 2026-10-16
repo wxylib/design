@@ -1,6 +1,6 @@
 # 02: One data model, from raster to vector
 
-Status: draft for review (gate 2)
+Status: gate 2 provisional, 2026-10-16 (defaults in section 12, open to revision)
 Builds on: [01 module survey](01-module-survey.md) (M3, M14, M15, M16, M26)
 and the gate 1 decisions recorded there. Section 10 adds context from
 hypertidy/meshcore and CGAL.
@@ -489,3 +489,18 @@ the others, which is the gap this document's Topology module would fill.
 5. **First slice.** Which rungs should the first implementation cover? My
    suggestion is R0 to R3 (COG and Zarr through async-tiff and zarrs, with
    rwarp), then R5 meshes, then R4 and R6.
+
+## 12. Gate 2 provisional defaults (2026-10-16)
+
+Michael gave standing approval to proceed on reasonable paths while he is
+away, so the recommendations above stand as provisional defaults. Any of
+them can be revisited; doc 03 and the code treat them as current.
+
+1. **The spectrum is the core**, with R3' (fitted models) and R4 (implicit
+   meshes: DGGS, L3 bins) as rungs of their own.
+2. **A domain keeps every mapping it was given**, with one marked primary.
+3. **Readers apply a conservative normalisation by default** (R2 to R1
+   within float32 tolerance) and report it; the stored costume is kept.
+4. **R6 geometry is GeoArrow**, in an optional module.
+5. **First slice: R0 to R3** over COG and Zarr with rwarp; then explicit
+   meshes; then implicit meshes (DGGS) and features.
