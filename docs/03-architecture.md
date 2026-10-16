@@ -87,6 +87,21 @@ where it is already cheap or performance demands it.
 - Without it: a native reader per format, which is GDAL's driver model and
   the scope this project exists to avoid.
 
+**A7. Adjacent efforts first (added 2026-10-16).** Before building a piece,
+check whether Earthmover, Development Seed, the zarrs project, the GeoZarr
+conventions or others already have it, or plan to. Use it, or contribute
+the missing piece upstream; wxylib keeps only what nobody else has (the
+unified domain model, warp, and the glue between them). The related work
+survey in this repo is the map for this.
+- Get: a small project that composes with icechunk, VirtualiZarr,
+  async-tiff and GeoZarr rather than competing with them; our work counts
+  toward shared standards (for example, a Rust implementation of the
+  GeoZarr `spatial:` and `proj:` conventions).
+- Cost: upstream timelines and review; some pieces wait or live in other
+  repos.
+- Without it: a reimplement-everything org, the failure mode several
+  pure-Rust "GDAL alternatives" on crates.io already show.
+
 **A5. GDAL is an oracle in tests, not a dependency.**
 - Get: bit-level comparison with GDAL where it matters (windows,
   georeferencing, warps), run where GDAL exists: Michael's machine (through
@@ -103,14 +118,20 @@ Each stage is small, works on its own, and ends in a gate.
 |-------|----------|------|-----|------|------------|
 | **S1** | `wxy-domain`: the types for R0 to R3, R2-to-R1 normalisation with a report, cell conventions; tests from regular-in-what cases (float32 GHRSST axis, AVISO Mercator latitude, NSIDC 3412) | the types read well in code | the model from doc 02 becomes concrete and testable with no I/O | design churn is still cheap here, so expect revisions | every later stage invents its own types |
 | **S2** | `wxy-source` and `wxy-tiff`: open a COG (local and HTTP), plan a window, fetch, decode | windows match GDAL (oracle) | the plan, fetch, decode seam is real | async plumbing; a sync convenience layer | the seam stays theoretical |
-| **S3** | `wxy-zarr`: Zarr v2/v3 through zarrs, CF and GeoZarr frames where zarrs or its ecosystem supports them | same window, same numbers as S2 for a COG converted to Zarr | the two formats meet in one model | partial conventions | Zarr support lags and the model is shaped by TIFF alone |
-| **S3b** | `wxy-virtual`: scanners that write virtual Zarr references, starting with TIFF (from `wxy-tiff`'s byte ranges) and a GDAL-backed scanner for other formats | a COG read through its virtual Zarr matches S2 and GDAL byte for byte | the virtualisation pathway (A6) is real | reference-store format choice (kerchunk JSON, Parquet refs, icechunk) | every new format needs a native reader |
+| **S3** | `wxy-zarr`: Zarr through zarrs, georeferenced by the GeoZarr `spatial:` and `proj:` conventions (v0.1) or CF 1D coordinates | same window, same numbers as S2 for a COG converted to Zarr | the two formats meet in one model | partial conventions | Zarr support lags and the model is shaped by TIFF alone |
+| **S3b** | virtual references, on hold pending the survey: scanners emit (chunk key, url, offset, length, checksum) plus Zarr metadata, written with icechunk's Rust `set_virtual_refs` and read back through `zarrs_icechunk`. TIFF scanning is already done by virtual-tiff (Python, on async-tiff), so a Rust scanner is only built if a Rust-side need appears; HDF5 and GRIB have Rust pieces to reuse (hdf5-reader chunk index, gribberish) | a COG read through its icechunk virtual store matches S2 and GDAL byte for byte | the virtualisation pathway (A6) is real, on shared infrastructure (A7) | icechunk as a dependency; a small kerchunk JSON/Parquet emitter is an open slot if needed | every new format needs a native reader |
 | **S4** | `wxy-warp` and `wxy-cli warp`: COG or Zarr to a target grid spec, through rwarp | bit-identical to `gdalwarp` at 1:1 (rwarp's existing bar) | the first end-to-end tool, the browser app's pipeline on servers | output format choice (Zarr first, since zarrs writes) | rwarp stays without a native I/O story |
 | **S5** | `wxy-resample`: kernels shared by warp and overviews; overview selection in planning | rwarp's downsampling limitation fixed and matched to GDAL | one validated kernel set | harder bit-identity at scaled support | two kernel sets, as in GDAL |
 | **S6** | Python (pyo3) and R (extendr or savvy) bindings of S4's surface | a notebook and an R script reproduce S4 | the tool reaches its users | binding maintenance | Rust only |
 | **S7** | the virtual scheme: select, remap, combine, compute, serialised | a VRT mosaic and a warped VRT expressed and evaluated | the VRT replacement | a new file format to design | virtual data stays GDAL-only |
 | **S8** | explicit meshes: R5 on meshspec v0.1, UGRID through existing readers | meshcore's UGRID cases reproduce | meshes join the model | topology module design | the spectrum stops at R3 |
 | **later** | implicit meshes (DGGS: `h3o`, `healpix`, `s2`), features (GeoArrow), curvilinear inverse mappings, byte views | each its own gate | the full spectrum | | |
+
+Status (2026-10-16): S1, S2 and S3 are done in wxylib/core, and S2 and S3
+match GDAL 3.12 byte for byte on the fixtures. S3b waits on the related
+work survey. `wxy-tiff`'s georeferencing (GeoKeys, transform) has no Rust
+home upstream yet; it may align with geotiff-core or be offered to
+async-tiff or async-geotiff rather than grow here.
 
 S1 is chosen as the first stage. It needs no I/O, no new external
 dependency beyond vaster, and it is where the data model is cheapest to get
