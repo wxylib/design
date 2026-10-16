@@ -35,7 +35,7 @@ revise or reject before the next document starts.
 | 1 | [Module survey](docs/01-module-survey.md) | Agree the module map (passed 2026-10-16) |
 | 2 | [One data model, from raster to vector](docs/02-data-model.md) | Accept core types and traits (provisional) |
 | 3 | [Architecture and staged roadmap](docs/03-architecture.md) | Pick the first implementation stage (S1 chosen, provisional) |
-| 4 | [The landscape: related work, what to leverage, what to track](docs/04-landscape.md) | Agree upstream-first, Icechunk refs, browser CRS, conventions work |
+| 4 | [The landscape: related work, what to leverage, what to track](docs/04-landscape.md) | Upstream-first, Icechunk refs, browser CRS, conventions work (passed 2026-10-16) |
 
 ## Musings
 
