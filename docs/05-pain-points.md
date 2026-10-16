@@ -1,6 +1,6 @@
 # 05: Pain points in GDAL, R and Python, and where wxylib answers them
 
-Status: draft for gate 5, 2026-10-16
+Status: gate 5 passed, 2026-10-16 (all recommendations taken)
 Builds on: [02 data model](02-data-model.md) (the R0 to R6 spectrum),
 [03 architecture](03-architecture.md) (stages S1 to S8),
 [04 landscape](04-landscape.md).
@@ -181,3 +181,18 @@ reported in Michael's notes.
    first, algorithms on it once S8's topology module exists.
 5. Presentation and the map format (section 11): an m03 musing now, or
    leave until S7? Recommended: m03 now, since it shapes S7's description.
+
+## 15. Gate 5 decisions (2026-10-16)
+
+Michael agreed to all five recommendations in section 14.
+
+1. S4b, mdim warp streamed under one plan, is added to the roadmap.
+2. Curvilinear (R3) warp moves to just after S5.
+3. A planned-extraction stage is added after S4.
+4. The kept mesh form (F1) is a conversion first; algorithms such as
+   overlay run on it once S8's topology module exists.
+5. Presentation and the map format are written up as
+   [m03](m03-presentation-and-map-format.md).
+
+The roadmap findings in section 12 (including A8, no global state) go to
+the planning thread, which records them in doc 03.
