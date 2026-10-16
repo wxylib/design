@@ -37,6 +37,15 @@ revise or reject before the next document starts.
 | 3 | [Architecture and staged roadmap](docs/03-architecture.md) | Pick the first implementation stage (S1 chosen, provisional) |
 | 4 | [The landscape: related work, what to leverage, what to track](docs/04-landscape.md) | Agree upstream-first, Icechunk refs, browser CRS, conventions work |
 
+## Musings
+
+Blue-sky side notes, not plans and not gated. A musing becomes work only
+by being picked up into a numbered document.
+
+- [m01: Downstream UX](docs/m01-downstream-ux.md): what front ends (a
+  modular QGIS among them) could do with the core's pieces, and which
+  doors the core should keep open for them.
+
 ## Related repositories
 
 - [hypertidy/rwarp](https://github.com/hypertidy/rwarp): the warp core
