@@ -39,6 +39,7 @@ revise or reject before the next document starts.
 | 2 | [One data model, from raster to vector](docs/02-data-model.md) | Accept core types and traits (provisional) |
 | 3 | [Architecture and staged roadmap](docs/03-architecture.md) | Pick the first implementation stage (S1 chosen, provisional) |
 | 4 | [The landscape: related work, what to leverage, what to track](docs/04-landscape.md) | Upstream-first, Icechunk refs, browser CRS, conventions work (passed 2026-10-16) |
+| 5 | [Pain points in GDAL, R and Python](docs/05-pain-points.md) | S4b mdim warp, curvilinear after S5, an extraction stage, no global state (passed 2026-10-16) |
 
 ## Musings
 
@@ -51,6 +52,9 @@ by being picked up into a numbered document.
 - [m02: Pilot, a byte-reference table as a wxy-virtual source](docs/m02-pilot-mdimrefs.md):
   the mdim-refs/0.2 table (OISST) through `wxy-virtual` into Icechunk,
   checked against GDAL; a trial of the gate 4 "table first" question.
+- [m03: Presentation on raw data, and the map as a document](docs/m03-presentation-and-map-format.md):
+  image scaling that travels with untouched values, and a map that
+  references its sources (from doc 05, X1 and X2).
 
 ## Reference specs
 
