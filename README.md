@@ -20,6 +20,11 @@ revise or reject before the next document starts.
   foundation.
 - GDAL is the inspiration and, for now, a workaround we may call. Nothing
   we publish carries "gdal" in its name.
+- Virtualisation is the default pathway for formats. A format we need gets
+  a scanner that emits chunk references (byte ranges plus codecs) readable
+  as virtual Zarr, rather than a reader of its own. This bridges to future
+  format standardisation and defers legacy complexity; GDAL and other tools
+  may serve as scanners where nothing else exists.
 - Every module, design choice and stage carries a rationale: what we get,
   what it costs, and what happens if we don't do it.
 

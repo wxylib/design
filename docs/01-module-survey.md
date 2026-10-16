@@ -63,7 +63,7 @@ layers. That rule is the main thing this map proposes.
 | M8 | TIFF/COG structure: IFDs, tiles, overviews as IFDs | `frmts/gtiff/` with bundled libtiff | High in GDAL, low in Rust | `async-tiff` 0.4.0 (async, object_store, read and decode separated) | adopt |
 | M9 | GeoTIFF georeferencing: GeoKeys to grid and CRS | `frmts/gtiff/gt_wkt_srs.cpp`, libgeotiff | Medium | `async-tiff::geo` (tags), `geotiff` 0.1.0 | own a thin layer: GeoKeys to M1 + M2 |
 | M10 | Zarr v2/v3 arrays, groups, codecs, sharding | `frmts/zarr/` | High in GDAL, low in Rust | `zarrs` (Zarr 3.1 conformant), `zarrs_object_store` 0.7, `icechunk` 2.3 | adopt |
-| M11 | Virtual chunk references (kerchunk JSON or Parquet) | `frmts/zarr/vsikerchunk*.cpp` | Medium | storage transformers in zarrs, icechunk virtual chunks | own-later; this is how a GeoTIFF becomes a Zarr array without copying |
+| M11 | Virtual chunk references (kerchunk JSON or Parquet) | `frmts/zarr/vsikerchunk*.cpp` | Medium | storage transformers in zarrs, icechunk virtual chunks | own, early: the default pathway for formats (doc 03, A6, added 2026-10-16) |
 | M12 | Write path: GeoTIFF/COG creation, Zarr writing | `gtiffdataset_write.cpp`, `cogdriver.cpp`, `zarr_*` | High | `tiff` 0.11 (sync encoder), zarrs (full write) | defer for TIFF, adopt zarrs when needed |
 | M13 | The other ~130 raster drivers | `frmts/*` | High | `gdal` 0.19 crate (bindings) | defer; reach them through the GDAL workaround (section 6) |
 

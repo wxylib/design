@@ -72,6 +72,21 @@ through `ChunkSource`, nothing else.**
   guesses, until an upstream crate fills them.
 - Without it: convention logic leaks into the core, as in GDAL's drivers.
 
+**A6. Formats arrive by virtualisation first (added 2026-10-16).** A format
+wxylib needs gets a *scanner* that writes chunk references (path, byte
+offset, length, codec chain) as a virtual Zarr store, which `wxy-zarr` reads
+through zarrs. A native reader (as `wxy-tiff` is) is the exception, kept
+where it is already cheap or performance demands it.
+- Get: one read path (zarrs) for every format; formats are described once,
+  in a standard form other tools (zarr-python, VirtualiZarr, icechunk) also
+  read; legacy quirks stay in scanners, out of the core.
+- Cost: formats whose chunks are not independently decodable (strips with
+  shared state, some HDF4 or GRIB layouts) need scanners that are honest
+  about what cannot be referenced; the reference store must be kept in step
+  with the source files.
+- Without it: a native reader per format, which is GDAL's driver model and
+  the scope this project exists to avoid.
+
 **A5. GDAL is an oracle in tests, not a dependency.**
 - Get: bit-level comparison with GDAL where it matters (windows,
   georeferencing, warps), run where GDAL exists: Michael's machine (through
@@ -89,6 +104,7 @@ Each stage is small, works on its own, and ends in a gate.
 | **S1** | `wxy-domain`: the types for R0 to R3, R2-to-R1 normalisation with a report, cell conventions; tests from regular-in-what cases (float32 GHRSST axis, AVISO Mercator latitude, NSIDC 3412) | the types read well in code | the model from doc 02 becomes concrete and testable with no I/O | design churn is still cheap here, so expect revisions | every later stage invents its own types |
 | **S2** | `wxy-source` and `wxy-tiff`: open a COG (local and HTTP), plan a window, fetch, decode | windows match GDAL (oracle) | the plan, fetch, decode seam is real | async plumbing; a sync convenience layer | the seam stays theoretical |
 | **S3** | `wxy-zarr`: Zarr v2/v3 through zarrs, CF and GeoZarr frames where zarrs or its ecosystem supports them | same window, same numbers as S2 for a COG converted to Zarr | the two formats meet in one model | partial conventions | Zarr support lags and the model is shaped by TIFF alone |
+| **S3b** | `wxy-virtual`: scanners that write virtual Zarr references, starting with TIFF (from `wxy-tiff`'s byte ranges) and a GDAL-backed scanner for other formats | a COG read through its virtual Zarr matches S2 and GDAL byte for byte | the virtualisation pathway (A6) is real | reference-store format choice (kerchunk JSON, Parquet refs, icechunk) | every new format needs a native reader |
 | **S4** | `wxy-warp` and `wxy-cli warp`: COG or Zarr to a target grid spec, through rwarp | bit-identical to `gdalwarp` at 1:1 (rwarp's existing bar) | the first end-to-end tool, the browser app's pipeline on servers | output format choice (Zarr first, since zarrs writes) | rwarp stays without a native I/O story |
 | **S5** | `wxy-resample`: kernels shared by warp and overviews; overview selection in planning | rwarp's downsampling limitation fixed and matched to GDAL | one validated kernel set | harder bit-identity at scaled support | two kernel sets, as in GDAL |
 | **S6** | Python (pyo3) and R (extendr or savvy) bindings of S4's surface | a notebook and an R script reproduce S4 | the tool reaches its users | binding maintenance | Rust only |
