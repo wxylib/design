@@ -120,7 +120,7 @@ Each stage is small, works on its own, and ends in a gate.
 | **S2** | `wxy-source` and `wxy-tiff`: open a COG (local and HTTP), plan a window, fetch, decode | windows match GDAL (oracle) | the plan, fetch, decode seam is real | async plumbing; a sync convenience layer | the seam stays theoretical |
 | **S3** | `wxy-zarr`: Zarr through zarrs, georeferenced by the GeoZarr `spatial:` and `proj:` conventions (v0.1) or CF 1D coordinates | same window, same numbers as S2 for a COG converted to Zarr | the two formats meet in one model | partial conventions | Zarr support lags and the model is shaped by TIFF alone |
 | **S3b** | `wxy-virtual` (first slice done 2026-10-16: tiled TIFF without predictor, written with Icechunk and read through wxy-zarr, matching GDAL): scanners emit (chunk key, url, offset, length, checksum) plus Zarr metadata, written with icechunk's Rust `set_virtual_refs` and read back through `zarrs_icechunk`. TIFF scanning is already done by virtual-tiff (Python, on async-tiff), so a Rust scanner is only built if a Rust-side need appears; HDF5 and GRIB have Rust pieces to reuse (hdf5-reader chunk index, gribberish) | a COG read through its icechunk virtual store matches S2 and GDAL byte for byte | the virtualisation pathway (A6) is real, on shared infrastructure (A7) | icechunk as a dependency; a small kerchunk JSON/Parquet emitter is an open slot if needed | every new format needs a native reader |
-| **S4** | `wxy-warp` and `wxy-cli warp`: COG or Zarr to a target grid spec, through rwarp | bit-identical to `gdalwarp` at 1:1 (rwarp's existing bar) | the first end-to-end tool, the browser app's pipeline on servers | output format choice (Zarr first, since zarrs writes) | rwarp stays without a native I/O story |
+| **S4** | `wxy-warp` and `wxy-cli warp` (done 2026-10-16): COG or Zarr to a target grid spec, through rwarp | bit-identical to `gdalwarp` at 1:1 (rwarp's existing bar) | the first end-to-end tool, the browser app's pipeline on servers | output format choice (Zarr first, since zarrs writes) | rwarp stays without a native I/O story |
 | **S5** | `wxy-resample`: kernels shared by warp and overviews; overview selection in planning | rwarp's downsampling limitation fixed and matched to GDAL | one validated kernel set | harder bit-identity at scaled support | two kernel sets, as in GDAL |
 | **S6** | Python (pyo3) and R (extendr or savvy) bindings of S4's surface | a notebook and an R script reproduce S4 | the tool reaches its users | binding maintenance | Rust only |
 | **S7** | the virtual scheme: select, remap, combine, compute, serialised | a VRT mosaic and a warped VRT expressed and evaluated | the VRT replacement | a new file format to design | virtual data stays GDAL-only |
@@ -131,6 +131,14 @@ Status (2026-10-16): S1, S2, S3 and a first slice of S3b are done in
 wxylib/core, all matching GDAL 3.12 byte for byte on the fixtures. S3b's
 next pieces (predictor and LZW, which have no standard Zarr codec yet;
 GDAL-backed scanners; kerchunk export) wait for a need.
+
+S4 is done: `wxy-warp` and `wxy warp` (GeoTIFF or Zarr in, GeoZarr out).
+Nearest neighbour is identical to GDAL's warper on every fixture case, and
+every method is identical near 1:1. Bilinear and cubic at downsampling
+ratios differ, as expected until S5's kernel scaling. Two rwarp bugs found
+on the way (approximate transformer endpoints, nearest truncation) have
+patches waiting for hypertidy/rwarp; until a release carries them,
+`wxy-warp` pins rwarp by git revision and shims both.
 
 Open topic (gate 4): a flat tabular reference store. Scanners already
 produce a table (one row per chunk: key, url, offset, length, checksum,
