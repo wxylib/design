@@ -505,10 +505,11 @@ them can be revisited; doc 03 and the code treat them as current.
 5. **First slice: R0 to R3** over COG and Zarr with rwarp; then explicit
    meshes; then implicit meshes (DGGS) and features.
 
-## 13. Open question: is "warp" the common reprojection verb?
+## 13. Reprojection verbs: `transform` across modes, `warp` onto grids
 
-Raised by Michael, 2026-10-16, without a view yet. Recorded here as
-open; nothing below is decided.
+Raised by Michael, 2026-10-16. Decided the same day ("transform is
+good"): `transform` is the common verb for positions on every rung, and
+`warp` keeps its GDAL meaning of resampling values onto a target grid.
 
 In GDAL, "warp" means one thing: resample a grid's values onto another
 grid. Across the spectrum, what people call reprojection is really two
@@ -525,7 +526,7 @@ separable steps:
    regrid), grid to mesh (sample). Only this step needs kernels, and only
    this step loses information.
 
-Proposal to weigh: call step 1 `transform` (one verb, all rungs), and
+Decision: call step 1 `transform` (one verb, all rungs), and
 keep `warp` for step 2 when the target is a grid, with `regrid` or
 `sample` for other targets. rwarp's own split already matches this: its
 `Transformer` is step 1, and its kernels are step 2.
