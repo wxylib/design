@@ -130,7 +130,14 @@ Each stage is small, works on its own, and ends in a gate.
 Status (2026-10-16): S1, S2, S3 and a first slice of S3b are done in
 wxylib/core, all matching GDAL 3.12 byte for byte on the fixtures. S3b's
 next pieces (predictor and LZW, which have no standard Zarr codec yet;
-GDAL-backed scanners; kerchunk export) wait for a need. `wxy-tiff`'s georeferencing (GeoKeys, transform) has no Rust
+GDAL-backed scanners; kerchunk export) wait for a need.
+
+Open topic (gate 4): a flat tabular reference store. Scanners already
+produce a table (one row per chunk: key, url, offset, length, checksum,
+plus the array's Zarr metadata), and Icechunk is one sink for it. A flat
+sink and a reader over it (Parquet or similar, served as zarrs storage)
+would cover the cases where Icechunk's versioning is more than a job needs.
+Keep exploring before choosing; see the landscape survey, section 18. `wxy-tiff`'s georeferencing (GeoKeys, transform) has no Rust
 home upstream yet; it may align with geotiff-core or be offered to
 async-tiff or async-geotiff rather than grow here.
 
@@ -178,7 +185,7 @@ use tracks.
 | Containers | a small image with the CLI, and a dev image that adds the GDAL oracle (OSGeo GDAL images or rasterio wheels); amd64 and arm64 | S4, or sooner if the oracle moves into CI | image size with GDAL; keeping oracle GDAL versions pinned |
 | Python | maturin wheels (abi3) for manylinux, macOS, Windows | S6 | wheel matrix in CI; async runtime under Python |
 | R | extendr or savvy package | S6 | CRAN's Rust policy: vendored crates, offline builds, minimum rustc on CRAN machines, Windows toolchains |
-| Browser | wasm build behind rwarp's slippy-map app | with the web repo | `Send`/`Sync` bounds; C codecs on wasm; CORS for HTTP range reads; no local files |
+| Browser | wasm build behind rwarp's slippy-map app; CRS through proj-wasm (gate 4) | with the web repo | `Send`/`Sync` bounds; C codecs on wasm; CORS for HTTP range reads; no local files; proj-wasm size and worker plumbing |
 | Cloud | the CLI or Python next to the data (object_store backends) | S4 | credentials and region; egress cost |
 
 **Beyond Python and R.** Most other languages are reachable through two
