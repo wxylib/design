@@ -143,3 +143,53 @@ wrong and fix.
 2. **Crate prefix.** `wxy-` for crates on crates.io, or another prefix?
 3. **Oracle runs.** Generate GDAL fixtures on your machine from a
    `brief.md`, or set up CI with an OSGeo GDAL image, or both?
+
+## 5. Running wxylib: platforms, images, bindings (aspirations)
+
+Noted now so choices made early do not close doors; built only when a stage
+needs it (Michael, 2026-10-16: "consider, plan, implement when timely").
+The aim is that the development track is as easy to run as the eventual
+use tracks.
+
+**What is true today.**
+- The workspace is plain Rust and builds with `cargo` alone on Linux; CI
+  runs on Ubuntu only. macOS and Windows are expected to work but are
+  untested.
+- Native C code arrives through codecs, not through our crates:
+  `zstd-sys`, and `blosc-src` (bringing `lz4-sys` and `libz-sys`) through
+  zarrs' default codec set. A C compiler is therefore needed.
+- `wxy-domain`, `wxy-source` and `wxy-tiff` compile for
+  `wasm32-unknown-unknown` (local-file openers are left out there).
+  `wxy-zarr` does not yet: zarrs drops `Send`/`Sync` on wasm, and our
+  `ChunkSource` trait still requires them. That is a small fix to make when
+  the browser track starts, together with checking that the C codecs build
+  for wasm (or are swapped for pure-Rust ones).
+- GDAL is only a test oracle (A5), and the easiest cross-platform route to
+  it is a Python wheel (`pip install rasterio` bundles GDAL), which is how
+  wxylib/fixtures is generated.
+
+**Ways to run, when timely.**
+
+| Track | Route | Becomes timely | Known challenges |
+|-------|-------|----------------|------------------|
+| Rust | `cargo add` / `cargo install wxy-cli` | S4 (first CLI) | C codecs need a compiler; feature flags to opt out |
+| Prebuilt CLI | release binaries for Linux, macOS, Windows (x86_64, arm64), for example with cargo-dist | after S4 settles | signing on macOS and Windows |
+| Containers | a small image with the CLI, and a dev image that adds the GDAL oracle (OSGeo GDAL images or rasterio wheels); amd64 and arm64 | S4, or sooner if the oracle moves into CI | image size with GDAL; keeping oracle GDAL versions pinned |
+| Python | maturin wheels (abi3) for manylinux, macOS, Windows | S6 | wheel matrix in CI; async runtime under Python |
+| R | extendr or savvy package | S6 | CRAN's Rust policy: vendored crates, offline builds, minimum rustc on CRAN machines, Windows toolchains |
+| Browser | wasm build behind rwarp's slippy-map app | with the web repo | `Send`/`Sync` bounds; C codecs on wasm; CORS for HTTP range reads; no local files |
+| Cloud | the CLI or Python next to the data (object_store backends) | S4 | credentials and region; egress cost |
+
+**The hard one: PROJ.** Real CRS work needs PROJ (C++, SQLite, grid
+files), which is the main cross-platform cost in GDAL-based stacks. wxylib
+defers it to mdsumner/rust-proj-capability; until that settles, frames are
+carried as strings and no crate links PROJ, so none of the routes above
+inherits that cost yet.
+
+**What we would get, cost, and without it.**
+- Get: every track stays installable with one command, and problems are
+  stated before users hit them.
+- Cost: a CI matrix and release tooling, added stage by stage rather than
+  up front.
+- Without it: the usual geospatial install story, where the hardest part
+  of using a tool is building it.
