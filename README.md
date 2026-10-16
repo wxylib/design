@@ -4,6 +4,9 @@ Design notes, surveys and staging plans for wxylib: Rust tooling that takes
 the modular concepts GDAL already contains, gives each one its own home, and
 builds an ecosystem of crates, bindings and documentation around them.
 
+New to wxylib? The [intro page](https://github.com/wxylib/docs#readme)
+says what works, what the tests check and how to get involved.
+
 Nothing here is code. Each document ends in a gate: a decision to accept,
 revise or reject before the next document starts.
 
@@ -46,6 +49,17 @@ by being picked up into a numbered document.
 - [m01: Downstream UX](docs/m01-downstream-ux.md): what front ends (a
   modular QGIS among them) could do with the core's pieces, and which
   doors the core should keep open for them.
+- [m02: Pilot, a byte-reference table as a wxy-virtual source](docs/m02-pilot-mdimrefs.md):
+  the mdim-refs/0.2 table (OISST) through `wxy-virtual` into Icechunk,
+  checked against GDAL; a trial of the gate 4 "table first" question.
+
+## Reference specs
+
+Specs from adjacent work that the design documents refer to. Not wxylib
+formats.
+
+- [mdim-refs/0.2](specs/mdim-refs-0.2.md): a byte-reference table built
+  from a `gdal mdim mosaic` VRT (SQLite; Parquet and kerchunk exports).
 
 ## Related repositories
 
