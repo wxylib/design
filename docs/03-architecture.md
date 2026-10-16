@@ -110,6 +110,21 @@ survey in this repo is the map for this.
   GDAL are opt-in.
 - Without it: correctness claims rest on our own reading of GDAL's source.
 
+**CRS backend: what each candidate covers today (open, 2026-10-16).**
+The backend choice defers to mdsumner/rust-proj-capability; these are the
+facts S4 and the CRS guide work have added.
+- proj4rs (in use, through rwarp): `EPSG:NNNN` and PROJ strings only. No
+  WKT2, PROJJSON, `ESRI:` or `OGC:CRS84`. So `wxy warp --crs` takes EPSG
+  codes: a PROJ string would warp, but GeoZarr `proj:` has no field to
+  record one.
+- Rust Geodesy: no `stere` operator, so no EPSG:3031 or other polar
+  stereographic CRSs. It cannot be the only backend while polar data is a
+  first use. rust-proj-capability's `geodesy_ad.rs` adapter turns
+  `+towgs84` PROJ pairs into Geodesy pipelines (exact fixtures went from 9
+  to 27 of 93). That could later become a small helper here.
+- PROJ (C), and proj-wasm in the browser: full coverage. It is the backend
+  that unlocks WKT2 and PROJJSON input.
+
 ## 3. Stages
 
 Each stage is small, works on its own, and ends in a gate.
