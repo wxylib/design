@@ -35,6 +35,7 @@ revise or reject before the next document starts.
 | 1 | [Module survey](docs/01-module-survey.md) | Agree the module map (passed 2026-10-16) |
 | 2 | [One data model, from raster to vector](docs/02-data-model.md) | Accept core types and traits (provisional) |
 | 3 | [Architecture and staged roadmap](docs/03-architecture.md) | Pick the first implementation stage (S1 chosen, provisional) |
+| 4 | [The landscape: related work, what to leverage, what to track](docs/04-landscape.md) | Agree upstream-first, Icechunk refs, browser CRS, conventions work |
 
 ## Related repositories
 
@@ -52,6 +53,11 @@ revise or reject before the next document starts.
   [zarrs/zarrs](https://github.com/zarrs/zarrs),
   [developmentseed/zarrista](https://github.com/developmentseed/zarrista):
   I/O models to align with.
+- [earth-mover/icechunk](https://github.com/earth-mover/icechunk) and
+  [VirtualiZarr](https://github.com/zarr-developers/VirtualiZarr): the
+  virtual-reference store and parser contract (doc 04).
+- [zarr-conventions](https://github.com/zarr-conventions): the `spatial:`,
+  `proj:` and `multiscales` conventions behind GeoZarr (doc 04).
 
 ## License
 
