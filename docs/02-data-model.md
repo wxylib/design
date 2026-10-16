@@ -65,8 +65,8 @@ is which position mapping a domain carries.
 | R2 rectilinear | outer product of 1D vectors | nx + ny | pressure levels, stretched grids, AVISO before normalising | mdim indexing variables |
 | R3 curvilinear | a position per cell, still (i, j) indexed | 2 nx ny | ROMS, NEMO ORCA, VIIRS swath | classic geolocation arrays; mdim 2D coordinates |
 | R3' fitted models | a fitted function of the index | a few dozen coefficients | GCP polynomials, RPC, TPS | classic GCP and RPC metadata |
-| R4 implicit unstructured | arithmetic from a cell id, no (i, j) | 1 to a few numbers | L3 bins (`NUMROWS`), H3, S2, HEALPix | none |
-| R5 explicit unstructured | per element positions plus connectivity | vertices and topology | UGRID, MDAL meshes, TINs | MDAL (separate), not GDAL |
+| R4 implicit mesh | arithmetic from a cell id, no (i, j) | 1 to a few numbers | DGGS (H3, S2, HEALPix, ISEA), L3 bins (`NUMROWS`) | none |
+| R5 explicit mesh | per element positions plus connectivity | vertices and topology | UGRID, MDAL meshes, TINs | MDAL (separate), not GDAL |
 | R6 features | a geometry per element, no shared topology | a geometry per row | points, lines, polygons | OGR |
 
 Two observations make this one axis rather than four models:
@@ -83,6 +83,26 @@ Two observations make this one axis rather than four models:
   when materialised as rectangles. playproj's rasterize page is the same
   move in the other direction: an R6 polygon becomes an R1 field (centre-in)
   or an R1 coverage fraction (exact).
+
+**Where "mesh" fits.** In the umbrella sense, every rung from R1 to R5 is a
+mesh: a set of cells covering a domain, with vertices, edges and neighbours.
+The standard terms already say so. R1 to R3 are *structured* meshes, where
+the (i, j) index gives topology for free. R4 and R5 are *unstructured*. What
+separates the rungs is what has to be stored and what can be computed:
+
+| | Positions computed | Positions stored |
+|---|---|---|
+| **Topology computed** | R1 regular grid; R4 DGGS and L3 bins | R2, R3 grids (topology from the index) |
+| **Topology stored** | (rare: a computed mesh with edits) | R5 UGRID, MDAL, TINs |
+
+So a DGGS is a mesh whose vertices, edges, neighbours and hierarchy are all
+computed from the cell id, just as a regular grid's are computed from (i, j)
+and six numbers. meshcore's GRID and CELL models are this observation in
+code. A DGGS is to an unstructured mesh what a regular grid is to a
+curvilinear one: the same structure, with nothing stored but the rule.
+DGGS are not part of the first implementation slice, but the core types
+must not need changing when they arrive (section 4.2 already gives them
+the `Scheme` variant).
 
 So the operations GDAL spreads across drivers and apps (normalise, warp,
 rasterize, polygonize, extract, mesh to grid) are all **moves along this
