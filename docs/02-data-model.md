@@ -2,7 +2,8 @@
 
 Status: draft for review (gate 2)
 Builds on: [01 module survey](01-module-survey.md) (M3, M14, M15, M16, M26)
-and the gate 1 decisions recorded there.
+and the gate 1 decisions recorded there. Section 10 adds context from
+hypertidy/meshcore and CGAL.
 Reads with: [regular-in-what](https://github.com/hypertidy/regular-in-what)
 (the two questions, the ladder, the costumes) and
 [playproj](https://github.com/hypertidy/playproj) (index space against the
@@ -280,6 +281,9 @@ Unifying the types does not remove every difference. The real ones are:
   them from the scheme, R5 from topology, R6 not at all. Algorithms that need
   neighbours (focal operations, contouring, mesh interpolation) depend on
   the topology module, and that dependency is visible in their signatures.
+  meshcore (section 10) suggests this difference is smaller than it looks:
+  one verb set answers neighbour questions on every rung, computed on some
+  and stored on others.
 - **Interpolation inside a cell.** On R1 to R3, bilinear in index space. On
   a mesh, barycentric on faces. On features, not defined. The resampling
   crate (gate 1, decision 2) takes a domain and dispatches on its rung.
@@ -373,7 +377,83 @@ serialised before any data is read. That serialisation is the VRT
 replacement. Its file format is a doc 03 question; the operations are what
 this document commits to.
 
-## 10. Questions for gate 2
+## 10. Context from meshcore and CGAL (not decisions)
+
+Read after the draft was written, for context only. Nothing here changes the
+proposals above; it points at where they could go further.
+
+### hypertidy/meshcore
+
+[meshcore](https://github.com/hypertidy/meshcore) (R, prototype, read at
+`7e577dc`) runs one verb set over a regular grid (GRID), a HEALPix discrete
+global grid (CELL) and, through silicate's `silicate2` branch, UGRID meshes.
+Four of its ideas fit this model directly.
+
+- **One verb set across rungs.** `cells()`, `boundaries()`, `vertices()`,
+  `edges()`, `face_edge()`, `neighbours()`, `parent()`, `children()` and
+  `join_array()`. Only `cells()`, `boundaries()` and the hierarchy are
+  written per model; edges and neighbours are one generic implementation on
+  integer vertex keys. In this document's terms, the Topology module (4.3)
+  is not only for R4 and R5. Every rung from R1 to R5 can answer the same
+  verbs: R1 and R4 compute them from the index or cell id, R5 reads them
+  from storage. That is a candidate trait surface for the topology module.
+- **The identity ladder.** Whether two vertices are the same is a level a
+  model records, not a fact about the data: lattice (same key computed from
+  the cell id), exact, snapped, noded, exact predicates (CGAL). It is a
+  second axis, orthogonal to the position ladder in section 3. The position
+  ladder says *where* an element is; the identity ladder says *which
+  elements are the same*. It matters most at R5 and R6, where shared
+  boundaries are found rather than given.
+- **Keyed dimensions with a binding rung.** An array joins to a model's
+  entities by a keyed dimension, with no geometry: computed (GeoTIFF
+  `row * ncol + col`), stored (xdggs `cell_ids`) or positional (UGRID
+  `n_face`). The binding records how it was decided: declared, ugrid
+  attributes, name, or size. This is `Field.location` plus a domain dim,
+  and the binding rung belongs in the same report as normalisation (DM4).
+- **A written mesh spec.** meshspec v0.1 defines three forms as Arrow
+  tables (PSLG, triangle mesh, drawable mesh) with settled decisions on
+  index base, winding and provenance. For R5 wire formats it is an existing
+  spec to adopt rather than a new one to invent, and it sits naturally
+  beside GeoArrow (gate 2, question 4).
+
+meshcore's MDAL findings also support DM8 (conventions as adapters): MDAL
+and GDAL multidim agree exactly when both read a UGRID file, but MDAL loads
+no edges for 2D meshes and can silently return the wrong mesh. The model
+should own the entity tables, with MDAL as one reader among several and a
+key-agreement check as validation.
+
+Two of meshcore's open questions are this document's too: GRID hierarchy
+(2 x 2 blocks against GDAL's same-extent overviews, which is the `related`
+domains question in section 7) and 64-bit cell ids for DGGS at fine levels.
+
+### CGAL
+
+From general knowledge of CGAL's design, not from reading its source for
+this document. Three of its ideas are relevant.
+
+- **Kernels separate predicates from constructions, and exactness is a
+  parameter.** The same algorithm runs with floating point filters or exact
+  arithmetic. That is the top rung of meshcore's identity ladder, and it has
+  the same shape as the CRS decision (D5): the core names the operation, a
+  backend decides how exactly it is done.
+- **Combinatorial maps and linear cell complexes** describe topology in any
+  dimension with one structure (darts and their links), with attributes
+  attachable to cells of any dimension. That generalises `Location` (node,
+  edge, face, volume) to "a cell of dimension i, for i from 0 to d", and
+  covers layered 3D meshes without a special case.
+- **Generic programming by concept and model.** Algorithms are written
+  against concepts (traits) and any data structure that models the concept
+  can be used. meshcore's verbs and this document's `Positions`
+  implementing `Transformer` are the same idea. In Rust, traits are the
+  natural form.
+
+Rust already has pieces at this level: `spade` 2.15 (Delaunay and
+constrained Delaunay, the engine under hypertidy/trowel), `cdt` 0.1,
+`robust` 1.2 (adaptive exact predicates), `h3o` 0.11, `healpix` 0.3, `s2`
+0.2 and `geo-index` 0.4. None of them shares a cell or topology model with
+the others, which is the gap this document's Topology module would fill.
+
+## 11. Questions for gate 2
 
 1. **The spectrum as the core.** Is the R0 to R6 ladder the right organising
    axis, including R3' (fitted models) and R4 (schemes such as L3 bins and
