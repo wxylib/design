@@ -1,6 +1,7 @@
 # m05: The chunk cache as a growing implicit store
 
-Status: musing, 2026-10-17. Not a plan and not a gate. It explores an idea
+Status: musing, 2026-10-17; its four questions answered the same day
+(section 8), so pilot C1 is ready to pick up. It explores an idea
 of Michael's and ends with a smallest pilot and the questions that would
 turn it into work; it becomes work only through a numbered document.
 
@@ -238,6 +239,18 @@ C1 earns them. Publishing a fully held array as kerchunk Parquet with
 and comes after T1.
 
 ## 8. Questions that would turn this into work
+
+Answered by Michael, 2026-10-17:
+
+1. Byte-range level.
+2. Append-only. Rows say where their bytes came from, so held data can
+   be flushed or moved to another store for more sophisticated handling
+   later; DuckDB is a tiny step from there, and not in scope.
+3. The `copy` state goes into mdim-refs after the pilot proves it.
+4. Yes, a small `wxy-cache` crate.
+
+So pilot C1 (section 7) is the next step, as core work. The questions as
+asked:
 
 1. For a referenced chunk the chunk is the byte range, so the row is the
    same either way; the question is only where the hook sits. At the
