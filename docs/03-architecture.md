@@ -245,9 +245,13 @@ lines and writes CSV. All 9 point-read cases match GDAL, with no chunk
 fetched twice. What we get: values at many points without reading
 windows, and a planner GDAL-side tools could use too. What it costs: a
 module in wxy-warp, since it shares the transformer. Without it, users
-read windows and pick cells by hand. Still to come: interpolated reads
-(GDAL's InterpolateAtPoint, once an oracle for it is set up) and
-features (polygons to cells).
+read windows and pick cells by hand. The second slice (core 8729715) adds
+bilinear, cubic and cubic spline reads, ported from GDAL's
+InterpolateAtPoint; at GDAL's own pixel positions all of them match GDAL
+exactly, and positions from reprojected points sit within 2e-9 pixels of
+GDAL's (proj4rs against PROJ). The oracle calls GDAL's C API through
+ctypes in rasterio's bundled library. Still to come: features (polygons
+to cells, for zonal statistics).
 
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
 widened S5 and S7, added A8, and clarified A6. The order from here is S5,
