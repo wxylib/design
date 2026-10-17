@@ -64,6 +64,11 @@ by being picked up into a numbered document.
   doc 03 section 5 and m01 to m03 checked against what has landed
   (2026-10-17): what is closer, newly reachable, still far, or worth
   reframing.
+- [m05: The chunk cache as a growing implicit store](docs/m05-chunk-cache.md):
+  keeping the encoded bytes of every chunk a run reads (and, after a warp,
+  a record of every target chunk) beside the byte-reference rows, so a
+  store accumulates without dictating a format; ends with a range-cache
+  pilot.
 
 ## Reference specs
 
