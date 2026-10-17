@@ -194,7 +194,27 @@ JSON, the codec chosen for the target array):
 The range-level pilot below needs only `path, offset, size, data, hash,
 etag, fetched`: a ref table without the keys, which the join supplies.
 
-## 6. Smallest pilot
+## 6. Opt-in, configurable, and level with GDAL's caches
+
+Off by default: a run without `--cache` behaves exactly as today. The
+cache is configured, not implied: where it lives, inline threshold,
+which side (source, target, both), and read-only use of someone else's
+cache.
+
+GDAL has two caches this must at least match:
+
+| GDAL | What it is | Here |
+|---|---|---|
+| block cache (`GDAL_CACHEMAX`) | decoded blocks, in memory, per process | the in-memory decoded cache M16 already plans on the fetch side |
+| `/vsicurl/` range cache (`CPL_VSIL_CURL_CACHE_SIZE`) | fetched ranges, in memory, per process | the range layer of C1, with an in-memory mode and the same size cap |
+
+What it adds beyond them: it persists across runs and machines; it holds
+bytes encoded, so it is small and format-neutral; it is a table, so it can
+be queried, joined to the ref table, handed on and published; plans can
+see it (`--dry-run` hits and misses); and on the target side it records
+what was computed and from what, which neither GDAL cache does.
+
+## 7. Smallest pilot
 
 **C1, a persistent range cache under `wxy-tiff`.** A wrapper
 `AsyncFileReader` that looks up `(path, offset, size)` in an in-memory
@@ -217,7 +237,7 @@ C1 earns them. Publishing a fully held array as kerchunk Parquet with
 `raw` filled, or as Icechunk native chunks, is the materialisation step
 and comes after T1.
 
-## 7. Questions that would turn this into work
+## 8. Questions that would turn this into work
 
 1. Range-level first (recommended: no trait change, format-agnostic,
    catches headers) or chunk-level on `ChunkSource`?
@@ -228,7 +248,7 @@ and comes after T1.
 4. Home: a small crate (say `wxy-cache`) depending only on async-tiff,
    object_store and parquet, owned with core by the planning thread.
 
-## 8. What we would get, what it costs, what if we didn't
+## 9. What we would get, what it costs, what if we didn't
 
 - Get: second and later runs over the same region move no bytes;
   `--dry-run` says what a run will really cost; a cache you can hand
