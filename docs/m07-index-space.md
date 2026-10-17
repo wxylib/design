@@ -1,6 +1,8 @@
 # m07: Index space and coordinate space, from the playproj pages to Zarr
 
-Status: musing, 2026-10-17. It surveys the
+Status: musing, 2026-10-17; its four questions answered the same day
+(section 7: the recommended answers), so pilot I1 and I3 is ready to pick
+up. It surveys the
 [playproj](https://github.com/hypertidy/playproj) pages for what they say
 about mapping data onto different surface representations, places each on
 doc 02's ladder, checks what wxylib reads and warps today, and ends with a
@@ -166,8 +168,20 @@ function into a fixture-backed check.
    example (a change in hypertidy, so Michael's call)? Recommended: yes,
    once the store is published somewhere a browser can fetch it.
 
-## 7. Provisional default
+## 7. Answers
 
-Under standing autonomy the recommended answers above stand until Michael
-says otherwise; nothing is built from this musing until a numbered
-document or the planning thread picks it up.
+Michael, 2026-10-17: "Recommended is good". So:
+
+1. **Pilot:** I1 (roms-fan) and I3 (rotated) go to the planning thread as
+   fixtures in `wxylib/fixtures` under `index/`. I2, I4 and I5 wait until
+   the gaps they exercise are designed.
+2. **Vertical positions:** CF `formula_terms` coordinates are R3' (a
+   function of the index) whose coefficients may be fields. The ladder
+   does not grow.
+3. **Store dialect:** I1 uses ROMS's own names plus CF attributes.
+4. **playproj link:** yes, `indexspace.html` gets the I1 store as an
+   example once it is published somewhere a browser can fetch it (a
+   change in hypertidy, for Michael).
+
+Nothing is built in core from this musing; the vertical mapping waits for
+a numbered document.
