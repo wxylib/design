@@ -288,8 +288,9 @@ Without it, plans stay values inside Rust only.
 
 The chunk cache pilot (m05 C1, core 353d1f7): `wxy-cache` wraps the
 byte reader under `wxy-tiff`, answers ranges it holds and keeps the rest,
-still encoded, as append-only Parquet rows `(path, offset, size, data,
-hash, etag, fetched)`; `wxy warp --cache DIR` uses it for GeoTIFF sources,
+still encoded, as append-only Parquet rows `(source, offset, size, url,
+data, hash, validator, checked_by, fetched)` keyed on the source before
+any remap and partitioned by source (m06, core 650f7c1); `wxy warp --cache DIR` uses it for GeoTIFF sources,
 and `--dry-run --cache` reports held and missing fetches through
 `ChunkSource::stored_ranges`. A second cached warp reads nothing from the
 file and writes the same store, and the rows joined to the file's
