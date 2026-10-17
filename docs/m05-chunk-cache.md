@@ -243,8 +243,8 @@ and comes after T1.
    same either way; the question is only where the hook sits. At the
    byte reader first (recommended: bytes are already bytes there, no
    trait change, and header reads come along), or on `ChunkSource`,
-   which is the only place chunks with no byte range (a whole Zarr
-   object aside, GDAL-workaround blocks, computed chunks) can be held?
+   which is the only place chunks with no byte range (GDAL-workaround
+   blocks, computed chunks) can be held?
 2. Engine: append-only Parquet fragments (recommended: growing, no write
    contention, wasm-friendly) or SQLite/DuckDB?
 3. Should the `copy` state go into the mdim-refs spec now, or wait for a
