@@ -221,9 +221,20 @@ around the south pole that crosses the antimeridian. What we get:
 swath and ocean-model grids warp without resampling them to a regular
 grid first. What it costs: the backmap is built once per source (memory
 about 1.3 times the grid, in float32). Without it, curvilinear sources
-would need GDAL. Still to come in S5b: reading 2D CF coordinates from
-Zarr and netCDF into a curvilinear mapping, so the CLI can take them, and
-cell-edge (corner) arrays.
+would need GDAL.
+
+S5b's second slice (core e1311e2 and 1671818, fixtures 9625fd6) takes CF
+coordinates from Zarr: 2D lon/lat arrays become a curvilinear mapping,
+1D axes warp as an affine grid when evenly spaced and otherwise as 2D
+arrays (GDAL's route for irregular axes), and grids placed by their cell
+corners (CF 2D bounds, or corner arrays one row and column larger) warp
+with GDAL's TOP_LEFT_CORNER convention. The 6 corner cases match GDAL
+cell for cell, and `wxy warp` on a CF Zarr store matches GDAL from the
+CLI. Centres stay the default placement, as in GDAL's netCDF driver;
+`--bounds` chooses the corners. What we get: xarray-written stores warp
+from the shell. What it costs: one more CLI flag. Without it, CF stores
+would need a GeoZarr `spatial:` rewrite first. Still to come: 1D CF
+bounds (`lat_bnds`, n by 2) and netCDF input.
 
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
 widened S5 and S7, added A8, and clarified A6. The order from here is S5,
