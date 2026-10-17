@@ -73,6 +73,11 @@ by being picked up into a numbered document.
   the cogcache/blocklist review of wxylib checked point by point against
   the repos; proposes a flat refs store (table first, with the cache
   inside), a Bluelink-shaped fixture, and changes to C1 and S7.
+- [m07: Index space and coordinate space](docs/m07-index-space.md):
+  the playproj pages (ROMS, rotated pole, cubed sphere, geostationary and
+  more) placed on the ladder, the gaps they show (computed vertical
+  positions, periodic and folded index, patches, stored frames) and five
+  small Zarr fixtures to pin them.
 
 ## Reference specs
 
