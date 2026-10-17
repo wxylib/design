@@ -59,6 +59,9 @@ blocked on upstream, not on wxylib: the rwarp and controlledburn patches
   pin versions instead of commits.
 - Cost: semver promises on young APIs (a 0.x release keeps that light).
 - Without it: every user builds from git, and py and r pin core commits.
+- Michael, 2026-10-17: no rush for crates.io, "this is all very early".
+  So this is not a goal for now; it only says what a release would wait on
+  when the time comes.
 
 ## 2. Closer
 
@@ -136,12 +139,12 @@ Not a schedule; the order the evidence suggests if these are picked up.
 
 1. Serialisable plans and options, with `--dry-run` (small; serves
    plans-as-values, the catalogue and the bindings at once).
-2. Upstream release blockers: rwarp and controlledburn patches released,
-   then a 0.x crates.io release of the workspace.
-3. A browser COG warp demo in wxylib/web on `wxy-tiff` and `wxy-warp`;
+2. A browser COG warp demo in wxylib/web on `wxy-tiff` and `wxy-warp`;
    the `wxy-zarr` `Send`/`Sync` fix after it.
-4. Explainers in wxylib/docs, one per ported GDAL concept.
-5. Bindings that open sources, mapped from the shared options types.
+3. Explainers in wxylib/docs, one per ported GDAL concept.
+4. Bindings that open sources, mapped from the shared options types.
+
+A crates.io release is left off: it is not wanted yet (section 1).
 
 S7 (the virtual scheme) remains the next large core stage, and the map
 document and presentation layer follow it.
@@ -149,9 +152,8 @@ document and presentation layer follow it.
 ## 6. What we would get, what it costs, what if we didn't
 
 - Get: the aspirations checked against code rather than memory, with
-  one wasm check run today; two decisions surfaced that are cheap now and
-  dearer later (plan and option serialisation, the release blockers).
+  one wasm check run today; one decision surfaced that is cheap now and
+  dearer later (plan and option serialisation).
 - Cost: one more document to keep current; it is dated so it can simply
   be superseded.
-- Without it: the musings drift from the code, and the release track
-  stays blocked on upstream patches without anyone saying so.
+- Without it: the musings drift from the code.
