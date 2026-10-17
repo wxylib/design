@@ -90,7 +90,9 @@ without a binding per host.
 **The flat reference table (gate 4 open topic, m02).** Answered in
 practice: the mdim-refs table is read directly as a source, and Icechunk
 is one sink for it. Doc 03's open topic can be closed as "table first,
-Icechunk as a sink", and m02 marked done.
+Icechunk as a sink", and m02 marked done. (Superseded by m06: the only read
+path still writes an Icechunk repository first, so the topic stays open
+until a flat refs store reads the table directly.)
 
 ## 3. Still far
 
