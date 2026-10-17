@@ -189,9 +189,15 @@ plain/scaled switch is `WarpOptions::chunked` (`wxy warp --plain`), and
 plain gives the S4 output. What we get: GDAL's output without GDAL. What
 it costs: GDAL's chunking and per-chunk scale come along, quirks included,
 and a probe point check that PROJ does but proj4rs does not. Without it,
-coarse warps would alias. Next is S5's overview selection: gdalwarp reads an
-overview when the target is coarser (`-ovr AUTO`, its default), so until
-then wxy matches `gdalwarp -ovr NONE` and GDAL's library warper. Overviews
+coarse warps would alias. Overview selection followed (core 45ec852):
+`WarpOptions::overview` ports gdalwarp's `-ovr AUTO` rule (a 10x10
+lattice of target corners mapped to source pixels, then the closest
+coarsest level still finer than the target), `AUTO-n` and fixed levels, and the CLI
+defaults to auto as gdalwarp does; three overview cases match GDAL. What
+we get: gdalwarp's default output and its read savings. What it costs:
+one level for the whole warp, as gdalwarp, rather than per tile. Without
+it, coarse warps read full resolution and differ from gdalwarp. Per-tile
+selection stays an extension for later. Overviews
 through derived fields wait for a use; then S4b and S5b.
 
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
