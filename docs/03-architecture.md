@@ -267,6 +267,25 @@ users burn a zone raster and read the whole source. Timings and memory
 against GDAL's dense burn and exactextract are in wxylib/docs
 examples/zonal.
 
+Plans as values (m04 section 5, item 1; core 50ed027): `WarpPlan`,
+`PointPlan` and `ZonePlan` each give an `Explain`, the chunks the run
+will fetch in fetch order, decoded bytes, stored bytes where the source
+knows them (`ChunkSource::stored_bytes`, from a TIFF's tile byte counts;
+Zarr says nothing yet), and what was planned (GDAL's warp chunks and
+their source windows, batches of leading slices, the point method after
+GDAL's downgrade, zonal spans). `Explain` and the options types
+(`GridSpec`, `WarpOptions`, `PointOptions`, `ZoneCells`) round-trip
+through serde, options with defaults for missing fields; `wxy warp`,
+`points` and `zonal` take `--dry-run` and print it as JSON. A test runs
+each plan against a counting source and requires the explained keys to
+be exactly the keys fetched. Plans themselves are not deserialised: their
+transformers come from the source and options, and planning again from
+the serialised inputs gives the same plan. What we get: an EXPLAIN for
+maps, an approve-first flow for scripts and agents, and the first piece
+of the operation catalogue (one serialisable options type per verb).
+What it costs: serde in wxy-warp and a JSON shape that will change.
+Without it, plans stay values inside Rust only.
+
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
 widened S5 and S7, added A8, and clarified A6. The order from here is S5,
 then S4b and S5b, with S4c fitted in where it is cheapest. S4b and S4c
