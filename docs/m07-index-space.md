@@ -1,4 +1,4 @@
-# m06: Index space and coordinate space, from the playproj pages to Zarr
+# m07: Index space and coordinate space, from the playproj pages to Zarr
 
 Status: musing, 2026-10-17. It surveys the
 [playproj](https://github.com/hypertidy/playproj) pages for what they say
@@ -31,11 +31,11 @@ an index to a coordinate space: longitude and latitude, a projected CRS,
 depth. Doc 02's ladder is a ladder of how much that mapping costs to
 store, from nothing (R0) to six numbers (R1) to a position per cell (R3).
 
-![Five grids, each drawn twice: in index space and on the globe](img/m06-index-coordinate.png)
+![Five grids, each drawn twice: in index space and on the globe](img/m07-index-coordinate.png)
 
 *The same cells and colours in both rows. The colour is a field of the
 place, so it moves with the cells; the cells stay square in the top row
-and bend in the bottom one. Made by `scripts/m06_figures.py` from numpy
+and bend in the bottom one. Made by `scripts/m07_figures.py` from numpy
 ports of playproj's constructions (spherical earth, pictures only).*
 
 Two things the figure makes plain:
@@ -53,7 +53,7 @@ Two things the figure makes plain:
 
 The vertical makes the same point a third time, from `indexspace.html`:
 
-![A ROMS section: unit cells in (j, k), bent layers in depth](img/m06-roms-section.png)
+![A ROMS section: unit cells in (j, k), bent layers in depth](img/m07-roms-section.png)
 
 *Terrain-following layers: N layers in every column, so `(j, k)` is a
 regular grid while depth is a function of the layer, the stretching curve,

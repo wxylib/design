@@ -1,4 +1,4 @@
-"""Figures for docs/m06-index-space.md.
+"""Figures for docs/m07-index-space.md.
 
 Index space against coordinate space for the grids on the playproj pages
 (hypertidy/playproj: indexspace.html, grids.html, regular.html), drawn from
@@ -6,7 +6,7 @@ small numpy ports of the same constructions. Spherical earth throughout:
 these are pictures, not fixtures.
 
     python3 -m pip install numpy matplotlib
-    python3 scripts/m06_figures.py path/to/coastline-110m.json
+    python3 scripts/m07_figures.py path/to/coastline-110m.json
 
 The coastline file is playproj's data/coastline-110m.json (Natural Earth
 110m, flat [lon, lat, lon, lat, ...] lists); without it the maps have no
@@ -274,7 +274,7 @@ def six_grids():
     fig.suptitle("The same cells, the same colours: as the array has them (top) and as the earth has them (bottom)",
                  fontsize=11, x=0.01, ha="left")
     fig.tight_layout()
-    fig.savefig(os.path.join(OUT, "m06-index-coordinate.png"), dpi=110)
+    fig.savefig(os.path.join(OUT, "m07-index-coordinate.png"), dpi=110)
     plt.close(fig)
 
 
@@ -336,7 +336,7 @@ def section():
     fig.suptitle("A ROMS section off New South Wales: N = 20 layers, Vtransform 2, Vstretching 4, theta_s 7, theta_b 2, hc 250",
                  fontsize=10, x=0.01, ha="left")
     fig.tight_layout()
-    fig.savefig(os.path.join(OUT, "m06-roms-section.png"), dpi=110)
+    fig.savefig(os.path.join(OUT, "m07-roms-section.png"), dpi=110)
     plt.close(fig)
 
 

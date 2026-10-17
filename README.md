@@ -69,7 +69,7 @@ by being picked up into a numbered document.
   a record of every target chunk) beside the byte-reference rows, so a
   store accumulates without dictating a format; ends with a range-cache
   pilot.
-- [m06: Index space and coordinate space](docs/m06-index-space.md):
+- [m07: Index space and coordinate space](docs/m07-index-space.md):
   the playproj pages (ROMS, rotated pole, cubed sphere, geostationary and
   more) placed on the ladder, the gaps they show (computed vertical
   positions, periodic and folded index, patches, stored frames) and five
