@@ -178,6 +178,21 @@ on the way (approximate transformer endpoints, nearest truncation) have
 patches waiting for hypertidy/rwarp; until a release carries them,
 `wxy-warp` pins rwarp by git revision and shims both.
 
+S5's first slice is done (2026-10-17): `wxy-resample` holds GDAL's warp
+kernels ported in their arithmetic order (4-sample bilinear and cubic, the
+scaled kernel in SSE2 lane order, the general kernel with validity and
+nodata), and `wxy-warp` runs GDAL's warp operation around them, chunk by
+chunk (chunk list, per-chunk source windows and kernel scales). Every warp
+oracle case, nearest, bilinear and cubic, coarse targets, nodata and
+chunked windows included, is identical to GDAL (24 cases). The
+plain/scaled switch is `WarpOptions::chunked` (`wxy warp --plain`), and
+plain gives the S4 output. What we get: GDAL's output without GDAL. What
+it costs: GDAL's chunking and per-chunk scale come along, quirks included,
+and a probe point check that PROJ does but proj4rs does not. Without it,
+coarse warps would alias. S5's other pieces (overview selection per tile,
+overviews through derived fields) are next when a use needs them; S4b and
+S5b come first.
+
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
 widened S5 and S7, added A8, and clarified A6. The order from here is S5,
 then S4b and S5b, with S4c fitted in where it is cheapest. S4b and S4c
