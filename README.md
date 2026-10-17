@@ -60,6 +60,10 @@ by being picked up into a numbered document.
 - [m03: Presentation on raw data, and the map as a document](docs/m03-presentation-and-map-format.md):
   image scaling that travels with untouched values, and a map that
   references its sources (from doc 05, X1 and X2).
+- [m04: The loftier goals, reassessed](docs/m04-lofty-goals-reassessed.md):
+  doc 03 section 5 and m01 to m03 checked against what has landed
+  (2026-10-17): what is closer, newly reachable, still far, or worth
+  reframing.
 
 ## Reference specs
 
