@@ -198,7 +198,19 @@ we get: gdalwarp's default output and its read savings. What it costs:
 one level for the whole warp, as gdalwarp, rather than per tile. Without
 it, coarse warps read full resolution and differ from gdalwarp. Per-tile
 selection stays an extension for later. Overviews
-through derived fields wait for a use; then S4b and S5b.
+through derived fields wait for a use.
+
+S4b followed (core 8f14888): `WarpPlan` plans once from the spatial dims
+and warps any number of leading dims in batches of whole source chunks
+(capped in bytes), and the CLI writes each batch to the output store as
+it is warped (wxy-zarr `GridWriter`). Each slice equals the 2D warp of
+that slice alone, on both routes. What we get: a time x depth x y x x
+store warps without being loaded, and one plan instead of one per slice.
+What it costs: the plain route now warps slice by slice too (rwarp's
+multi-band pass masked a cell in every band when one band had nodata).
+Without it, mdim warps would be sliced by hand, as with GDAL. Leading
+coordinate values (time stamps, depths) are not yet copied to the
+output. Next is S5b.
 
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
 widened S5 and S7, added A8, and clarified A6. The order from here is S5,
