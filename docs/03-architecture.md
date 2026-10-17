@@ -210,7 +210,20 @@ What it costs: the plain route now warps slice by slice too (rwarp's
 multi-band pass masked a cell in every band when one band had nodata).
 Without it, mdim warps would be sliced by hand, as with GDAL. Leading
 coordinate values (time stamps, depths) are not yet copied to the
-output. Next is S5b.
+output.
+
+S5b's first slice followed (core 4765e0e, fixtures 3ff8fb1): a grid placed
+by 2D x and y arrays at cell centres warps through a port of GDAL's
+geolocation-array transformer (forward interpolation, its float32 backmap
+with GDAL's hole filling, and the exact inverse bilinear refinement), and
+all 12 curvilinear oracle cases match GDAL cell for cell, including a ring
+around the south pole that crosses the antimeridian. What we get:
+swath and ocean-model grids warp without resampling them to a regular
+grid first. What it costs: the backmap is built once per source (memory
+about 1.3 times the grid, in float32). Without it, curvilinear sources
+would need GDAL. Still to come in S5b: reading 2D CF coordinates from
+Zarr and netCDF into a curvilinear mapping, so the CLI can take them, and
+cell-edge (corner) arrays.
 
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
 widened S5 and S7, added A8, and clarified A6. The order from here is S5,
