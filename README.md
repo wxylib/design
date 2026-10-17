@@ -69,6 +69,10 @@ by being picked up into a numbered document.
   a record of every target chunk) beside the byte-reference rows, so a
   store accumulates without dictating a format; ends with a range-cache
   pilot.
+- [m06: Response to the foundation assessment](docs/m06-foundation-assessment-response.md):
+  the cogcache/blocklist review of wxylib checked point by point against
+  the repos; proposes a flat refs store (table first, with the cache
+  inside), a Bluelink-shaped fixture, and changes to C1 and S7.
 - [m07: Index space and coordinate space](docs/m07-index-space.md):
   the playproj pages (ROMS, rotated pole, cubed sphere, geostationary and
   more) placed on the ladder, the gaps they show (computed vertical

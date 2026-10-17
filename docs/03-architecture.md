@@ -286,6 +286,17 @@ of the operation catalogue (one serialisable options type per verb).
 What it costs: serde in wxy-warp and a JSON shape that will change.
 Without it, plans stay values inside Rust only.
 
+The chunk cache pilot (m05 C1, core 353d1f7): `wxy-cache` wraps the
+byte reader under `wxy-tiff`, answers ranges it holds and keeps the rest,
+still encoded, as append-only Parquet rows `(source, offset, size, url,
+data, hash, validator, checked_by, fetched)` keyed on the source before
+any remap and partitioned by source (m06, core 650f7c1); `wxy warp --cache DIR` uses it for GeoTIFF sources,
+and `--dry-run --cache` reports held and missing fetches through
+`ChunkSource::stored_ranges`. A second cached warp reads nothing from the
+file and writes the same store, and the rows joined to the file's
+reference table give back the plan's chunk keys. Zarr and virtual sources
+(C2) and target-side rows (T1) wait on this pilot.
+
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
 widened S5 and S7, added A8, and clarified A6. The order from here is S5,
 then S4b and S5b, with S4c fitted in where it is cheapest. S4b and S4c
