@@ -155,13 +155,14 @@ Each stage is small, works on its own, and ends in a gate.
 | **S2** (done 2026-10-16) | `wxy-source` and `wxy-tiff`: open a COG (local and HTTP), plan a window, fetch, decode | windows match GDAL (oracle) | the plan, fetch, decode seam is real | async plumbing; a sync convenience layer | the seam stays theoretical |
 | **S3** (done 2026-10-16) | `wxy-zarr`: Zarr through zarrs, georeferenced by the GeoZarr `spatial:` and `proj:` conventions (v0.1) or CF 1D coordinates | same window, same numbers as S2 for a COG converted to Zarr | the two formats meet in one model | partial conventions | Zarr support lags and the model is shaped by TIFF alone |
 | **S3b** | `wxy-virtual` (first slice done 2026-10-16: tiled TIFF without predictor, written with Icechunk and read through wxy-zarr, matching GDAL): scanners emit (chunk key, url, offset, length, checksum) plus Zarr metadata, written with icechunk's Rust `set_virtual_refs` and read back through `zarrs_icechunk`. TIFF scanning is already done by virtual-tiff (Python, on async-tiff), so a Rust scanner is only built if a Rust-side need appears; HDF5 and GRIB have Rust pieces to reuse (hdf5-reader chunk index, gribberish) | a COG read through its icechunk virtual store matches S2 and GDAL byte for byte | the virtualisation pathway (A6) is real, on shared infrastructure (A7) | icechunk as a dependency; a small kerchunk JSON/Parquet emitter is an open slot if needed | every new format needs a native reader |
+| **S3c** | flat refs store (m06, section 3): a zarrs async storage over the mdim-refs Parquet export (`arrays.json` and `refs_<array>.parquet`): metadata from `arrays.json`, chunk keys looked up in the rows, present rows fetched as byte ranges through `object_store`, inline rows returned from `data`, absent rows reported missing; `wxy-cache` sits inside it (replacing m05's C2) | an exported table read directly matches the same table read through Icechunk and GDAL on the fixtures | the default read path for virtual data; real `stored_bytes` in plans; the cache sees every virtual read; bindings without Icechunk | one storage kept in step with zarrs' traits, and a second read path to test against the oracle | every table read writes an Icechunk repository first, and the cache cannot see virtual reads |
 | **S4** | `wxy-warp` and `wxy-cli warp` (done 2026-10-16): COG or Zarr to a target grid spec, through rwarp | bit-identical to `gdalwarp` at 1:1 (rwarp's existing bar) | the first end-to-end tool, the browser app's pipeline on servers | output format choice (Zarr first, since zarrs writes) | rwarp stays without a native I/O story |
 | **S4b** (done 2026-10-16) | mdim warp (gate 5; doc 05, W1 and W3): any number of non-spatial dims, streamed slice by slice under one plan, so a time x depth x lat x lon store warps without loading it; the target stays explicit (an extent suggestion, if wanted, is a separate helper) | a 4D Zarr store warps slice by slice and each slice matches the 2D S4 warp of that slice | Michael's headline pain answered while the warp code is fresh | chunk-aware slicing in `wxy-warp` | wxylib repeats GDAL's slice-by-hand mdim warp |
 | **S4c** (points and zonal statistics done 2026-10-17) | planned extraction (gate 5; doc 05, E1): map points or features to chunk keys through the plan seam, fetch each chunk once, return values per point | values match GDAL's point reads on the fixtures, with each chunk fetched once | extraction at scale without reading whole windows | a small stage on the existing seam | users read windows and pick points by hand |
 | **S5** (done 2026-10-17) | `wxy-resample`: kernels shared by warp and overviews; a plain/scaled kernel switch (gate 5; doc 05, W2), so rwarp's one known divergence becomes an option; overview selection in planning, chosen per tile; overviews passed through derived (calc) fields (V3) | rwarp's downsampling limitation fixed and matched to GDAL with scaled kernels; plain kernels match today's output | one validated kernel set | harder bit-identity at scaled support | two kernel sets, as in GDAL; one overview level for a whole warp |
 | **S5b** (done 2026-10-17; 1D CF bounds and netCDF input to come) | curvilinear (R3) warp (moved from "later" at gate 5; doc 05, W4 and L4): inverse mappings for 2D coordinate arrays (swaths, model grids) | a curvilinear fixture warps to match GDAL's geolocation-array warp | the most repeated pain across GDAL, R and Python | the inverse-mapping design comes sooner | swaths and model grids stay on pyresample, xESMF and geolocation arrays |
 | **S6** | Python (pyo3) and R (extendr or savvy) bindings of S4's surface | a notebook and an R script reproduce S4 | the tool reaches its users | binding maintenance | Rust only |
-| **S7** | the virtual scheme: select, remap, combine, compute, serialised; covers features and mesh as well as grids, and the scheme is written by the library rather than by hand; combine validates its inputs the way gdalbuildvrt does (CRS, resolution, band count, data type) and reports what it dropped (gate 5; doc 05, V1, V5, D3) | a VRT mosaic and a warped VRT expressed and evaluated | the VRT replacement | a new file format to design | virtual data stays GDAL-only |
+| **S7** | the virtual scheme: select, remap, combine, compute, serialised; covers features and mesh as well as grids, and the scheme is written by the library rather than by hand; combine validates its inputs the way gdalbuildvrt does (CRS, resolution, band count, data type) and reports what it dropped (gate 5; doc 05, V1, V5, D3) | a VRT mosaic and a warped VRT expressed and evaluated | the VRT replacement | reads the mosaic VRT subset and the mdim-refs table as its inputs; any further serialisation (compute steps, features, mesh) is decided at S7's gate | virtual data stays GDAL-only |
 | **S8** | explicit meshes: R5 on meshspec v0.1, UGRID through existing readers; the kept mesh form is a conversion target first, and algorithms such as overlay run on it once the topology module exists (gate 5) | meshcore's UGRID cases reproduce | meshes join the model | topology module design | the spectrum stops at R3 |
 | **later** | implicit meshes (DGGS: `h3o`, `healpix`, `s2`), features (GeoArrow), byte views | each its own gate | the full spectrum | | |
 
@@ -294,8 +295,9 @@ any remap and partitioned by source (m06, core 650f7c1); `wxy warp --cache DIR` 
 and `--dry-run --cache` reports held and missing fetches through
 `ChunkSource::stored_ranges`. A second cached warp reads nothing from the
 file and writes the same store, and the rows joined to the file's
-reference table give back the plan's chunk keys. Zarr and virtual sources
-(C2) and target-side rows (T1) wait on this pilot.
+reference table give back the plan's chunk keys. Virtual sources go through
+the flat refs store (S3c, which replaces m05's C2), and target-side rows
+(T1) wait on this pilot.
 
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
 widened S5 and S7, added A8, and clarified A6. The order from here is S5,
@@ -303,12 +305,12 @@ then S4b and S5b, with S4c fitted in where it is cheapest. S4b and S4c
 build on S4 directly, so either can move ahead of S5 if a use calls for
 it.
 
-Open topic (gate 4): a flat tabular reference store. Scanners already
-produce a table (one row per chunk: key, url, offset, length, checksum,
-plus the array's Zarr metadata), and Icechunk is one sink for it. A flat
-sink and a reader over it (Parquet or similar, served as zarrs storage)
-would cover the cases where Icechunk's versioning is more than a job needs.
-Keep exploring before choosing; see the landscape survey, section 18. `wxy-tiff`'s georeferencing (GeoKeys, transform) has no Rust
+Gate 4 topic, reopened by m06 (2026-10-17): a flat refs store over the
+Parquet export is the default read path, and Icechunk is a sink
+(`write_icechunk` keeps working from the same `VirtualArray`s). This is
+stage S3c; m04's line closing the topic is superseded.
+
+`wxy-tiff`'s georeferencing (GeoKeys, transform) has no Rust
 home upstream yet; it may align with geotiff-core or be offered to
 async-tiff or async-geotiff rather than grow here.
 

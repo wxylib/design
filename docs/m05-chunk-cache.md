@@ -231,6 +231,10 @@ Done when:
 - the fragments, joined to an mdim-refs table for the same COG on
   `(path, offset, size)`, give back the chunk keys `Explain` listed.
 
+(Superseded in part by m06, 2026-10-17: C1 keys on the source before any
+remap and partitions fragments by source; C2 becomes the flat refs store
+with the cache inside, doc 03 stage S3c.)
+
 No trait change, no new format, no target side. C2 (the same wrapper
 over `object_store`, for Zarr and virtual sources) and T1 (target rows
 from `GridWriter`, keyed by plan id, with fate and lineage) follow only if
