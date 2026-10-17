@@ -236,6 +236,19 @@ from the shell. What it costs: one more CLI flag. Without it, CF stores
 would need a GeoZarr `spatial:` rewrite first. Still to come: 1D CF
 bounds (`lat_bnds`, n by 2) and netCDF input.
 
+S4c's first slice (core f26adf8, fixtures points/): `plan_points` maps
+points in any CRS to source cells through the warp's own transformer
+(exact, so affine and curvilinear sources alike), as gdallocationinfo
+finds them, and groups them by chunk; `extract_points` fetches each chunk
+once and reads every leading slice at each cell; `wxy points` takes x,y
+lines and writes CSV. All 9 point-read cases match GDAL, with no chunk
+fetched twice. What we get: values at many points without reading
+windows, and a planner GDAL-side tools could use too. What it costs: a
+module in wxy-warp, since it shares the transformer. Without it, users
+read windows and pick cells by hand. Still to come: interpolated reads
+(GDAL's InterpolateAtPoint, once an oracle for it is set up) and
+features (polygons to cells).
+
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
 widened S5 and S7, added A8, and clarified A6. The order from here is S5,
 then S4b and S5b, with S4c fitted in where it is cheapest. S4b and S4c
