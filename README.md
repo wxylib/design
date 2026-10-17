@@ -10,6 +10,8 @@ says what works, what the tests check and how to get involved.
 Nothing here is code. Each document ends in a gate: a decision to accept,
 revise or reject before the next document starts.
 
+![The R0 to R6 raster-vector spectrum that doc 02 builds the data model on](https://raw.githubusercontent.com/wxylib/docs/main/img/spectrum.svg)
+
 ## Principles
 
 - Slow incremental steps that are productive, consistent, modular and
@@ -18,11 +20,10 @@ revise or reject before the next document starts.
   serialised and costed before any pixel is touched (the rwarp model).
 - Leverage existing crates (object_store, async-tiff, zarrs, proj, proj4rs,
   vaster) where they fit. Build only what has no good home.
-- GDAL itself is a workaround for now, never the basis. If we reach for
-  functionality before we have the foundation for it, we stop and build the
-  foundation.
-- GDAL is the inspiration and, for now, a workaround we may call. Nothing
-  we publish carries "gdal" in its name.
+- GDAL is the inspiration, the test oracle and, for now, a workaround we
+  may call, never the basis. If we reach for functionality before we have
+  the foundation for it, we stop and build the foundation. Nothing we
+  publish carries "gdal" in its name.
 - Virtualisation is the default pathway for formats. A format we need gets
   a scanner that emits chunk references (byte ranges plus codecs) readable
   as virtual Zarr, rather than a reader of its own. This bridges to future
@@ -40,6 +41,10 @@ revise or reject before the next document starts.
 | 3 | [Architecture and staged roadmap](docs/03-architecture.md) | Pick the first implementation stage (S1 chosen, provisional) |
 | 4 | [The landscape: related work, what to leverage, what to track](docs/04-landscape.md) | Upstream-first, Icechunk refs, browser CRS, conventions work (passed 2026-10-16) |
 | 5 | [Pain points in GDAL, R and Python](docs/05-pain-points.md) | S4b mdim warp, curvilinear after S5, an extraction stage, no global state (passed 2026-10-16) |
+
+Which stages are built is kept in one place, doc 03's
+[stages section](docs/03-architecture.md#3-stages); what they add up to
+for a user is on the [intro page](https://github.com/wxylib/docs#what-works-today).
 
 ## Musings
 
