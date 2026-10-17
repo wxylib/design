@@ -250,8 +250,22 @@ bilinear, cubic and cubic spline reads, ported from GDAL's
 InterpolateAtPoint; at GDAL's own pixel positions all of them match GDAL
 exactly, and positions from reprojected points sit within 2e-9 pixels of
 GDAL's (proj4rs against PROJ). The oracle calls GDAL's C API through
-ctypes in rasterio's bundled library. Still to come: features (polygons
-to cells, for zonal statistics).
+ctypes in rasterio's bundled library. The third slice (core
+9654f26..03544aa, fixtures polygons/) is zonal statistics by lazy
+rasterization: polygons become row spans of cells, never a raster,
+either as GDAL's rasterizer burns them (cell centres, or ALL_TOUCHED;
+`GDALdllImageFilledPolygon` and `GDALdllImageLineAllTouched` ported, 115
+polygons identical in both modes) or as exact covered fractions from
+controlledburn (exactextract's algorithm, a crates.io dependency; holes
+burned as separate signed rings until a controlledburn hole fix lands).
+Spans are grouped by the chunks they cross and each chunk is fetched once
+and summarised for every zone over it (`plan_zones`, `zonal_stats`, `wxy
+zonal`). What we get: zonal statistics whose memory is the polygons'
+perimeter plus a batch of chunks, not a zone raster the size of the
+source. What it costs: a rasterizer port and one dependency. Without it,
+users burn a zone raster and read the whole source. Timings and memory
+against GDAL's dense burn and exactextract are in wxylib/docs
+examples/zonal.
 
 Gate 5 (2026-10-16; doc 05, sections 12 and 15) added S4b, S4c and S5b,
 widened S5 and S7, added A8, and clarified A6. The order from here is S5,
