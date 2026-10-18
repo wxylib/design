@@ -69,7 +69,7 @@ is which position mapping a domain carries.
 | R5 explicit mesh | per element positions plus connectivity | vertices and topology | UGRID, MDAL meshes, TINs | MDAL (separate), not GDAL |
 | R6 features | a geometry per element, no shared topology | a geometry per row | points, lines, polygons | OGR |
 
-Two observations make this one axis rather than four models:
+Three observations make this one axis rather than four models:
 
 - **R1 to R3 are one family.** Balaji's "logically rectangular": every cell
   is a box in index space. GDAL already moves between them: mdim's
@@ -83,6 +83,13 @@ Two observations make this one axis rather than four models:
   when materialised as rectangles. playproj's rasterize page is the same
   move in the other direction: an R6 polygon becomes an R1 field (centre-in)
   or an R1 coverage fraction (exact).
+- **Point clouds need no new rung** (m08). A LAS or LAZ file is R6 whose
+  positions are scaled integers, so its points sit on an R1 lattice: a
+  sparse R1 array. COPC and EPT add an octree whose nodes follow from
+  their keys, an R4 chunk scheme keyed by position rather than index.
+  Before a scan becomes LAS it has an index in the sensor's frame: R1 for
+  a terrestrial scan (azimuth by elevation), R3 for airborne scan lines,
+  R3' for waveform samples along a pulse.
 
 **Where "mesh" fits.** In the umbrella sense, every rung from R1 to R5 is a
 mesh: a set of cells covering a domain, with vertices, edges and neighbours.

@@ -78,6 +78,12 @@ by being picked up into a numbered document.
   more) placed on the ladder, the gaps they show (computed vertical
   positions, periodic and folded index, patches, stored frames) and five
   small Zarr fixtures to pin them.
+- [m08: Point clouds, lidar and PDAL on the ladder](docs/m08-point-clouds.md):
+  point clouds as R6 on an R1 lattice with an R4 octree chunk scheme
+  (COPC), scans as R1 or R3 in the sensor frame, COPC as already virtual,
+  the Rust crates (las, laz, copc-streaming), and a stance: ladder moves
+  and planned reads, PDAL as oracle, no processing toolkit (all six
+  questions answered as recommended, 2026-10-18).
 
 ## Reference specs
 
