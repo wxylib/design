@@ -1,6 +1,8 @@
 # m08: Point clouds, lidar and PDAL on the ladder
 
-Status: musing, 2026-10-18. It places point clouds (lidar, photogrammetry,
+Status: musing, 2026-10-18; its six questions answered the same day
+(section 9: the recommended answers), and doc 02 section 3 carries the
+ladder note. It places point clouds (lidar, photogrammetry,
 terrestrial scans) on doc 02's ladder, surveys the Rust crates and the
 PDAL side, and proposes a stance: wxylib reads and writes points as one
 more domain on the ladder and moves them between rungs, but does not
@@ -250,3 +252,23 @@ EPSG waits for the PROJ question.
 6. **Order.** If points become a stage, P1 and P2 first (they reuse S4c
    whole), then P3? Recommended: yes, and only after the stages already
    queued, since nothing here blocks them.
+
+## 9. Answers
+
+Michael, 2026-10-18: "agree Yes on all 6 Recommends". So:
+
+1. **Stance:** points are a source and a target on the ladder. wxylib
+   builds no processing toolkit; PDAL is the oracle and the workaround.
+2. **Ladder:** doc 02 section 3 now says point clouds are R6 on an R1
+   lattice with an optional R4 chunk scheme, and that scans before LAS
+   are R1, R3 or R3' in the sensor frame. No new rung.
+3. **Readers:** las (with laz) alone first; copc-streaming joins when the
+   browser or async path needs it.
+4. **In memory:** Arrow columns, GeoArrow points, GeoParquet out.
+5. **Virtualisation:** COPC is already virtual. No Icechunk path and no
+   refs export until a catalogue or the cache needs one.
+6. **Order:** if points become a stage, P1 and P2 first, then P3, after
+   the stages already queued.
+
+Nothing is built in core from this musing; points become a stage only
+through a numbered document.
