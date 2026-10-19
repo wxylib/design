@@ -1,7 +1,7 @@
-# m09: The modules that don't exist yet: an operation registry, and byte views
+# m09: The modules that don't exist yet
 
 Status: musing, 2026-10-19. Direction, not a plan: nothing is built from
-it, and it becomes work only through a numbered document. It ends in four
+it, and it becomes work only through a numbered document. It ends in five
 questions, each with a recommended answer.
 
 ## 1. Summary
@@ -30,6 +30,11 @@ framing, and proposes a design-process rule that follows from it.
 - **A crate check before each stage.** Before implementation starts, ask
   whether a crate already does the job, whether the piece should be its
   own crate, and whether we are overbuilding (section 5).
+- **The rest of GDAL's infrastructure** (configuration, errors,
+  progress, threads, CRS naming, time, plugins, testing) mostly maps onto
+  existing crates or is a pattern to follow. Three more pieces look like
+  missing modules: a progress-and-cancel handle, a CF time crate, and a
+  GDAL oracle harness (section 6).
 
 ## 2. What wxy does today
 
@@ -298,7 +303,49 @@ acceptable, as with the stub repos). Without it: wxy grows the GDAL shape,
 one large library where each part is only usable through the whole, which
 is what the project set out not to be.
 
-## 6. Questions
+## 6. The rest of GDAL, through the same lens
+
+Doc 01 maps GDAL by data layer (bytes, formats, the data model,
+algorithms, composition, surfaces) and gives each module a verdict.
+Sections 3 and 4 above revisit two of its rows. This section goes through
+the parts of GDAL that doc 01 does not map because they are not about
+data: the infrastructure every driver and algorithm leans on. Most of it
+lives in `port/` (CPL, the "common portability library") and the
+cross-cutting parts of `gcore/`. For each, the question is the same: does
+a Rust crate already do it, is there a missing module, or is it only a
+pattern wxy should follow?
+
+| GDAL | What it does | Rust today | Verdict |
+|---|---|---|---|
+| Driver manager and capabilities (`GDALDriverManager`, `DCAP_*` flags, `Identify`/`Open` probing, creation and open option lists as XML) | Finds a driver for a file and says what it can do | None generic; registries per crate (zarrs codecs via `inventory`) | **Pattern.** wxy's formats arrive through scanners (virtualisation principle), so the registry it needs is of scanners. Typed options, as in section 3, replace option XML |
+| Configuration (`CPLGetConfigOption`, environment, `gdalrc`, thread-local and path-specific options) | Global knobs read anywhere | `figment`, `config`; `object_store` builders read the environment | **Pattern, no crate.** Configuration is an explicit value passed in (pain point A8, B3); environment only at the edge, in the CLI and bindings |
+| Errors and logging (`CPLError`, handler stacks, `CPLDebug` categories, `CPL_DEBUG`) | Reporting, and silencing by category | `thiserror`, `tracing` | **Adopt.** `tracing` spans per plan step; nothing in core logs yet |
+| Progress and cancellation (`GDALProgressFunc` returning false to cancel, `GDALScaledProgress` for sub-steps) | One callback type every long operation takes | `indicatif` (display), `tokio_util::sync::CancellationToken` (cancel), separately | **Candidate crate, small.** A geo-free progress-and-cancel handle that nests (scaled sub-steps), and crosses into Python (tqdm) and R (cli) as one callback. Pairs with the operation registry: every operation takes one |
+| Threads and memory budgets (`GDAL_NUM_THREADS`, `GDAL_CACHEMAX`, the worker pool, the block cache LRU) | Shared limits across drivers | `rayon`, `tokio`, `moka`, `quick_cache`, `foyer` | **Adopt, as plan inputs.** wxy's plans already cap bytes per batch; a budget is a field of the plan, not a global (A8) |
+| CRS model beyond the transform (WKT1/WKT2/PROJJSON I/O, `FindMatches` to identify an EPSG code, axis-order policy `OAMS_TRADITIONAL_GIS_ORDER`) | Reading, writing and naming CRSs | `projjson` 0.1 (typed PROJJSON, 2026-09), `crs-definitions`, `proj4rs`, `proj-core`, `proj` (C PROJ) | **Watch, possibly contribute.** The pieces are appearing; the gap is identification (WKT in, "this is EPSG:3031" out) and one axis-order rule. Part of the open PROJ-in-Rust question |
+| Time and units (netCDF driver's CF time decoding, calendars, units strings) | Turning coordinate values into dates | `cftime-rs` 0.1.6 (2023), `chrono` (no CF calendars) | **Candidate crate, or upstream.** CF calendars (`365_day`, `360_day`, `noleap`) matter for climate data; core has no calendar code today. Check whether `cftime-rs` is alive before writing one |
+| Metadata domains, PAM `.aux.xml` sidecars, statistics, histograms, RAT, colour tables | Values and descriptions stored beside the data | Zarr attributes, CF; nothing for statistics | **Data model, not a crate** (doc 02). Statistics and histograms are derived products: cacheable like any plan output (m05), not a sidecar format |
+| Plugins and deferred driver loading (`GDAL_DRIVER_PATH`, deferred plugins since 3.9) | Drivers added without rebuilding GDAL | No stable Rust ABI; `abi_stable` (stale), WebAssembly components (`wasmtime`, `extism`) | **Later, and likely WebAssembly.** Until then, cargo features and `inventory` registration, plus a subprocess for anything GDAL-only |
+| HTTP behaviour (`GDAL_HTTP_*` retry, timeouts, multi-range requests, the on-disk HTTP cache, `AdviseRead` prefetch) | Making remote reads cheap | `object_store` (retry, credentials, range coalescing in `get_ranges`), wxy-cache | **Exists**; prefetch is what wxy's plan already is |
+| OGR feature model, OGR SQL, spatial filters | Vector access and query | `geo`, `geoarrow`, `geozero`, DataFusion and SedonaDB | **Exists**; out of scope in doc 01 |
+| The test suite as an oracle (`autotest`, driver conformance) | Defines "correct" | None shared; wxy has its GDAL oracle tests and fixtures; terrio's conformance table (doc 04) | **Candidate crate.** A harness that runs one operation in GDAL (through `osgeo.gdal`) and in a Rust crate and compares bytes and values is useful to every Rust geo project, not only wxy |
+
+Three new candidates come out of this, beside sections 3 and 4: a
+**progress-and-cancel handle**, a **CF time crate** (or contribution to an
+existing one), and a **GDAL oracle harness**. Like the operation registry
+and byte views, none of them needs anything from wxy, so each would be a
+crate of its own. The rest is
+pattern: explicit configuration, budgets in plans, `tracing`, typed
+options instead of option lists.
+
+What do we get: a full list of where wxy would otherwise copy GDAL's
+infrastructure piece by piece, each with a home that is not wxy. What does
+it cost: nothing until a stage needs one of them; the crate check
+(section 5) then applies to that row. What if we didn't: the
+infrastructure arrives one module at a time, inside `wxy-*` crates, and
+wxy ends up with GDAL's shape after all.
+
+## 7. Questions
 
 1. **Is the operation registry its own module?** Recommended: yes, as a
    geo-free crate in the core workspace, extracted when a second project
@@ -316,3 +363,8 @@ is what the project set out not to be.
    implementation, starting with the next stage (S3c). Its first finding
    is already actionable: use `object_store::registry` in place of PR #7's
    `url_store`.
+5. **Which of section 6's candidates first?** Recommended: the oracle
+   harness, because wxy already has the pieces (fixtures, `osgeo.gdal`
+   scripts, oracle tests) and every stage leans on it; progress and
+   cancellation with the operation registry; CF time when a stage first
+   decodes time.

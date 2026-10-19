@@ -89,8 +89,9 @@ by being picked up into a numbered document.
   the CLI as an operation registry (GDAL's `gdal` framework, what clap
   lacks, a geo-free crate that generates CLI, py and r), VSI through
   object_store, its registry and async-tiff's reader seam, the two real
-  gaps (byte views and a chain grammar), and a "crate check" before each
-  stage.
+  gaps (byte views and a chain grammar), a "crate check" before each
+  stage, and GDAL's other infrastructure (configuration, progress,
+  threads, CRS naming, time, plugins, testing) through the same lens.
 
 ## Reference specs
 
