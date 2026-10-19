@@ -138,3 +138,21 @@ columns are exactly the block-info layer: `dim_0..dim_{n-1}`, `present`,
    plan and compute the view in code; that loses SQL-only readers.
 3. Home for `R/mdimrefs.R`: raad.virtualize (store) with the writer staying in
    blocklist, or a small package of its own.
+4. **Proposed: per-axis chunk edges** (from wxylib design m10, overlapping
+   COG mosaics). 0.2 assumes one regular chunk grid per array, so a mosaic
+   whose winning tiles have unequal sizes cannot be virtualised. The
+   proposal: an optional `chunk_edges` column in `arrays` (JSON, one list
+   of cumulative edges per dimension, the Zarr `rectilinear` grid of
+   zarr-extensions), with `chunks` kept as the source chunk shape; when
+   present, the view's global keys index those edges instead of
+   `dest_i / c_i`, and the chunk-aligned plan rule becomes "each placement
+   starts and ends on an edge". Readers that do not know the column refuse
+   the array rather than misread it. To be agreed here before any writer
+   or reader emits it; it is not a wxylib extension.
+5. **Parquet export layout.** The export (`refs_<array>.parquet` plus
+   `arrays.json`) is the flat refs store that tables are harvested into and
+   virtual indexes are rendered from. Its layout is not fixed: one
+   self-describing Parquet file with `meta`, `arrays` and `remap` in
+   key-value metadata is the likely end. The export also lacks the
+   `sources` table (`source`, `size`, `mtime`, `etag`), which a cache
+   needs to validate held bytes.
