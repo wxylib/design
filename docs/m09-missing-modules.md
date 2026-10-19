@@ -1,48 +1,35 @@
 # m09: The modules that don't exist yet: an operation registry, and byte views
 
 Status: musing, 2026-10-19. Direction, not a plan: nothing is built from
-it, and it becomes work only through a numbered document. It answers two
-questions Michael asked while trying `wxy`, and proposes one design-process
-rule he suggested. It ends in four questions, each with a recommended
-answer.
+it, and it becomes work only through a numbered document. It ends in four
+questions, each with a recommended answer.
 
-## 1. The ask
+## 1. Summary
 
-Michael, 2026-10-19:
+wxylib's aim is not parity with GDAL but to find the modules that do not
+exist yet: pieces GDAL has inside it that have no standalone home, which
+wxy would be the first user of rather than the owner of. Doc 01 already
+names two candidates, M24 (algorithm registry, CLI, pipelines; "own,
+designed last") and M5/M6 (byte access, adopt `object_store`; byte views,
+"no single Rust home", F4 and D3). This musing revisits both with that
+framing, and proposes a design-process rule that follows from it.
 
-> the grander vision is not to become GDAL-equal but to identify the
-> modules that don't yet exist, so good extensible cli reflecting the API
-> is a pattern, not isolated to wxy - should that be a module? - then vsi*
-> abstraction, that has strong exemplars in devseeed / Kyle Barron crates,
-> that's how I need to remember to think
-
-and, minutes later:
-
-> before design feature implementation starts it should include a review
-> of are we overbuilding when something that could be its own crate should
-> exist? (that's been my big learning with hypertidy lately, those pieces
-> were kind of niche but now they slot together one after the other)
-
-Doc 01 already names both modules: M24 (algorithm registry, CLI,
-pipelines; "own, designed last") and M5/M6 (byte access, adopt
-`object_store`; byte views, "no single Rust home", F4 and D3). This
-musing revisits them with that framing: not "what does wxy need" but "is
-there a module here that nobody has written, which wxy would be the first
-user of rather than the owner of".
-
-Short answers:
-
-- **The CLI pattern: yes, a module, and a new one.** Nothing in Rust turns
-  one typed operation description into a CLI, a Python call, an R call and
-  a machine-readable catalogue. clap describes a command line, not an
-  operation. Build it as a crate with no geo dependency, proven on wxy's
-  three verbs.
-- **VSI: mostly exists, one real gap.** `object_store` covers remote bytes
-  and, in the 0.14 we use, the URL-to-store dispatch (`object_store::registry`).
-  async-tiff's `AsyncFileReader` is the right reader seam. What is missing
-  is the composable *view*: a member of a zip on a URL, a gzip with a seek
-  index, a byte range as a file, a cache as a layer, and one string
-  grammar that names a chain of them.
+- **An extensible CLI that reflects the API is a pattern, and a new
+  module.** Nothing in Rust turns one typed operation description into a
+  CLI, a Python call, an R call and a machine-readable catalogue. clap
+  describes a command line, not an operation. Build it as a crate with no
+  geo dependency, proven on wxy's three verbs (section 3).
+- **VSI mostly exists, with one real gap.** `object_store` covers remote
+  bytes and, in the 0.14 we use, the URL-to-store dispatch
+  (`object_store::registry`); async-tiff's `AsyncFileReader` is the right
+  reader seam, and the DevSeed and Kyle Barron crates are the exemplars
+  to think with. What is missing is the composable *view*: a member of a
+  zip on a URL, a gzip with a seek index, a byte range as a file, a cache
+  as a layer, and one string grammar that names a chain of them
+  (section 4).
+- **A crate check before each stage.** Before implementation starts, ask
+  whether a crate already does the job, whether the piece should be its
+  own crate, and whether we are overbuilding (section 5).
 
 ## 2. What wxy does today
 
@@ -66,7 +53,7 @@ Short answers:
 PR #7's `url_store` is a small hand-rolled version of what
 `object_store::registry::DefaultObjectStoreRegistry` already does (resolve
 a URL to a store and a path, longest-prefix match, lazily built from the
-environment). That is a concrete instance of Michael's guardrail
+environment). That is a concrete instance of the crate check
 (section 5): the crate existed; we wrote a smaller copy.
 
 ## 3. The CLI as a module: an operation registry
@@ -88,7 +75,7 @@ command line, not in the parsing:
 | `.gdalg.json`: a pipeline saved as JSON opens as a dataset | The pipeline is itself a virtual dataset | No notion of persistence |
 | Shell completion, progress, consistent `--input`/`--output`/`--overwrite` | Uniform surface | Completion only (clap_complete) |
 
-Michael's point stands: wxy could copy this design without the mix of old
+wxy could copy this design without the mix of old
 and new it still carries in GDAL (the classic `gdal_translate` family and
 the per-program option parsers alongside it). wxy's own variant has one
 extra asset GDAL's lacks: every operation already separates plan from run,
@@ -146,7 +133,7 @@ pub trait Operation: Send + Sync {
   doc 01's "virtual descriptions are data" and m01 section 2.4's
   operation catalogue.
 - The crate has **no wxy dependency**. wxy registers its operations into
-  it; another project (rwarp's CLI, a controlledburn CLI, Michael's
+  it; another project (rwarp's CLI, a controlledburn CLI, other
   hypertidy tools) could do the same.
 
 ### 3.4 What do we get, what does it cost, what if we didn't
@@ -283,7 +270,7 @@ dataset that needs them.
 
 ## 5. A design-process rule: the crate check
 
-Michael's hypertidy lesson is that small, niche pieces (vaster's grid
+The hypertidy experience is that small, niche pieces (vaster's grid
 arithmetic, controlledburn's exact coverage, rwarp's warp core) later slot
 together one after another, *because* each was its own crate with a narrow
 job. This musing found two such pieces, and also found that PR #7 wrote a
@@ -318,7 +305,7 @@ is what the project set out not to be.
    wants it. First slice: serde + schemars options per verb, `wxy
    --json-usage`, and one `run` entry for py and r.
 2. **When?** Recommended: before the bindings grow past warp (m04 said the
-   same), and not before Michael has used `wxy` enough to know the verbs'
+   same), and not before `wxy` has been used enough to know the verbs'
    shape; this musing is direction only.
 3. **Byte views and the chain grammar: wxy's, or a standalone crate (or
    upstream to object_store / async-tiff)?** Recommended: standalone,
