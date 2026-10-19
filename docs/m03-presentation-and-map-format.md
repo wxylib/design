@@ -5,7 +5,7 @@ section 11 (X1, X2) at gate 5, and builds on m01 sections 2.5 and 2.6,
 which first raised both ideas. It becomes work only through a numbered
 document.
 
-## 1. Two gaps, from Michael's notes
+## 1. Two gaps
 
 - **Presentation on raw data (X1).** No real raster format carries the
   image scaling (stretch, palette, gamma, band-to-RGB mapping, nodata

@@ -1,22 +1,23 @@
 # m08: Point clouds, lidar and PDAL on the ladder
 
-Status: musing, 2026-10-18; its six questions answered the same day
-(section 9: the recommended answers), and doc 02 section 3 carries the
-ladder note. It places point clouds (lidar, photogrammetry,
+Status: musing, 2026-10-18; its six decisions are in section 8, and doc
+02 section 3 carries the ladder note. It places point clouds (lidar, photogrammetry,
 terrestrial scans) on doc 02's ladder, surveys the Rust crates and the
 PDAL side, and proposes a stance: wxylib reads and writes points as one
 more domain on the ladder and moves them between rungs, but does not
-become a point cloud processing toolkit. It ends in six questions, each
-with a recommended answer. Nothing is built from it; it becomes work only
-through a numbered document, and core belongs to the planning thread.
+become a point cloud processing toolkit. Nothing is built from it; it
+becomes work only through a numbered document.
 
-## 1. The ask
+## 1. Summary
 
-Michael, 2026-10-18:
-
-> One thing i didn't think of is point clouds, we should explore how
-> pdal, Lidar, and points generally fit into the type ladder and what
-> stance we should take on tooling there
+How do PDAL, lidar and points generally fit on the type ladder, and what
+stance should wxylib take on point tooling? Point clouds are R6 on an R1
+lattice, with an optional R4 chunk scheme for COPC and EPT; raw scans
+before LAS are R1, R3 or R3' in the sensor frame, so no new rung is
+needed. wxylib reads and writes points as Arrow columns (GeoArrow points,
+GeoParquet out), treats COPC as already virtual, and moves points between
+rungs (grid to points, points to grid) under plans with `--dry-run`. It
+builds no processing toolkit: PDAL stays the oracle and the workaround.
 
 Doc 02 mentions points once ("a point layer is an R5 mesh with no
 connectivity") and m01 lists point clouds through PDAL as something a
@@ -79,7 +80,7 @@ wall and a sphere, ray cast in `scripts/m08_figures.py`.*
 | Waveform samples | R3' | origin plus direction times time, per pulse | LAS waveform packets, PulseWaves |
 | LAS, LAZ, PLY | R6 on an R1 lattice | stored scaled integers per point | almost every delivered lidar tile |
 | COPC, EPT | R6 elements, R4 chunk scheme | stored points; nodes by octree key | cloud-hosted lidar, USGS 3DEP via EPT |
-| Gridded products (DEM, DSM, CHM, density) | R1 | an affine | Michael's GA 5 m lidar DEM COGs |
+| Gridded products (DEM, DSM, CHM, density) | R1 | an affine | Geoscience Australia 5 m lidar DEM COGs |
 | TIN from ground points | R5 | points plus triangles | DEM interpolation, PDAL `filters.delaunay` |
 
 So the ladder needs no new rung. What point clouds add is a chunk scheme
@@ -109,7 +110,7 @@ they meet machinery wxylib already has:
 - **Points to points across frames.** Reprojection, which for lidar is
   nearly always a compound CRS. The autzen file below is NAD83 Oregon GIC
   Lambert in international feet plus NAVD88 height in US survey feet;
-  Michael's GA DEM keeps AUSGeoid and quasigeoid zones apart for the same
+  the Geoscience Australia DEM keeps AUSGeoid and quasigeoid zones apart for the same
   reason. Vertical datums need geoid grids, which only PROJ has (the
   open PROJ-in-Rust question, doc 01 M2, gets sharper here).
 
@@ -148,8 +149,8 @@ the 81. That is a level of detail ladder in the same sense as raster
 overviews, and an `Explain` for a COPC query would print this table cut
 to the query box.
 
-So COPC is to points what a tiled COG is to rasters in Michael's view
-(doc 05, D2): already virtualised, and scanning it into Icechunk would
+So COPC is to points what a tiled COG is to rasters in doc 05's view
+(D2): already virtualised, and scanning it into Icechunk would
 copy a table the file already holds. The "Bytes in place" test applies
 unchanged: no new byte-ref schema. If a refs row is ever useful (a
 catalogue across many COPC files, or the chunk cache seeing point
@@ -218,7 +219,7 @@ Not proposed for now; recorded so a later numbered document has a start.
   batches per octree node, a box and level query, and an `Explain`.
   Oracle: PDAL `readers.copc` with the same bounds and resolution, point
   for point. Fixture: autzen-classified (PDAL's sample data) or a small
-  ELVIS tile near Michael's GA DEM work.
+  ELVIS tile near the Geoscience Australia DEM.
 - **P2, grid to points.** S4c's extraction fed by P1's batches: sample a
   COG at every point and write the values as a column. Oracle: PDAL
   `filters.colorization`.
@@ -231,44 +232,23 @@ Not proposed for now; recorded so a later numbered document has a start.
 The triangulated DEM waits for S8's topology module; CRS work beyond
 EPSG waits for the PROJ question.
 
-## 8. Questions
-
-1. **Stance.** Points as a source and target on the ladder, no processing
-   toolkit, PDAL as oracle and workaround (section 6, item 1)?
-   Recommended: yes.
-2. **Ladder.** Record in doc 02 that point clouds are R6 on an R1 lattice
-   with an optional R4 chunk scheme, and that scans before LAS are R1, R3
-   or R3' in the sensor frame, with no new rung? Recommended: yes, as a
-   short note in doc 02 section 3.
-3. **Readers.** las for local files and copc-streaming for HTTP and wasm,
-   or las alone until a remote need appears? Recommended: las alone
-   first; las already queries COPC, and copc-streaming joins when the
-   browser or async path needs it.
-4. **In memory.** Arrow columns with GeoArrow points and GeoParquet out
-   (section 6, item 3)? Recommended: yes.
-5. **Virtualisation.** Treat COPC as already virtual, with no Icechunk
-   path and no refs export until a catalogue or the cache needs one?
-   Recommended: yes.
-6. **Order.** If points become a stage, P1 and P2 first (they reuse S4c
-   whole), then P3? Recommended: yes, and only after the stages already
-   queued, since nothing here blocks them.
-
-## 9. Answers
-
-Michael, 2026-10-18: "agree Yes on all 6 Recommends". So:
+## 8. Decisions (2026-10-18)
 
 1. **Stance:** points are a source and a target on the ladder. wxylib
-   builds no processing toolkit; PDAL is the oracle and the workaround.
-2. **Ladder:** doc 02 section 3 now says point clouds are R6 on an R1
+   builds no processing toolkit; PDAL is the oracle and the workaround
+   (section 6, item 1).
+2. **Ladder:** doc 02 section 3 says point clouds are R6 on an R1
    lattice with an optional R4 chunk scheme, and that scans before LAS
    are R1, R3 or R3' in the sensor frame. No new rung.
-3. **Readers:** las (with laz) alone first; copc-streaming joins when the
-   browser or async path needs it.
-4. **In memory:** Arrow columns, GeoArrow points, GeoParquet out.
+3. **Readers:** las (with laz) alone first, since las already queries
+   COPC; copc-streaming joins when the browser or async path needs it.
+4. **In memory:** Arrow columns, GeoArrow points, GeoParquet out
+   (section 6, item 3).
 5. **Virtualisation:** COPC is already virtual. No Icechunk path and no
    refs export until a catalogue or the cache needs one.
-6. **Order:** if points become a stage, P1 and P2 first, then P3, after
-   the stages already queued.
+6. **Order:** if points become a stage, P1 and P2 first (they reuse S4c
+   whole), then P3, and only after the stages already queued, since
+   nothing here blocks them.
 
 Nothing is built in core from this musing; points become a stage only
 through a numbered document.

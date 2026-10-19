@@ -3,10 +3,10 @@
 Status: musing, 2026-10-17. A response, not a plan: each point below
 says where it would land, and becomes work only when the owning document
 or repository picks it up. Changes it proposes to doc 03 are listed in
-section 5 for the planning thread to apply.
+section 5.
 
-Michael shared an assessment of wxylib written from his adjacent
-cogcache, blocklist, sds and bowerbird work (2026-10-17). Its scheme:
+An assessment of wxylib was written from the adjacent cogcache,
+blocklist, sds and bowerbird work (2026-10-17). Its scheme:
 bowerbird and sds as the catalog, a `gdal mdim mosaic` VRT as the plan,
 the mdim-refs/0.2 byte-reference table as the cross-language contract,
 then Icechunk (C) and kerchunk Parquet (D) as outputs, R users first.
@@ -22,23 +22,23 @@ agreed: wxylib reads the table and is not where the table is made.
 
 | # | Point | Verdict | Lands in |
 |---|---|---|---|
-| 1 | Table producer (step B) has no public home | Agree | Out of scope for wxylib; Michael's call between an R package and the GDAL block-info PR |
+| 1 | Table producer (step B) has no public home | Agree | Out of scope for wxylib; a maintainer's call between an R package and the GDAL block-info PR (section 6) |
 | 2 | "Table first" not closed: the only read path materialises Icechunk | Agree | core: a flat refs store (section 3) |
 | 3 | Only one chunk per file tested | Partly | fixtures: a small Bluelink-shaped fixture in CI |
 | 4 | Icechunk does not serve R users; who owns kerchunk Parquet (D) | Agree | Out of scope: D stays with blocklist |
 | 5 | R binding far from R users; CRAN feasibility | Agree | r, after item 2, with a feasibility check first |
 | 6 | S7 and the m03 map document risk a new format | Agree | doc 03 S7 wording; m03 |
 | 7 | No seam to the sds catalog | Agree | Out of scope for wxylib |
-| 8 | Pace versus ownership | Agree | Michael's call (section 6) |
+| 8 | Pace versus ownership | Agree | Open question (section 6) |
 | 9a | `ChunkSource::stored_bytes` empty for refs-backed sources | Agree | core, with item 2 |
-| 9b | GDAL 3.13 `GetRawBlockInfo` errors on an unwritten chunk | Agree | Upstream GDAL issue, Michael |
+| 9b | GDAL 3.13 `GetRawBlockInfo` errors on an unwritten chunk | Agree | Upstream GDAL issue |
 | C1 | Cache pilot misses the refs and Icechunk read path | Agree | wxy-cache interface now; C2 becomes the flat refs store |
 | C2 | Key on the source, not the resolved path | Agree | C1 key |
 | C3 | THREDDS validity fallback | Agree, plus a gap | C1 validator column; Parquet export lacks `sources` |
 | C4 | Compaction and scale | Agree | C1 directory layout |
 | C5 | `copy` read order in zaro | Checked: safe | mdim-refs spec note when `copy` lands |
 
-C1 to C5 were sent to the planning thread before it starts pilot C1.
+C1 to C5 are folded into pilot C1 before it starts.
 
 ## 2. The gaps, one by one
 
@@ -83,8 +83,8 @@ https remap is the workaround). Lands in fixtures:
   several chunks per file, one unwritten chunk, zlib and shuffle; scanned
   with osgeo.gdal `GetRawBlockInfo` by `make_mdimrefs_fixtures.py`; GDAL
   oracle windows with hashes; a CI test in `wxy-virtual`;
-- the BRAN oracle hashes computed where THREDDS is reachable (Michael's
-  machine or NCI), by brief.
+- the BRAN oracle hashes computed where THREDDS is reachable (a
+  local machine or NCI), by brief.
 
 **4. Icechunk does not serve the priority audience; who owns D.** Agree
 with the recommendation: kerchunk Parquet stays in R (blocklist), zaro's
@@ -124,7 +124,7 @@ table and its `remap` targets; fixtures manifests name the published
 URLs an sds entry would point at.
 
 **8. Pace versus ownership.** Agree that the oracle tests protect
-correctness, not understanding. Section 6 asks which crates Michael holds
+correctness, not understanding. Section 6 asks which crates are held
 to the "own every line" bar; the recommendation is `wxy-virtual`'s refs
 reader and the flat refs store, as the assessment suggests, because they
 are the contract with zaro and blocklist.
@@ -138,7 +138,7 @@ the flat refs store it is a column. Lands with section 3.
 
 **9b. The GDAL 3.13 quirk.** Agree it deserves an upstream issue
 (`GetRawBlockInfo` errors on an unwritten chunk instead of reporting it
-absent). Michael's, since he holds the GDAL work; the synthetic fixture
+absent). It belongs with the GDAL-side work; the synthetic fixture
 in item 3 would make a clean reproducer.
 
 ## 3. Proposed: a flat refs store (and with it, C2)
@@ -208,12 +208,12 @@ readers use different discriminators, though, and the spec says
 "`offset` NULL". When `copy` goes into the spec, it should state that
 inline means `offset` null, and zaro should follow.
 
-## 5. Proposed changes for the planning thread
+## 5. Proposed changes
 
 - Doc 03, gate 4 open topic: not closed. Replace the m04 framing with
   "a flat refs store over the Parquet export is the default read path;
-  Icechunk is a sink" and add the store as a stage (numbering is the
-  planning thread's).
+  Icechunk is a sink" and add the store as a stage (numbering decided
+  in doc 03).
 - Doc 03, S7 row: replace "a new file format to design" with "reads the
   mosaic VRT subset and the mdim-refs table as its inputs; any further
   serialisation (compute steps, features, mesh) is decided at S7's gate".
@@ -225,7 +225,7 @@ inline means `offset` null, and zaro should follow.
 m04's line "Doc 03's open topic can be closed" is marked superseded by
 this note.
 
-## 6. Questions for Michael
+## 6. Open questions
 
 1. Step B's home: an R package around `mdimrefs.R` (recommended: R users
    first, small once gdalraster binds `GetRawBlockInfo`), or the GDAL
@@ -242,8 +242,8 @@ this note.
   that sees the reads that matter for OISST and BRAN, tests for the case
   the scheme actually needs (many chunks per file, several variables, a
   missing chunk), and S7 kept from inventing a seventh schema.
-- Cost: one more storage implementation and fixture; the planning
-  thread's C1 grows a source key, a validator column and a partitioned
+- Cost: one more storage implementation and fixture; pilot C1
+  grows a source key, a validator column and a partitioned
   layout before it starts.
 - Without it: "table first" stays a claim, the cache misses the virtual
   path it was meant for, and R users wait on a binding that vendors

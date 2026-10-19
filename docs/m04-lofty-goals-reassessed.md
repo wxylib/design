@@ -2,9 +2,7 @@
 
 Status: musing. An assessment, not a plan; nothing here is scheduled. It
 rereads the aspirations in doc 03 section 5 and musings m01 to m03 against
-what has landed, so the next choices are made with a current map
-(Michael, 2026-10-17: "How do those loftier goals look now, can we
-reassess").
+what has landed, so the next choices are made with a current map.
 
 What has landed since those documents were written: S1 to S5, S4b
 (streamed mdim warp), S4c (points, interpolated points, zonal statistics
@@ -59,8 +57,8 @@ blocked on upstream, not on wxylib: the rwarp and controlledburn patches
   pin versions instead of commits.
 - Cost: semver promises on young APIs (a 0.x release keeps that light).
 - Without it: every user builds from git, and py and r pin core commits.
-- Michael, 2026-10-17: no rush for crates.io, "this is all very early".
-  So this is not a goal for now; it only says what a release would wait on
+- A crates.io release is not wanted while the project is this early, so
+  this is not a goal for now; it only says what a release would wait on
   when the time comes.
 
 ## 2. Closer
