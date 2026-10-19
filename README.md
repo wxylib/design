@@ -92,6 +92,11 @@ by being picked up into a numbered document.
   gaps (byte views and a chain grammar), a "crate check" before each
   stage, and GDAL's other infrastructure (configuration, progress,
   threads, CRS naming, time, plugins, testing) through the same lens.
+- [m10: Overlapping COG mosaics, measured on REMA v2 and COP30](docs/m10-overlapping-mosaics.md):
+  overlap, variable chunk sizes and padded tiles as three problems; the
+  tile-edge and origin cuts as duals; on REMA v2 2 m 96 percent of chunks
+  stay references and the pyramid breaks at level 3; COP30 ships on two
+  grids; the predictor codec (with an encoder) is the first blocker.
 
 ## Reference specs
 
