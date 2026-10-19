@@ -92,6 +92,10 @@ by being picked up into a numbered document.
   gaps (byte views and a chain grammar), a "crate check" before each
   stage, and GDAL's other infrastructure (configuration, progress,
   threads, CRS naming, time, plugins, testing) through the same lens.
+- [m10: Overlapping COG mosaics, measured on REMA v2](docs/m10-overlapping-mosaics.md):
+  overlap is resolved by a cut in the plan, rectilinear chunks carry the
+  odd sizes the cut leaves; on REMA v2 2 m, 96 percent of chunks stay
+  byte references, and LZW with a float predictor is the real blocker.
 
 ## Reference specs
 
