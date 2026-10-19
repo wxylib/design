@@ -85,6 +85,12 @@ by being picked up into a numbered document.
   the Rust crates (las, laz, copc-streaming), and a stance: ladder moves
   and planned reads, PDAL as oracle, no processing toolkit (all six
   questions answered as recommended, 2026-10-18).
+- [m09: The modules that don't exist yet](docs/m09-missing-modules.md):
+  the CLI as an operation registry (GDAL's `gdal` framework, what clap
+  lacks, a geo-free crate that generates CLI, py and r), VSI through
+  object_store, its registry and async-tiff's reader seam, the two real
+  gaps (byte views and a chain grammar), and a "crate check" before each
+  stage.
 
 ## Reference specs
 
