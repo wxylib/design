@@ -52,67 +52,33 @@ for a user is on the [capability map](https://wxylib.org/docs/capabilities.html)
 
 ## Musings
 
-Blue-sky side notes, not plans and not gated. A musing becomes work only
-by being picked up into a numbered document.
+Side notes, not plans and not gated. A musing becomes work only by being
+picked up into a numbered document. Some end in questions; where those
+have been answered, the status says so and the musing records the
+decisions.
 
-- [m01: Downstream UX](docs/m01-downstream-ux.md): what front ends (a
-  modular QGIS among them) could do with the core's pieces, and which
-  doors the core should keep open for them.
-- [m02: Pilot, a byte-reference table as a wxy-virtual source](docs/m02-pilot-mdimrefs.md):
-  the mdim-refs/0.2 table (OISST) through `wxy-virtual` into Icechunk,
-  checked against GDAL; a trial of the gate 4 "table first" question.
-- [m03: Presentation on raw data, and the map as a document](docs/m03-presentation-and-map-format.md):
-  image scaling that travels with untouched values, and a map that
-  references its sources (from doc 05, X1 and X2).
-- [m04: The loftier goals, reassessed](docs/m04-lofty-goals-reassessed.md):
-  doc 03 section 5 and m01 to m03 checked against what has landed
-  (2026-10-17): what is closer, newly reachable, still far, or worth
-  reframing.
-- [m05: The chunk cache as a growing implicit store](docs/m05-chunk-cache.md):
-  keeping the encoded bytes of every chunk a run reads (and, after a warp,
-  a record of every target chunk) beside the byte-reference rows, so a
-  store accumulates without dictating a format; ends with a range-cache
-  pilot.
-- [m06: Response to the foundation assessment](docs/m06-foundation-assessment-response.md):
-  the cogcache/blocklist review of wxylib checked point by point against
-  the repos; proposes a flat refs store (table first, with the cache
-  inside), a Bluelink-shaped fixture, and changes to C1 and S7.
-- [m07: Index space and coordinate space](docs/m07-index-space.md):
-  the playproj pages (ROMS, rotated pole, cubed sphere, geostationary and
-  more) placed on the ladder, the gaps they show (computed vertical
-  positions, periodic and folded index, patches, stored frames) and five
-  small Zarr fixtures to pin them.
-- [m08: Point clouds, lidar and PDAL on the ladder](docs/m08-point-clouds.md):
-  point clouds as R6 on an R1 lattice with an R4 octree chunk scheme
-  (COPC), scans as R1 or R3 in the sensor frame, COPC as already virtual,
-  the Rust crates (las, laz, copc-streaming), and a stance: ladder moves
-  and planned reads, PDAL as oracle, no processing toolkit (all six
-  questions answered as recommended, 2026-10-18).
-- [m09: The modules that don't exist yet](docs/m09-missing-modules.md):
-  the CLI as an operation registry (GDAL's `gdal` framework, what clap
-  lacks, a geo-free crate that generates CLI, py and r), VSI through
-  object_store, its registry and async-tiff's reader seam, the two real
-  gaps (byte views and a chain grammar), a "crate check" before each
-  stage, and GDAL's other infrastructure (configuration, progress,
-  threads, CRS naming, time, plugins, testing) through the same lens.
-- [m10: Overlapping COG mosaics, measured on REMA v2 and COP30](docs/m10-overlapping-mosaics.md):
-  overlap, variable chunk sizes and padded tiles as three problems; the
-  tile-edge and origin cuts as duals; on REMA v2 2 m 96 percent of chunks
-  stay references and the pyramid breaks at level 3; COP30 ships on two
-  grids; the predictor codec (with an encoder) is the first blocker.
-- [m11: Quiet operations](docs/m11-quiet-operations.md): what composite
-  raster readers do without saying so (painting order, baked resampling,
-  registration, level substitution), a ladder from hidden to separated
-  rendering, and REMA v2, COP30 and Sentinel-2 as the fixtures that
-  expose them. Source table in [measurements/cop30/](measurements/cop30/).
+| Musing | About | Status |
+|--------|-------|--------|
+| [m01: Downstream UX, blue sky](docs/m01-downstream-ux.md) | What front ends (a modular QGIS among them) could build from the core, and which doors the core keeps open for them | Open, no questions |
+| [m02: Pilot, a byte-reference table as a wxy-virtual source](docs/m02-pilot-mdimrefs.md) | The mdim-refs/0.2 table (OISST) through `wxy-virtual` into Icechunk, checked against GDAL | Done: pilot built in core; walk-through on the [docs site](https://wxylib.org/docs/oisst-virtual.html) |
+| [m03: Presentation on raw data, and the map as a document](docs/m03-presentation-and-map-format.md) | Image scaling that travels with untouched values, and a map that references its sources (doc 05, X1 and X2) | Open, no questions |
+| [m04: The loftier goals, reassessed](docs/m04-lofty-goals-reassessed.md) | Doc 03 section 5 and m01 to m03 checked against what had landed by 2026-10-17 | Assessment; its gate 4 closure is superseded by m06 |
+| [m05: The chunk cache as a growing implicit store](docs/m05-chunk-cache.md) | Keeping the encoded bytes of every chunk a run reads beside the byte-reference rows, so a store accumulates without dictating a format | Decided 2026-10-17; pilot C1 built in core (`wxy-cache`); C2 replaced by S3c |
+| [m06: Response to the foundation assessment](docs/m06-foundation-assessment-response.md) | An outside review of wxylib checked point by point; proposes the flat refs store with the cache inside, and a Bluelink-shaped fixture | Section 6 decided 2026-10-19; became stage S3c in doc 03 |
+| [m07: Index space and coordinate space](docs/m07-index-space.md) | The playproj grids placed on the ladder, the gaps they show, and five small Zarr fixtures to pin them | Decided 2026-10-17; fixtures I1 and I3 built |
+| [m08: Point clouds, lidar and PDAL on the ladder](docs/m08-point-clouds.md) | Point clouds as R6 on an R1 lattice with an R4 octree chunk scheme (COPC), the Rust crates, and a stance: ladder moves, PDAL as oracle, no processing toolkit | Decided 2026-10-18 (all six as recommended) |
+| [m09: The modules that don't exist yet](docs/m09-missing-modules.md) | The CLI as an operation registry, VSI through object_store, byte views and a chain grammar as the real gaps, a crate check before each stage, and GDAL's other infrastructure | Open: five questions with recommended answers |
+| [m10: Overlapping COG mosaics, measured on REMA v2 and COP30](docs/m10-overlapping-mosaics.md) | Overlap, variable chunk sizes and padded tiles as three problems; tile-edge and origin cuts as duals; the predictor codec as the first blocker | Open, measured; requirements in section 8 |
+| [m11: Quiet operations](docs/m11-quiet-operations.md) | What composite raster readers do without saying so, a ladder from hidden to separated, and REMA v2, COP30 and Sentinel-2 as the fixtures that expose it | Open; COP30 source table in [measurements/cop30](measurements/cop30/README.md) |
 
 ## Reference specs
 
 Specs from adjacent work that the design documents refer to. Not wxylib
 formats.
 
-- [mdim-refs/0.2](specs/mdim-refs-0.2.md): a byte-reference table built
-  from a `gdal mdim mosaic` VRT (SQLite; Parquet and kerchunk exports).
+| Spec | About | Status |
+|------|-------|--------|
+| [mdim-refs/0.2](specs/mdim-refs-0.2.md) | A byte-reference table built from a `gdal mdim mosaic` VRT (SQLite; Parquet and kerchunk exports) | Draft; open questions on per-axis chunk edges and the Parquet export layout |
 
 ## Related repositories
 
