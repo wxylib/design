@@ -4,9 +4,9 @@ Design notes, surveys and staging plans for wxylib: Rust tooling that takes
 the modular concepts GDAL already contains, gives each one its own home, and
 builds an ecosystem of crates, bindings and documentation around them.
 
-New to wxylib? Start at **https://wxylib.github.io/docs/**: what works, how-tos,
+New to wxylib? Start at **https://wxylib.org/docs/**: what works, how-tos,
 explainers and how to help. These documents are rendered there too, under
-[Design](https://wxylib.github.io/docs/design/README.html).
+[Design](https://wxylib.org/docs/design/README.html).
 
 Nothing here is code. Each document ends in a gate: a decision to accept,
 revise or reject before the next document starts.
@@ -45,7 +45,7 @@ revise or reject before the next document starts.
 
 Which stages are built is kept in one place, doc 03's
 [stages section](docs/03-architecture.md#3-stages); what they add up to
-for a user is on the [capability map](https://wxylib.github.io/docs/capabilities.html).
+for a user is on the [capability map](https://wxylib.org/docs/capabilities.html).
 
 ## Musings
 
