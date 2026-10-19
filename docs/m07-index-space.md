@@ -1,22 +1,23 @@
 # m07: Index space and coordinate space, from the playproj pages to Zarr
 
-Status: musing, 2026-10-17; its four questions answered the same day
-(section 7: the recommended answers), so pilot I1 and I3 is ready to pick
-up. It surveys the
+Status: musing, 2026-10-17; its four decisions are in section 6, and
+pilot I1 and I3 is ready to pick up. It surveys the
 [playproj](https://github.com/hypertidy/playproj) pages for what they say
 about mapping data onto different surface representations, places each on
 doc 02's ladder, checks what wxylib reads and warps today, and ends with a
-small set of Zarr fixtures and four questions. It becomes work only through
-a numbered document; core and fixtures belong to the planning thread.
+small set of Zarr fixtures and four decisions. It becomes work only
+through a numbered document.
 
-## 1. The ask
+## 1. Summary
 
-Michael, 2026-10-17:
-
-> We could start looking at the playproj examples for use with Zarr
-> https://hypertidy.github.io/playproj/indexspace.htm and the other
-> examples generally for mapping data onto different surface
-> representations
+The playproj pages, starting with
+[indexspace](https://hypertidy.github.io/playproj/indexspace.html), are a
+source of Zarr examples for mapping data onto different surface
+representations. Two of them (I1, a ROMS-style curvilinear fan with
+vertical coordinates, and I3, a rotated pole grid) become fixtures in
+`wxylib/fixtures` under `index/`; the rest wait until the gaps they
+exercise are designed. CF vertical coordinates are treated as R3' with
+field terms, so the ladder does not grow.
 
 Gate 1 already organises core around the R0 to R6 ladder, with
 regular-in-what and playproj as its references. What playproj adds is a
@@ -131,7 +132,7 @@ question.
 
 ### Smallest pilot
 
-I1 alone, or I1 and I3. I1 is the page Michael pointed at, exercises a
+I1 alone, or I1 and I3. I1 is playproj's index-space page, exercises a
 3D curvilinear array that real ROMS output looks like, and has its oracle
 half-written in playproj. I3 is cheap and turns an existing wxy-domain
 function into a fixture-backed check.
@@ -151,37 +152,20 @@ function into a fixture-backed check.
   stores, which are the easy cases; the first ROMS, FV3 or GOES user finds
   the gaps instead.
 
-## 6. Questions
+## 6. Decisions (2026-10-17)
 
-1. **Pilot.** Hand I1 (and I3) to the planning thread as fixtures in
-   `wxylib/fixtures` under `index/`? Recommended: yes, I1 and I3; the
-   rest wait for the gaps they exercise to be designed.
-2. **Vertical positions.** Treat CF `formula_terms` coordinates as R3'
-   (a function of the index) whose coefficients may be fields, or as a
-   separate kind of mapping? Recommended: R3' with field terms, so the
-   ladder does not grow.
-3. **Store dialect.** Write I1 with ROMS's own names plus CF attributes
-   (what ROMS output and playproj's reader use), or translate to GeoZarr?
-   Recommended: ROMS names plus CF; GeoZarr has no vertical or
-   curvilinear convention yet.
-4. **playproj link.** Point `indexspace.html` at the I1 store as an
-   example (a change in hypertidy, so Michael's call)? Recommended: yes,
-   once the store is published somewhere a browser can fetch it.
-
-## 7. Answers
-
-Michael, 2026-10-17: "Recommended is good". So:
-
-1. **Pilot:** I1 (roms-fan) and I3 (rotated) go to the planning thread as
-   fixtures in `wxylib/fixtures` under `index/`. I2, I4 and I5 wait until
-   the gaps they exercise are designed.
+1. **Pilot:** I1 (roms-fan) and I3 (rotated) become fixtures in
+   `wxylib/fixtures` under `index/`. I2, I4 and I5 wait until the gaps
+   they exercise are designed.
 2. **Vertical positions:** CF `formula_terms` coordinates are R3' (a
-   function of the index) whose coefficients may be fields. The ladder
-   does not grow.
-3. **Store dialect:** I1 uses ROMS's own names plus CF attributes.
-4. **playproj link:** yes, `indexspace.html` gets the I1 store as an
-   example once it is published somewhere a browser can fetch it (a
-   change in hypertidy, for Michael).
+   function of the index) whose coefficients may be fields, rather than a
+   separate kind of mapping. The ladder does not grow.
+3. **Store dialect:** I1 uses ROMS's own names plus CF attributes (what
+   ROMS output and playproj's reader use), not a translation to GeoZarr,
+   which has no vertical or curvilinear convention yet.
+4. **playproj link:** `indexspace.html` gets the I1 store as an example
+   once it is published somewhere a browser can fetch it (a change in
+   hypertidy).
 
 Nothing is built in core from this musing; the vertical mapping waits for
 a numbered document.

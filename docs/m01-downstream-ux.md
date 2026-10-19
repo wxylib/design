@@ -3,8 +3,8 @@
 Status: musing. Not a plan, not a gate, not a commitment. Nothing here is
 scheduled and nothing here changes docs 01 to 03. It exists so that early
 choices in the core can be checked against where the pieces might one day
-be used (Michael, 2026-10-16: "aspirational blue sky side musings ... qgis
-could be a more modular set of resources too").
+be used, including the idea that QGIS could itself be a more modular set
+of resources.
 
 The "m" series sits beside the numbered, gated documents. A musing becomes
 work only by being picked up into a numbered document and passing a gate.

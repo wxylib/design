@@ -1,26 +1,13 @@
 # m05: The chunk cache as a growing implicit store
 
 Status: musing, 2026-10-17; its four questions answered the same day
-(section 8), so pilot C1 is ready to pick up. It explores an idea
-of Michael's and ends with a smallest pilot and the questions that would
-turn it into work; it becomes work only through a numbered document.
+(section 8), so pilot C1 is ready to pick up. It explores one idea and
+ends with a smallest pilot and the decisions that turn it into work; it
+becomes work only through a numbered document.
 
-## 1. The idea
+## 1. Summary
 
-Michael, 2026-10-17:
-
-> When we plan a source to warp we have this indirection where byte refs
-> (chunks) are cached in a flat table, when those are read there's an
-> opportunity to cache them undecided and the table is a natural place
-> with a binary blob column or another store with a link. There's another
-> opportunity to cache target chunks after warp which could have the same
-> structure, refs, link, encoded chunk - or the chunk's data can be
-> rendered, sent somewhere else, discarded. Zarr is a materialized store
-> but our tabular cache of source (and potentially target) provides a
-> growing implicit store that doesn't preclude later reuse, and doesn't
-> dictate format.
-
-Put plainly: every read wxylib makes already passes through a row of a
+Every read wxylib makes already passes through a row of a
 byte-reference table (where the chunk is) or could. If the bytes that come
 back are kept, still encoded, next to that row, the table grows from an
 index into a store. Nobody decided to build a Zarr copy; one accumulates,
@@ -242,32 +229,26 @@ C1 earns them. Publishing a fully held array as kerchunk Parquet with
 `raw` filled, or as Icechunk native chunks, is the materialisation step
 and comes after T1.
 
-## 8. Questions that would turn this into work
+## 8. Decisions (2026-10-17)
 
-Answered by Michael, 2026-10-17:
+1. **Hook level: the byte range.** For a referenced chunk the chunk is
+   the byte range, so the row is the same either way; the question was
+   only where the hook sits. The byte reader wins over `ChunkSource`:
+   bytes are already bytes there, no trait change is needed, and header
+   reads come along. `ChunkSource` remains the only place chunks with no
+   byte range (GDAL-workaround blocks, computed chunks) could be held,
+   if that is ever wanted.
+2. **Engine: append-only Parquet fragments**, over SQLite or DuckDB:
+   growing, no write contention, wasm-friendly. Rows say where their
+   bytes came from, so held data can be flushed or moved to another store
+   for more sophisticated handling later; DuckDB is a tiny step from
+   there, and not in scope.
+3. **The `copy` state goes into the mdim-refs spec after the pilot proves
+   it**, not before.
+4. **Home: a small `wxy-cache` crate** in core, depending only on
+   async-tiff, object_store and parquet.
 
-1. Byte-range level.
-2. Append-only. Rows say where their bytes came from, so held data can
-   be flushed or moved to another store for more sophisticated handling
-   later; DuckDB is a tiny step from there, and not in scope.
-3. The `copy` state goes into mdim-refs after the pilot proves it.
-4. Yes, a small `wxy-cache` crate.
-
-So pilot C1 (section 7) is the next step, as core work. The questions as
-asked:
-
-1. For a referenced chunk the chunk is the byte range, so the row is the
-   same either way; the question is only where the hook sits. At the
-   byte reader first (recommended: bytes are already bytes there, no
-   trait change, and header reads come along), or on `ChunkSource`,
-   which is the only place chunks with no byte range (GDAL-workaround
-   blocks, computed chunks) can be held?
-2. Engine: append-only Parquet fragments (recommended: growing, no write
-   contention, wasm-friendly) or SQLite/DuckDB?
-3. Should the `copy` state go into the mdim-refs spec now, or wait for a
-   pilot to prove it?
-4. Home: a small crate (say `wxy-cache`) depending only on async-tiff,
-   object_store and parquet, owned with core by the planning thread.
+So pilot C1 (section 7) is the next step, as core work.
 
 ## 9. What we would get, what it costs, what if we didn't
 
