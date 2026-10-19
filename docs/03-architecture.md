@@ -149,6 +149,9 @@ facts S4 and the CRS guide work have added.
 
 Each stage is small, works on its own, and ends in a gate.
 
+The stages that bear on the byte-reference scheme (S3b, S3c, S7) are also
+measured against the [commit criteria](commit-criteria.md).
+
 | Stage | Delivers | Gate | Get | Cost | Without it |
 |-------|----------|------|-----|------|------------|
 | **S1** (done 2026-10-16) | `wxy-domain`: the types for R0 to R3, R2-to-R1 normalisation with a report, cell conventions; tests from regular-in-what cases (float32 GHRSST axis, AVISO Mercator latitude, NSIDC 3412) | the types read well in code | the model from doc 02 becomes concrete and testable with no I/O | design churn is still cheap here, so expect revisions | every later stage invents its own types |

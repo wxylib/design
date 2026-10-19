@@ -43,6 +43,9 @@ revise or reject before the next document starts.
 | 4 | [The landscape: related work, what to leverage, what to track](docs/04-landscape.md) | Upstream-first, Icechunk refs, browser CRS, conventions work (passed 2026-10-16) |
 | 5 | [Pain points in GDAL, R and Python](docs/05-pain-points.md) | S4b mdim warp, curvilinear after S5, an extraction stage, no global state (passed 2026-10-16) |
 
+Whether wxylib earns a long-term commitment is tested by four
+[commit criteria](docs/commit-criteria.md), with their live status.
+
 Which stages are built is kept in one place, doc 03's
 [stages section](docs/03-architecture.md#3-stages); what they add up to
 for a user is on the [capability map](https://wxylib.org/docs/capabilities.html).
