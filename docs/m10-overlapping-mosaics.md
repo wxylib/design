@@ -2,8 +2,9 @@
 
 Status: musing, 2026-10-19. It measures two real archives and states what a
 virtual store of each would need; it becomes work only through a numbered
-document. Claims are marked measured (read here from the files), reported
-(from header reads made elsewhere, not repeated here) or inferred.
+document. Claims are marked measured (read from the files, or from a
+source table kept in `measurements/`), reported (from header reads made
+elsewhere, not repeated here) or inferred.
 
 The question: virtualise a COG mosaic whose files overlap, which needs what
 Zarr calls rectilinear chunks. REMA v2 2 m (5800 COGs,
@@ -112,35 +113,56 @@ are `1024, 1024, 1024, 528` repeating. Without a truncate codec, 7 of every
 16 chunks are computed (about 27 percent of the bytes). For this
 distribution the truncate codec is on the critical path.
 
-**OpenTopography** (`COP30_hh.vrt` and its children), reported from GDAL
-header reads (the host is not reachable from here):
+**OpenTopography** (`COP30_hh.vrt` and its children), measured from the
+VRT's own source table (26,475 rows, `measurements/cop30/`), a header
+sample of two files per width and one file read from both distributions:
 
-- children are 3601 rows by band width + 1 columns, pixel-is-point, every
-  adjacent pair sharing one sample line: overlap in its smallest form;
-- 512 x 512 blocks, float32, six overview levels; compression and
-  predictor not yet scanned;
-- the VRT is 1,296,001 x 626,401 at 1 arcsecond, which bakes in upsampling
-  of every coarse-band source and the edge-inclusive grid, neither of
-  which byte references can express;
-- about 26,475 of 62,640 one-degree cells are present: sparse, so missing
-  chunks in Zarr.
+- children are 3601 rows by band width + 1 columns, pixel-is-point with
+  tiepoints on integer degrees, every adjacent pair sharing one sample
+  line: overlap in its smallest form;
+- 512 x 512 tiles, float32, DEFLATE with no predictor, and no nodata tag
+  (ocean is stored as 0, a value; a store's fill value is a declaration,
+  not something read from the files); the sample is assumed to hold
+  archive-wide;
+- the same tile (N73 W030) is 1201 x 3601 with no predictor here and
+  1200 x 3600 with predictor 3 on AWS: the distribution sets the codec
+  chain as well as the grid;
+- the VRT is 1,296,001 x 626,401 at 1 arcsecond, 90S to 84N, and pastes
+  every source at the ratio of its band (1, 1.5, 2, 3, 5, 10; 14,589 of
+  26,475 sources upsampled, DstRect widths 3601 to 3610, 3601.5 for the
+  1.5 band). Each paste is 3600 + ratio wide, so neighbours overlap by
+  exactly the shared sample at the paste ratio. Neither the upsampling
+  nor the edge-inclusive grid can be expressed by byte references;
+- 26,475 of 62,640 one-degree cells are present (42.3 percent): sparse,
+  so missing chunks in Zarr; 31 sources sit in the antimeridian columns
+  (W180 and E179).
 
-Under the origin cut each file owns from its origin and drops its shared
-last line, which falls inside the block that is truncated anyway. Kept
-widths and x chunks per band:
+The width falls to a tenth of the equatorial width, and most of the
+narrow files are Antarctic: every one of the 3,600 cells south of 80S is
+present, at 720 or 360 px per degree. Under the origin cut each file owns
+from its origin and drops its shared last line, which falls inside the
+block that is truncated anyway. Kept widths and x chunks per band, with
+the file counts per hemisphere:
 
-| band (abs lat) | px per degree | x chunks |
-|---|---|---|
-| 0 to 50 | 3600 | 512 x 7, 16 |
-| 50 to 60 | 2400 | 512 x 4, 352 |
-| 60 to 70 | 1800 | 512 x 3, 264 |
-| 70 to 80 | 1200 | 512 x 2, 176 |
-| 80 to 85 | 720 | 512, 208 |
-| 85 to 90 | 360 | 360 |
+| band (abs lat) | px per degree | VRT ratio | files N | files S | x chunks |
+|---|---|---|---|---|---|
+| 0 to 50 | 3600 | 1 | 7889 | 3997 | 512 x 7, 16 |
+| 50 to 60 | 2400 | 1.5 | 2373 | 86 | 512 x 4, 352 |
+| 60 to 70 | 1800 | 2 | 2988 | 594 | 512 x 3, 264 |
+| 70 to 80 | 1200 | 3 | 1704 | 2848 | 512 x 2, 176 |
+| 80 to 85 | 720 | 5 | 396 (to 84N) | 1800 | 512, 208 |
+| 85 to 90 | 360 | 10 | 0 | 1800 | 360 |
 
 y is `512 x 7, 16` everywhere. No chunk grid expresses the banding itself,
 because pixel width depends on latitude; the honest shape is one array per
 latitude band, each rectilinear, oceans as missing chunks.
+
+Without a truncate codec, the seam chunks of each file are computed:
+about 0.9 percent of the pixels in the 3600 band, 15 percent in the
+2400, 1800 and 1200 bands, 29 percent at 720, and all of the 360 band,
+whose files are narrower than one block. Over the archive that is 6.6
+percent of the pixels (measured counts, inferred bytes). With no
+predictor, computed chunks need only a zlib encoder.
 
 The same product ships on two grid conventions depending on distributor.
 The grid is a property of the distribution, not the dataset, and the
@@ -152,10 +174,10 @@ virtualisation layer is where it gets chosen.
 |---|---|---|
 | overlap | 100 px buffer | none (AWS); one shared line (OpenTopography) |
 | resolution | uniform | banded by latitude |
-| coverage | dense | about 42 percent |
+| coverage | dense | 42.3 percent |
 | cut | either | origin |
-| seam chunks | computed or truncated | truncated (computed costs about 27 percent on AWS) |
-| codec | LZW, predictor 3 | DEFLATE, predictor 3 (AWS) |
+| seam chunks | computed or truncated | truncated (computed costs about 27 percent on AWS, 6.6 percent on OpenTopography) |
+| codec | LZW, predictor 3 | DEFLATE, predictor 3 (AWS); DEFLATE, no predictor (OpenTopography) |
 | extra structure | pyramid break at level 3 | band tree; VRT-baked rendering |
 | awkward files | margin tiles off the origin lattice | 84N cap; antimeridian column |
 
@@ -185,7 +207,8 @@ truncated), and one codec shared by referenced and computed chunks.
 1. An encoder-parity fixture for the TIFF codec path (encode, then decode,
    bit identical), beside the decode fixture.
 2. Predictor-3 decode and encode in wxylib's TIFF path, for LZW and
-   DEFLATE. Today `wxy_virtual::scan_tiff` refuses any predictor and zarrs
+   DEFLATE (REMA and AWS COP30; OpenTopography COP30 has no predictor).
+   Today `wxy_virtual::scan_tiff` refuses any predictor and zarrs
    has no floating-point predictor codec.
 3. A rectilinear `ChunkGrid` in wxylib (today `wxy-zarr` reads regular
    grids only), with zarrs' end-overhang allowance so outer padded tiles
@@ -194,7 +217,8 @@ truncated), and one codec shared by referenced and computed chunks.
    regular grid per array).
 5. A truncate codec (a zarr-extensions proposal). Not on the critical path
    for REMA, where it converts the tile-edge cut to the origin cut by
-   re-manifest; on the critical path for AWS COP30.
+   re-manifest; on the critical path for AWS COP30; for OpenTopography
+   COP30 it saves 6.6 percent of the pixels, and the whole 360 band.
 
 Icechunk 2.3 stores arrays on any chunk grid and refuses only to reindex
 non-regular ones, so it is not the blocker.
@@ -214,9 +238,12 @@ plus one COP30 band seam:
 
 ## 10. Not claimed
 
-- OpenTopography COP30 compression, predictor and nodata: not scanned.
-- A COP30 census of bands, sizes and registration residues: not run.
-- Computed-chunk byte totals for COP30 OpenTopography: not estimated.
+- OpenTopography COP30 codec: from a sample of two files per width,
+  assumed constant; the full header scan is not run.
+- COP30 seam values: the shared line duplicates samples by construction;
+  no read has confirmed identity.
+- Computed-chunk byte totals for COP30: pixel fractions only, not
+  compressed bytes.
 - That a truncate codec proposal exists in zarr-extensions: reported, not
   checked here.
 

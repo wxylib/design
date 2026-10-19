@@ -100,6 +100,11 @@ by being picked up into a numbered document.
   tile-edge and origin cuts as duals; on REMA v2 2 m 96 percent of chunks
   stay references and the pyramid breaks at level 3; COP30 ships on two
   grids; the predictor codec (with an encoder) is the first blocker.
+- [m11: Quiet operations](docs/m11-quiet-operations.md): what composite
+  raster readers do without saying so (painting order, baked resampling,
+  registration, level substitution), a ladder from hidden to separated
+  rendering, and REMA v2, COP30 and Sentinel-2 as the fixtures that
+  expose them. Source table in [measurements/cop30/](measurements/cop30/).
 
 ## Reference specs
 
