@@ -22,14 +22,14 @@ agreed: wxylib reads the table and is not where the table is made.
 
 | # | Point | Verdict | Lands in |
 |---|---|---|---|
-| 1 | Table producer (step B) has no public home | Agree | Out of scope for wxylib; a maintainer's call between an R package and the GDAL block-info PR (section 6) |
+| 1 | Table producer (step B) has no public home | Agree | Out of scope for wxylib; decided in section 6 |
 | 2 | "Table first" not closed: the only read path materialises Icechunk | Agree | core: a flat refs store (section 3) |
 | 3 | Only one chunk per file tested | Partly | fixtures: a small Bluelink-shaped fixture in CI |
 | 4 | Icechunk does not serve R users; who owns kerchunk Parquet (D) | Agree | Out of scope: D stays with blocklist |
 | 5 | R binding far from R users; CRAN feasibility | Agree | r, after item 2, with a feasibility check first |
 | 6 | S7 and the m03 map document risk a new format | Agree | doc 03 S7 wording; m03 |
 | 7 | No seam to the sds catalog | Agree | Out of scope for wxylib |
-| 8 | Pace versus ownership | Agree | Open question (section 6) |
+| 8 | Pace versus ownership | Agree | Decided in section 6 |
 | 9a | `ChunkSource::stored_bytes` empty for refs-backed sources | Agree | core, with item 2 |
 | 9b | GDAL 3.13 `GetRawBlockInfo` errors on an unwritten chunk | Agree | Upstream GDAL issue |
 | C1 | Cache pilot misses the refs and Icechunk read path | Agree | wxy-cache interface now; C2 becomes the flat refs store |
@@ -52,8 +52,7 @@ wxylib's business (`wxy_virtual::scan_tiff` exists), so scanning one
 file into chunk rows is in scope. What is out of scope is placement:
 turning a mosaic VRT into a global chunk grid is the plan, and the plan
 is the VRT. Recommendation: the producer gets its home outside wxylib
-(an R package around `mdimrefs.R` once gdalraster binds
-`GetRawBlockInfo`, or the revived GDAL `mdim block-info` PR); fixtures
+(any R producer that reproduces the fixture tables, section 6); fixtures
 keeps the Python scanner as the oracle builder. A Rust scanner that
 emits mdim-refs rows (the DMR++ idea, assessment item 6) is the natural
 first wxylib scanner that is not GDAL, and is a later musing, not now.
@@ -124,10 +123,10 @@ table and its `remap` targets; fixtures manifests name the published
 URLs an sds entry would point at.
 
 **8. Pace versus ownership.** Agree that the oracle tests protect
-correctness, not understanding. Section 6 asks which crates are held
-to the "own every line" bar; the recommendation is `wxy-virtual`'s refs
-reader and the flat refs store, as the assessment suggests, because they
-are the contract with zaro and blocklist.
+correctness, not understanding. The crates held to the "own every
+line" bar are `wxy-virtual`'s refs reader and the flat refs store, as the
+assessment suggests, because they are the contract with zaro and
+blocklist (section 6).
 
 **9a. `stored_bytes` for refs-backed sources.** Agree. `ChunkSource`'s
 default returns `None` (wxy-source lib.rs) and only `wxy-tiff` overrides
@@ -225,16 +224,34 @@ inline means `offset` null, and zaro should follow.
 m04's line "Doc 03's open topic can be closed" is marked superseded by
 this note.
 
-## 6. Open questions
+## 6. Decisions (2026-10-19)
 
-1. Step B's home: an R package around `mdimrefs.R` (recommended: R users
-   first, small once gdalraster binds `GetRawBlockInfo`), or the GDAL
-   block-info PR revived?
-2. Ownership bar: hold `wxy-virtual`'s refs reader and the flat refs
-   store to "own every line" (recommended), and leave the rest to
-   oracle tests and review?
-3. Order: flat refs store before R bindings that open sources
-   (recommended, since it removes Icechunk from what R would vendor)?
+1. **Step B's home: several producers, one contract.** The table is the
+   contract, so the producer need not be one package. Three R routes
+   exist, none of them in wxylib:
+   - blocklist over rhdf5: reads the HDF5 chunk index directly, no GDAL;
+     netCDF4 and HDF5 only, and not exposed to the GDAL 3.13 unwritten
+     chunk error (gap 9b).
+   - The gdalraster `gdalmultidim-api` branch (mdsumner fork): binds
+     `GDALMDArray::GetRawBlockInfo` per chunk and a whole-array
+     `getRawBlockRefs()` returning a data frame (filename, offset, size,
+     info, one index column per dimension); any driver GDAL reads. It
+     drops a chunk whose call fails as well as one that is absent, so on
+     GDAL 3.13 an unwritten HDF5 chunk and a real error look the same.
+   - GDAL7 (rgdal-dev): has an MDArray class and lazy chunked reads, but
+     does not bind `GetRawBlockInfo` yet; as a generator over GDAL's SWIG
+     interface it can take the method once GDAL's SWIG carries it
+     (inferred, not checked).
+   Any of them counts as a producer once it reproduces the fixtures
+   tables (`mdimrefs/oisst-198109`, and `bran2023-temp-201001` for many
+   chunks per file); the Python scanner in fixtures stays the oracle
+   builder. A producer that tells a failed call from an absent chunk is
+   preferred.
+2. **Ownership bar:** `wxy-virtual`'s refs reader and the flat refs store
+   are held to "own every line"; the rest is covered by oracle tests and
+   review.
+3. **Order:** the flat refs store comes before R bindings that open
+   sources, which removes Icechunk from what R would vendor.
 
 ## 7. What we would get, what it costs, what if we didn't
 
