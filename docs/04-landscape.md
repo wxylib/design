@@ -435,6 +435,12 @@ Destination Earth's HEALPix Zarr data is a ready test corpus.
 | Xpublish, xpublish-tiles | 0.5.2; 0.11.2 | **align, contribute** |
 | hypertidy rangefinder, mdsumner rema-ovr | HTML/JS | **align**. They are prior art for the `web` repo |
 
+### 10.4 Agent-driven surfaces (added 2026-10-20)
+
+| Item | State | Verdict |
+|------|-------|---------|
+| [Mapsuke](https://github.com/MIERUNE/mapsuke) (MIERUNE, Kanahiro Iguchi) | QGIS 3.44+ plugin in Python, GPL-2.0, first commit 2026-09-24, 139 commits, no release yet | **watch**. A Claude Code or Codex session drives QGIS by running Python, and it uses the installed Processing algorithms as skills, with bundled `mapsuke-*` skills for cartography, export and scripting. It shows an algorithm registry (M24) being consumed by agents rather than people. That argues for wxylib's CLI and pipelines being self-describing (inputs, outputs and help readable by a machine), so an agent can find and call them the same way |
+
 ## 11. Pure-Rust GDAL alternatives (the contrast case)
 
 | Project | Size and history | Reuse of the shared spine | Validation | Verdict |
@@ -594,7 +600,8 @@ Also on the radar: the Zarr Spec Committee and zarr-extensions, OGC DGGS
 and TMS work, CF-1.14, GeoParquet 2.0 final, Earthmover Zax and Flux,
 xpublish-tiles, the CNG Forum and Zarr Summit (for 2027 talks), pyresample
 2.0, DGGAL and rs4dggs, Pangeo Discourse, and the R spatial community
-(r-spatial, rOpenSci, the r-universe `geozarr` package *(unverified)*).
+(r-spatial, rOpenSci, the r-universe `geozarr` package *(unverified)*),
+and agent-driven GIS such as MIERUNE's Mapsuke (section 10.4).
 
 The cheapest way to keep this current is a monthly check of the release
 feeds above, written into this document's section 15 as a dated delta.
