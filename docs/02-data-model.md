@@ -3,7 +3,7 @@
 Status: gate 2 provisional, 2026-10-16 (defaults in section 12, open to revision)
 Builds on: [01 module survey](01-module-survey.md) (M3, M14, M15, M16, M26)
 and the gate 1 decisions recorded there. Section 10 adds context from
-hypertidy/meshcore and CGAL.
+hypertidy/meshcore, CGAL, and trianglewins on grids as meshes.
 Reads with: [regular-in-what](https://github.com/hypertidy/regular-in-what)
 (the two questions, the ladder, the costumes) and
 [playproj](https://github.com/hypertidy/playproj) (index space against the
@@ -404,7 +404,7 @@ serialised before any data is read. That serialisation is the VRT
 replacement. Its file format is a doc 03 question; the operations are what
 this document commits to.
 
-## 10. Context from meshcore and CGAL (not decisions)
+## 10. Context from meshcore, CGAL and grids as meshes (not decisions)
 
 Read after the draft was written, for context only. Nothing here changes the
 proposals above; it points at where they could go further.
@@ -479,6 +479,54 @@ constrained Delaunay, the engine under hypertidy/trowel), `cdt` 0.1,
 `robust` 1.2 (adaptive exact predicates), `h3o` 0.11, `healpix` 0.3, `s2`
 0.2 and `geo-index` 0.4. None of them shares a cell or topology model with
 the others, which is the gap this document's Topology module would fill.
+
+### Grids as meshes: Delaunay in what?
+
+Added 2026-10-20, from regular-in-what's "Grids as meshes" section and the
+trianglewins page of the same name
+([survey/grids.md](https://github.com/mdsumner/trianglewins/blob/main/survey/grids.md)).
+The book's claim that a grid is regular only *in a frame* has a mesh
+version: a triangulation is Delaunay, has straight edges and interpolates
+linearly only in a frame too. trianglewins measures it on one 10 x 10
+block of the NSIDC 25 km south grid (EPSG:3412). Triangulated in its own
+frame or on the sphere, every triangle is half of one grid cell (162 for
+81 cells). In longitude and latitude near the pole, 31% are. Near 60S all
+the cells survive but 24 extra slivers fill the block's concave edges.
+Five points bear on this document.
+
+- **R1 to R3 reach R5 without Delaunay.** The (i, j) index already gives
+  every cell as a quad, so a structured grid becomes a triangle mesh by
+  splitting each quad, with the diagonal as the only choice. That is a
+  move along the spectrum (section 3) beside features-to-mesh (doc 05,
+  F1): exact, cheap, and it keeps lattice identity (meshcore, above). The
+  diagonal changes the interpolant (bilinear is linear on neither split),
+  so it is a recorded choice, not a mesher default.
+- **Topology survives `transform`; mesh geometry does not.** Section 13's
+  `transform` keeps a domain's connectivity, so it stays lossless on R5.
+  But claims about mesh geometry (Delaunay, straight edges, area and angle
+  bounds, barycentric weights) are made in the frame the mesh was built
+  in, and are void after a transform unless re-checked. A grid stored in
+  the wrong frame can be normalised back (DM4); a mesh built in the wrong
+  frame is a different mesh. This is DM2 for meshes: a geometric claim on
+  an R5 domain names its frame. Stereographic grids show the edge case:
+  the projection maps circles to circles, so Delaunay ties (every square
+  cell) survive onto the sphere.
+- **A second inverse for R3.** DM3's inverse mapping for curvilinear
+  grids can be the grid's own triangulation in the target frame: locate
+  the triangle, and barycentric weights give fractional (i, j). S5b uses
+  GDAL's backmap with inverse bilinear refinement; the triangulation is
+  piecewise linear with no hole filling, so it is a cross-check now and
+  a natural locator once the S8 topology module exists.
+- **Edge interpretation belongs with the mapping.** Whether an edge is
+  straight in the frame or a great circle is a property to carry next to
+  `CellConvention`, as bigcurve and s2 state it for features
+  (trianglewins survey/curves.md).
+- **trianglewins as an R5 oracle.** GDAL is the oracle for rasters. For
+  whichever triangulation backend S8 adopts (spade is in the harness,
+  through trowel), the trianglewins measures (segment preservation,
+  constrained Delaunay, depth, attribute carry) are the matching oracle,
+  and its planned grid cases (quads, frames, diagonal) cover this
+  section's moves.
 
 ## 11. Questions for gate 2
 
