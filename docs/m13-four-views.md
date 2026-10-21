@@ -20,8 +20,9 @@ into a numbered document or [commit-criteria.md](commit-criteria.md).
   of it.
 - The most valuable next steps are a permanent public home for the store
   (everything below gets easier), a CI-sized fixture of the same shape,
-  two small plan gaps in `wxy` the exercises found, and a second dataset
-  through the same four views (GHRSST COGs, in progress elsewhere).
+  and two small plan gaps in `wxy` the exercises found. A second dataset,
+  GHRSST MUR COGs, already has the same four views and the same agreement
+  with GDAL.
 - The uses that would show the model off best are the ones that cross
   the store's grain: track and profile match-ups, sections, and heat
   content over regions, in several languages from one table.
@@ -70,6 +71,7 @@ Two claims hold the views together:
 | Live store, kerchunk view | same | same hashes | core #12 |
 | Live store, Icechunk view | same | same hashes | live test of the store |
 | No-library readers | same | same hashes from Python (Parquet, HTTP, zlib) and the same values in the browser | docs `examples/bran`; web `bran.html` |
+| Second dataset, COG time stack | GHRSST MUR `analysed_sst` 2024 on source.coop: 366 daily COGs, (366, 17999, 36000), 512 x 512 tiles, 935,496 refs; harvested in 6 s with async-tiff | five windows identical to GDAL through `mdim.vrt` (GDAL and GDAL's xarray backend), zarr-python on kerchunk and Icechunk, and wxy on flat, kerchunk and Icechunk | core #13; GHRSST store thread |
 
 Against the four commit criteria:
 
@@ -148,12 +150,31 @@ test rather than a run log.
 
 ### 5.4 A second dataset through the same views
 
-GHRSST COGs (one file per day, one chunk set per file, TIFF instead of
-HDF5) are being built into the same four views. Together the two cover
-both harvest paths (HDF5 chunk walks and TIFF IFDs) and both chunk
-layouts (many per file, whole files per day). A page that reads both
-from their tables with the same code would make the model's main point
-without a word of explanation.
+GHRSST MUR sea surface temperature (daily COGs on source.coop) now has
+the same four views for 2024, built in about a minute, and every reader
+agrees with GDAL (section 3). It differs from BRAN in three ways that
+belong in any overview:
+
+- **The plan is a time stack of 2D files**, not a `gdal mdim mosaic` of
+  netCDF: a vrtstack-style VRT. The four views stay the same; only the
+  harvest and the plan's shape change.
+- **The codec splits the readers.** Tiles are ZSTD with the TIFF
+  horizontal predictor. The Zarr views carry a delta codec
+  (`imagecodecs_delta` in v2, a horizontal delta codec in v3) that GDAL's
+  Zarr driver cannot decode. So GDAL and GDAL's xarray backend read
+  through the VRT, Python needs imagecodecs or virtual-tiff, and wxy needs
+  its predictor crate. The views are equal in bytes, not in who can read
+  them: a reason to keep all four.
+- **The refs views are much faster to start.** GDAL's first read at a
+  late time step through the VRT took about 2 minutes (it opens files in
+  turn); the refs views took about half a second. The VRT stays the
+  oracle and the plan, but not the interactive path.
+
+Together the two datasets cover both harvest paths (HDF5 chunk walks and
+TIFF IFDs) and both layouts (many chunks per file, one file per day). A
+page that reads both from their tables with the same code would make the
+model's main point without a word of explanation. The full GHRSST series
+(about 8,900 days, about 22.8 million refs) is the first test of 5.5.
 
 ### 5.5 Scale: many years, many variables
 
