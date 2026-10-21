@@ -44,7 +44,7 @@ format ([commit-criteria.md](commit-criteria.md), rules).
 
 | View | Gives | Costs | Best for |
 |---|---|---|---|
-| `mdim.vrt` | the plan: which file supplies which slab, in GDAL's own terms; provenance a person can read | GDAL to use; opens each source file's metadata | the oracle; GDAL users; rebuilding everything else |
+| `mdim.vrt` | the plan: which file supplies which slab, in GDAL's own terms; provenance a person can read | GDAL to use (directly, or through GDAL's xarray backend); opens each source file's metadata | the oracle; GDAL users, and xarray users through GDAL; rebuilding everything else |
 | `flat/` (mdim-refs Parquet) | the whole index as rows: queryable, joinable, any language with Parquet and HTTP | a reader per language (small: decode is zlib plus shuffle here) | wxy, DuckDB, R and Python without a format stack, the browser, cost models |
 | `kerchunk/` | the fsspec reference store xarray already knows | Python-centred; one more rendering to keep in step | existing xarray workflows |
 | `icechunk/` | versioned, transactional virtual Zarr; the Earthmover ecosystem | a repository format and its manifests; heavier than a table | publishing and evolving a dataset over time |
@@ -205,7 +205,8 @@ the same rows. Only worth it once a real time-series user exists.
   bytes by depth, anomalous chunks (a sudden size change can flag a
   processing change in the source), and plan costs before any read.
 - **Each language at its natural level.** Python: xarray on the kerchunk
-  or Icechunk view, or the no-library reader. R: `arrow` on the table,
+  or Icechunk view, xarray on `mdim.vrt` through GDAL's xarray backend, or
+  the no-library reader. R: `arrow` on the table,
   or GDAL multidim on the VRT, or the `wxy` package later. Rust: `wxy`
   and its crates. JavaScript: the browser page. Julia: Zarr.jl on
   kerchunk. The same hashes in all of them is the cross-language test.
