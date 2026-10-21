@@ -41,7 +41,7 @@ One SQLite file per dataset. Names `meta`, `sources`, `arrays`, `placements`,
 | `sources` | `source_id` | `source` TEXT UNIQUE, `size` BIGINT, `mtime` BIGINT, `etag` TEXT |
 | `arrays` | `array` | `kind` (`data`, `coord`), `storage` (`referenced`, `inline`, `affine`), `dims`, `shape`, `chunks` (JSON), `dtype` (numpy, e.g. `<i2`), `fill` (text), `codec` (JSON `{compressor, filters}`, Zarr v2 ids), `attrs` (JSON, CF), `affine` (JSON `{start, step}`), `values` (BLOB) |
 | `<array>` | `(source_id, dim_0..dim_{n-1})` | `present` INTEGER, `offset` BIGINT, `size` BIGINT, `info` TEXT, `data` BLOB |
-| `placements` | `(array, dest)` | `source_id`, `source_array`, `src_offset`, `count`, `dest` (JSON element offsets and counts) |
+| `placements` | `(array, dest)` | `source_id`, `source_array`, `src_offset`, `count`, `dest` (each a JSON array, one integer per global dimension: SourceSlab offset, SourceSlab count, DestSlab offset) |
 | `remap` | `(target, prefix)` | `replacement` |
 | `refs_<array>` (view) | `dim_0..dim_{n-1}` | `present`, `path`, `offset`, `size`, `info`, `data` |
 
@@ -61,9 +61,18 @@ from the plan; `chunks`, `dtype` and `codec` describe the sources.
 - **Presence.** Block-info's three states: present and referenced
   (`present=1`, `offset` and `size` set), present and inline (`present=1`,
   `offset` NULL, `data` set), absent (`present=0`; readers use `fill`).
+- **Within-source keys carry the global rank.** A source of lower rank than
+  the array (a 2D tile placed in a 3D stack, VRT `SourceTranspose -1,0,1`)
+  has key 0 on each axis its placement adds. A placement may add leading
+  axes; it may not permute the source's own axes.
+- **`info`** is the block-info text form, `KEY=VALUE` pairs joined by `; `
+  (`COMPRESSION=DEFLATE; FILTER=SHUFFLE; ENDIANNESS=LITTLE`). Readers may
+  also accept the JSON list osgeo.gdal's `GetInfo()` returns. The mapping
+  to codecs is in "Codec mapping" below.
 - **Byte columns are BIGINT**, so OGR and Arrow read them as 64-bit.
 - **One codec per array.** All present chunks of an array carry the same
-  `info`. A source whose chunks disagree (a filter skipped on some chunks)
+  `info` (compared as parsed pairs, not raw strings), across every
+  ingest, not only within one scan. A source whose chunks disagree (a filter skipped on some chunks)
   cannot join the array; ingest fails rather than writing a mixed array.
 - **Chunk-aligned plan.** Each placement has step 1, `src_offset` and `dest`
   divisible by `chunks`, and `dest + count` divisible by `chunks` unless it
@@ -88,6 +97,30 @@ restricted to source chunks inside the slab, and `path` the verbatim source.
 `mr_view_sql(con, a, target)` writes the same query with remapped paths. The
 columns are exactly the block-info layer: `dim_0..dim_{n-1}`, `present`,
 `path`, `offset`, `size`, `info`, plus `data` for inline chunks.
+
+**One chunk by global key.** Filtering the view on its computed keys scans
+every row. The per-chunk read path joins from the placement instead: the
+placement whose `dest` slab holds the key, then
+
+```
+dim_i(source) = dim_i(global) - dest_i / c_i + src_offset_i / c_i
+```
+
+looked up by the chunk table's primary key (`mr_chunk_sql()`). Measured
+under 1 ms at about 1M chunks, against 0.9 to 1.9 s through the view
+(design m15).
+
+## Codec mapping
+
+| `info` | Zarr v2 | Zarr v3 |
+|---|---|---|
+| `COMPRESSION=DEFLATE` | compressor `zlib` | `numcodecs.zlib` |
+| `COMPRESSION=ZSTD` | compressor `zstd` | `zstd` |
+| `FILTER=SHUFFLE` | filter `shuffle`, `elementsize` = item size | `numcodecs.shuffle` |
+| `PREDICTOR=2` (TIFF) | filter `imagecodecs_delta`, `axis` -1, `dist` 1 | `HorizontalDeltaCodec`, ahead of `bytes` |
+| `ENDIANNESS=LITTLE` or `BIG` | must agree with `dtype` | `bytes` endian |
+
+Anything else (`PREDICTOR=3`, other filters) is not mapped and stops ingest.
 
 ## Writers and readers
 
@@ -131,9 +164,11 @@ columns are exactly the block-info layer: `dim_0..dim_{n-1}`, `present`,
 
 ## Open questions
 
-1. The view filters on computed columns, so a single-chunk lookup scans the
-   array's rows. Fine at 16k rows; for arrays with millions of chunks the
-   publish step should materialise `refs_<array>` as a keyed table.
+1. The view filters on computed columns, so a single-chunk lookup through
+   it scans the array's rows. Answered for point lookups by the
+   placement-first join in "The view"; materialising `refs_<array>` as a
+   keyed table remains an option for SQL-only readers that filter ranges
+   through the view.
 2. Placements duplicate the VRT. The alternative is to keep the VRT as the only
    plan and compute the view in code; that loses SQL-only readers.
 3. Home for `R/mdimrefs.R`: raad.virtualize (store) with the writer staying in
@@ -150,9 +185,12 @@ columns are exactly the block-info layer: `dim_0..dim_{n-1}`, `present`,
    the array rather than misread it. To be agreed here before any writer
    or reader emits it; it is not a wxylib extension.
 5. **Parquet export layout.** The export (`refs_<array>.parquet` plus
-   `arrays.json`) is the flat refs store that tables are harvested into and
-   virtual indexes are rendered from. Its layout is not fixed: one
-   self-describing Parquet file with `meta`, `arrays` and `remap` in
-   key-value metadata is the likely end. The export also lacks the
-   `sources` table (`source`, `size`, `mtime`, `etag`), which a cache
-   needs to validate held bytes.
+   `arrays.json`, plus `sources.parquet`) is the flat refs store that
+   tables are harvested into and virtual indexes are rendered from. The
+   SQLite file is the producer's working encoding; the export is the
+   published one and the input every renderer should take (design m15).
+   Its layout is not fixed: one self-describing Parquet file with `meta`,
+   `arrays` and `remap` in key-value metadata is the likely end. Rows
+   should be sorted by the dims and split into row groups along `dim_0`
+   so readers can prune; `path` may be dictionary-encoded (required at
+   tens of millions of rows).
