@@ -71,6 +71,7 @@ decisions.
 | [m10: Overlapping COG mosaics, measured on REMA v2 and COP30](docs/m10-overlapping-mosaics.md) | Overlap, variable chunk sizes and padded tiles as three problems; tile-edge and origin cuts as duals; the predictor codec as the first blocker | Open, measured; requirements in section 8 |
 | [m11: Quiet operations](docs/m11-quiet-operations.md) | What composite raster readers do without saying so, a ladder from hidden to separated, and REMA v2, COP30 and Sentinel-2 as the fixtures that expose it | Open; COP30 source table in [measurements/cop30](measurements/cop30/README.md) |
 | [m13: Four views of one byte table](docs/m13-four-views.md) | The mdim VRT, flat table, kerchunk and Icechunk views of the live BRAN2023 store; where the proofs sit; next steps by value; uses for learning, analysis and teaching | Open, for review |
+| [m14: What is missing](docs/m14-unreferenced-datasets.md) | Survey of widely used ocean, sea ice, reanalysis and topography datasets with no cloud copy or published byte-reference index, ranked by value and harvest difficulty | Open, for review |
 
 ## Reference specs
 
