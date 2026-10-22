@@ -1,7 +1,7 @@
 # Commit criteria: when wxylib becomes the engine
 
-Status: live checklist, updated as criteria move. Last updated 2026-10-21
-(core 9b486a6; m06 section 6; m10).
+Status: live checklist, updated as criteria move. Last updated 2026-10-22
+(core 4b74450; m06 section 6; m10).
 
 wxylib is being pushed hard to see whether it deserves a long-term
 commitment as the engine of a wider scheme: byte-reference tables over
@@ -46,7 +46,7 @@ from the Parquet key-value metadata when that lands.
 | # | Criterion | Status | What closes it |
 |---|---|---|---|
 | 1 | wxylib reads the table directly, with the cache inside, and BRAN is checked byte for byte against GDAL | **Met for BRAN; CI case open.** `wxy-refs` (S3c, core 9b486a6) reads the table without Icechunk, with `wxy-cache` keyed on the pre-remap source; OISST matches GDAL. BRAN2023 daily `temp` for 2010 (365 x 51 x 1500 x 3600, 1,116,900 references into NCI THREDDS) read from a flat export on keyed S3 (core PR #10, #11): both oracle windows identical to GDAL 3.14 reading the store's `mdim.vrt` (fixtures `scripts/oracle_bran2023_store.py`), 2026-10-21 | the synthetic Bluelink-shaped fixture (m06, section 2) in fixtures, so the many-chunks-per-file case is in CI |
-| 2 | wxylib reads a table made by a producer it does not own | **Agreed, not shown.** m06 section 6: several producers, one contract; blocklist, the gdalraster `getRawBlockRefs()` branch and later GDAL7 each count once they reproduce the fixture tables. None has been checked yet. The BRAN fixture table already comes from an outside build (R, rhdf5 and GDAL multidim, via a kerchunk index), but its bytes are unverified, so it does not count yet | one producer's rows for `mdimrefs/` (synthetic, offline) and `mdimrefs/oisst-198109/` equal to the fixture rows on offset, size and presence; then wxylib reading that producer's table matching GDAL |
+| 2 | wxylib reads a table made by a producer it does not own | **Shown on live stores; fixture check open.** m06 section 6: several producers, one contract. The multi-view stores are now generated outside wxylib, by raad.virtualize (harvest, collate, render), which is where all of BRAN2023 on THREDDS and the GHRSST MUR COGs are being built. wxylib reads its tables identically to GDAL: BRAN2023 `temp` for 2010 (criterion 1) and GHRSST MUR `analysed_sst` for 2024 (five windows, flat, kerchunk and Icechunk views, against GDAL on the store's `mdim.vrt`), 2026-10-21. What is not yet done is the row-level check against the fixture tables, so the contract is shown by bytes read, not by rows compared. blocklist, the gdalraster `getRawBlockRefs()` branch and later GDAL7 still count once they reproduce the fixture tables | one producer's rows for `mdimrefs/` (synthetic, offline) and `mdimrefs/oisst-198109/` equal to the fixture rows on offset, size and presence; then wxylib reading that producer's table matching GDAL |
 | 3 | An R user reads a table through wxylib without installing Rust, or wxylib's R surface is declared not the goal | **Not started.** Order set (m06 section 6): the flat store comes before R bindings that open sources, so R never vendors Icechunk | a CRAN feasibility check of the `wxy` package (vendored crate size, the rustc version CRAN builders carry, build time), then a decision |
 | 4 | No new file format | **Holding, under pressure.** S7 reads the mosaic VRT subset and the table as its inputs. m10 (overlapping COG mosaics) needs per-axis chunk edges, the first real extension to mdim-refs | the extension agreed in the mdim-refs spec (proposed in its [open questions](../specs/mdim-refs-0.2.md#open-questions)) before any wxylib code writes it. If it lands only inside wxylib, this criterion fails |
 

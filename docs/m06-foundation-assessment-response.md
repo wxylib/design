@@ -265,3 +265,27 @@ this note.
 - Without it: "table first" stays a claim, the cache misses the virtual
   path it was meant for, and R users wait on a binding that vendors
   Icechunk.
+
+## 8. Recheck (2026-10-22)
+
+Each point re-scored against the repositories at core 4b74450,
+fixtures c3adea5 and design bd45511, after S3c, the BRAN2023 and GHRSST
+MUR live stores, and the mdim-refs reconciliation (m15).
+
+| # | Point | Now | Evidence and what is left |
+|---|---|---|---|
+| 1 | Table producer has no home | Closed by direction | Multi-view stores are generated outside wxylib, in raad.virtualize (harvest, collate, render): all of BRAN2023 on THREDDS and the GHRSST MUR COGs as they update. Left: the row-level comparison with the fixture tables (commit criterion 2) |
+| 2 | "Table first" not closed | Closed | `wxy-refs` (S3c) is zarrs storage over the Parquet export with `wxy-cache` inside; `wxy warp` takes a table directory or `s3://` prefix as its source; no Icechunk on the read path |
+| 3 | Only one chunk per file tested | Mostly closed | BRAN2023 `temp` for 2010, 1,116,900 references, many chunks per file, matches GDAL; tables and sources on S3 (core #10 to #12); TIFF predictor (`wxy-predictor`, core #13), GHRSST 2024 matches GDAL in five windows. Left: the synthetic Bluelink-shaped fixture in CI (several variables, an unwritten chunk), LZW on the refs path |
+| 4 | Icechunk does not serve R users; who owns D | Partly closed | `wxy-refs` reads kerchunk Parquet (core #12), so wxylib reads D; D is rendered by raad.virtualize. wxylib still emits no D, as recommended. Whether GDAL reads Icechunk was not rechecked |
+| 5 | R binding far from R users | Open | wxylib/r and wxylib/py are pinned to core 39b07bb (51 commits behind) and bind an in-memory warp only. What changed: `wxy-refs` pulls no Icechunk (263 crates in its tree against 397 for `wxy-virtual`) and declares no `rust-version`; it still carries tokio and reqwest through object_store. The CRAN feasibility check has not started |
+| 6 | S7 and m03 risk a new format | Closed | Doc 03's S7 row reads the VRT subset and the table; m03 now references sources by a mosaic VRT or an mdim-refs table. Pressure remains from m10's per-axis chunk edges (commit criterion 4) |
+| 7 | No seam to the catalog | Out of scope, unchanged | |
+| 8 | Pace versus ownership | Decided, test pending | `wxy-refs` is the crate held to "own every line" and is now 1.7k lines (table, kerchunk, location), written between 2026-10-19 and 2026-10-21. The bar is met only once it has been read through |
+| 9a | `stored_bytes` for refs sources | Partly closed | `--dry-run --cache` reports held and missing bytes from the table. A plain `--dry-run` still reports none for a table source: `RefsStore::stored_range` exists but the Zarr chunk source does not use it |
+| 9b | GDAL `GetRawBlockInfo` on an unwritten chunk | Open | No upstream issue recorded |
+| C1 | Cache misses the refs path | Closed | The cache sits inside `wxy-refs` |
+| C2 | Key on the source | Closed | Pre-remap source key (core 650f7c1) |
+| C3 | Validity on THREDDS | Partly closed | The export's `sources` table is in the spec (m15) and in the BRAN store; `wxy-refs` does not read it yet |
+| C4 | Scale | Partly closed, new pressure | Fragments partitioned by source (core ba84338). The whole GHRSST MUR series (22.8M references) does not fit `RefsStore`, which holds the table in memory (about 14 GB): a table of that size needs row-group lookup by chunk, not a full load |
+| C5 | `copy` read order | Unchanged | `copy` is not in the spec yet |
