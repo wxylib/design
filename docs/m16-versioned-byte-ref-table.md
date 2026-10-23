@@ -5,7 +5,9 @@ that Icechunk's addressing and layout features are views over a byte-ref
 table and its versioning features are storage, and answers its open
 question: for a byte-ref table with history, Lance, or a thin layer of
 Parquet fragments plus an `object_store` `PutMode::Create` manifest
-commit, queried by DataFusion or SedonaDB? Scripts and logs:
+commit, queried by DataFusion or SedonaDB? A second part (section 7) asks
+the same of the chunk bytes themselves, held in the table rather than
+referenced. Scripts and logs:
 [measurements/m16-lance](../measurements/m16-lance/README.md).
 
 ## Summary
@@ -36,12 +38,26 @@ it, and is it worth doing now?
   split per 30 days, and 1.84 GB split per 365 days, because each commit
   rewrites the whole manifest its day falls in. The current render default
   (365) is right for a one-shot render and wrong for a daily-appended repo.
-- **Recommendation: do not adopt Lance yet.** Nothing that reads the
+- **For refs, Lance is a good fit but not a needed one. For bytes it is
+  the stronger case.** A refs table is small, and any format serves it. Lance
+  is built for large binary values with fast row access, and its blob
+  column holds each value either inline or as an external
+  (uri, position, size) range, read the same way. That is the mdim-refs
+  `data` / `offset` / `size` pair and the m05 `held` states in one column.
+  On a 1,890-chunk box (234 MB) of held GHRSST bytes, a chunk comes back by
+  row in 1 ms. The oracle window decodes from held bytes with no network. A
+  reprocessed day changes only the new version, and the scan tag still
+  reproduces GDAL. A mixed table of held and referenced chunks reads through
+  one call. This is the zaro position ("the table is the store, Arrow is the
+  codec engine") with history added (section 7).
+- **Recommendation: do not adopt Lance for refs yet.** Nothing that reads the
   stores needs "as of" today; most versioning is already columns (sources
   keyed by file, prelim and final as distinct sources); and R and GDAL,
   the first readers, cannot read Lance. Keep SQLite as the working store
   and the flat Parquet as the published middle stage. Name the triggers
-  that would change this (section 6). Act now on the Icechunk split.
+  that would change this (section 6). Act now on the Icechunk split. For
+  held bytes (the chunk cache, a hardened zaro store), Lance is the first
+  table format to try when that work starts.
 
 ## 1. What was built
 
@@ -208,7 +224,89 @@ first test of it.
 time (section 4). That is the one result that changes something already
 planned (daily GHRSST and BRAN updates).
 
-## 7. Open questions
+## 7. Holding the bytes, not only the refs
+
+Section 1 to 6 version a table of references; the bytes stay in the
+provider's files. The other reading of "Lance for arrays" is the table
+holding the chunk bytes. mdim-refs already allows it (`data`, present
+and inline), and m05 proposes held copies beside refs (`held = copy`) for
+the chunk cache. That reading sharpens the position zaro takes in its
+design notes: the Parquet is the store, Arrow the codec engine, no GDAL in
+the pixel path. What it lacks is a way to hold bytes that can be revised
+without losing what was read before. Scripts: `lance_held.py`,
+`lance_extblob.py`.
+
+**Held box.** Days 0 to 29 of 2024, chunk rows 24 to 30 and columns 60 to
+68 (Tasman Sea to south of Tasmania): 1,890 chunks, 234.3 MB of encoded
+bytes, fetched through the `s3direct` remap in 51 s with 16 threads. The
+mdim-refs chunk columns are unchanged, with `data` filled and `offset` and
+`size` kept (a held copy).
+
+| Store of the same 1,890 rows | Size | One chunk by key, mean of 50 |
+|---|---|---|
+| Parquet, one row group | 234.4 MB | 436 ms |
+| Parquet, 64-row row groups | 234.4 MB | 29 ms |
+| Lance, binary column, filter | 234.4 MB | 59 ms (no index; scans keys) |
+| Lance, binary column, take by row | same | 1.0 ms |
+| Lance, blob column | 234.4 MB | 4 ms to find the descriptor, then about 5 ms to read |
+
+Sizes are equal because the bytes are already compressed. The difference
+is access. Parquet reads in row groups, so a big row group means reading a
+lot to get one chunk. Lance reads single rows, so once a key maps to a row
+(a sorted key, or a scalar index), getting one chunk costs about as much as
+a local file read.
+
+**Versioned bytes.** The box was written as 20 days bulk, then 10 daily
+commits, and tagged `scan`. Day 5's 63 chunks were then overwritten (with
+day 6's bytes, a stand-in for a reprocessed granule) by `merge_insert`.
+The oracle window block-t0to9-hobart decoded from held bytes only, with no
+network, gives this:
+
+| Version | Matches GDAL hash | Days differing from `scan` |
+|---|---|---|
+| tag `scan` | yes | none |
+| latest | no | day 5 only |
+
+A reference cannot do this. If the provider overwrites a file, every ref
+into it is stale, and the best a refs table can do is detect it (`sources`
+mtime and etag). A versioned table of held bytes keeps what was read, by
+tag, while the latest version follows the provider.
+
+**One column, refs and bytes.** Lance blob values have a kind. Kind 0 or
+1 is the bytes, held in the dataset. Kind 3 is an external range: uri,
+position, size. `read_blobs` returns bytes for either. The whole 2024 table
+was written with each chunk as an external blob into the source COGs: 10.7
+s for 935,496 rows, read through Lance's object store. Then 315 chunks
+(days 0 to 4 of the box) were promoted to held bytes by `merge_insert`.
+The Hobart window read through one `read_blobs` call, 5 external and 5
+held, matches the GDAL hash, and so does the refs-only tag. That is m05's
+cache promotion (`ref` to `copy`) as an ordinary versioned upsert.
+
+Limits seen:
+
+- Lance's object store reads `s3://`, `gs://`, `az://` and `file://`, not
+  `https://`. External blobs need a remap target in one of those schemes
+  (`s3://us-west-2.opendata.source.coop/` here, anonymous). That is one
+  more reason remap stays a view.
+- The external uri is stored in full on each row: 56 MB for the year,
+  against 10 MB for the plain columns with `source_id`. Plain columns
+  stay the better layout for a refs-only table. External blobs earn their
+  place where some rows are held.
+- No R reader, as before. A hardened zaro on this layout would read Lance
+  through Arrow streams from a Python or Rust helper, or wait for a Lance
+  reader in R.
+
+What it buys: a store that answers a chunk by key in milliseconds, keeps
+what was read when sources change, and moves a chunk from referenced to
+held without a new schema. What it costs: the bytes (234 MB here for 30
+days of a small box; about 335 MB a day for the whole globe), a Lance
+dependency in the reader, and a cache policy someone must own. What if
+not: refs plus a range cache stay correct while sources are immutable,
+and that holds for this archive today. The case strengthens when the
+data is a mutable provider (NRT products, reprocessing) or when a
+derived chunk has no source file at all.
+
+## 8. Open questions
 
 1. Is one chunk table per array the right Lance layout for a many-array
    store (BRAN has several variables), given that a Lance commit covers one
@@ -221,3 +319,7 @@ planned (daily GHRSST and BRAN updates).
    database; Delta's log commit is put-if-absent as Lance's is, and Delta
    tables are readable from R through DuckDB. Worth one replay each if the
    triggers arrive.
+4. For held bytes: is the right unit the chunk (one row per chunk, as
+   here) or a held copy of the whole source file with the refs pointing
+   into it (`held = link`)? The first gives versioned chunks; the second
+   keeps file-level validation against `sources` simple.

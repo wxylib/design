@@ -17,6 +17,8 @@ zarr, numcodecs, sedonadb 0.5.0.
 | `lance_bytes.py OUT STORE` | each oracle window read through the Lance refs (remap target `s3direct`), decoded, hashed; compared with the manifest and with osgeo.gdal on the plan VRT remapped by `gdal-s3direct` | `bytes-rescan.json` |
 | `frag_store.py STORE.sqlite OUT LANCE` | the same history as Parquet fragments plus a manifest written with object_store `PutMode::Create` (obstore `mode="create"`); view in DataFusion; two-writer race | `frag-log.json` |
 | `icechunk_replay.py FLAT OUT --split N` | the same history as an Icechunk repo with manifests split every N days (write side only) | `icechunk-split{1,30,365}-log.json` |
+| `lance_held.py STORE OUT` | section 7: a 1,890-chunk box of held bytes in Lance and Parquet; size, lookup by key, daily commits, a reprocessed day, the oracle window decoded offline at the tag and at latest | `held-log.json` |
+| `lance_extblob.py STORE HELD OUT` | section 7: the year as Lance external blobs (s3:// ranges), days 0..4 of the box promoted to held bytes, the window read through one `read_blobs` call | `extblob-log.json` |
 | `m16_figure.py DIR OUT.png` | the history-size figure | `../../docs/img/m16-history-size.png` |
 
 Remote reads need `SSL_CERT_FILE` / `CURL_CA_BUNDLE` set in a proxied

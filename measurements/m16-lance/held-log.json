@@ -1,0 +1,50 @@
+{
+ "box": {
+  "days": [
+   0,
+   29
+  ],
+  "chunk_rows": [
+   24,
+   30
+  ],
+  "chunk_cols": [
+   60,
+   68
+  ]
+ },
+ "chunks": 1890,
+ "fetch_seconds": 51.3,
+ "held_bytes": 234323816,
+ "bytes": {
+  "lance": 234436477,
+  "lance_blob": 234411420,
+  "parquet": 234371657,
+  "parquet_rg64": 234431478
+ },
+ "lookup_ms_per_chunk": {
+  "lance": 58.8,
+  "lance_blob": 4.3,
+  "parquet": 436.2,
+  "parquet_rg64": 29.3,
+  "lance_take_by_row": 1.0
+ },
+ "reprocess_day5": {
+  "num_inserted_rows": 0,
+  "num_updated_rows": 63,
+  "num_deleted_rows": 0
+ },
+ "window_block_t0to9_hobart": {
+  "scan": {
+   "sha_matches_gdal": true,
+   "days_differing_from_scan": null
+  },
+  "latest": {
+   "sha_matches_gdal": false,
+   "days_differing_from_scan": [
+    5
+   ]
+  }
+ },
+ "versions": 12
+}
