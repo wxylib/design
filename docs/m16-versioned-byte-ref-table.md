@@ -234,7 +234,10 @@ and inline), and m05 proposes held copies beside refs (`held = copy`) for
 the chunk cache. That reading sharpens the position zaro takes in its
 design notes: the Parquet is the store, Arrow the codec engine, no GDAL in
 the pixel path. What it lacks is a way to hold bytes that can be revised
-without losing what was read before. Scripts: `lance_held.py`,
+without losing what was read before. It is also cogcache's model
+(rgdal-dev/cogcache, the start of the "Bytes in place" lineage): a table of
+refs until the bytes are needed, then the same table as a mix of refs and
+held bytes. Scripts: `lance_held.py`,
 `lance_extblob.py`.
 
 **Held box.** Days 0 to 29 of 2024, chunk rows 24 to 30 and columns 60 to
