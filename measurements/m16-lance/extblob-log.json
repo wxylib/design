@@ -1,0 +1,26 @@
+{
+ "rows": 935496,
+ "write_seconds": 10.7,
+ "bytes_refs_only": 56159276,
+ "promote": {
+  "num_inserted_rows": 0,
+  "num_updated_rows": 315,
+  "num_deleted_rows": 0
+ },
+ "bytes_mixed": 89393985,
+ "window_refs": {
+  "kinds": {
+   "3": 10
+  },
+  "sha_matches_gdal": true,
+  "read_seconds": 0.94
+ },
+ "window_mixed": {
+  "kinds": {
+   "1": 5,
+   "3": 5
+  },
+  "sha_matches_gdal": true,
+  "read_seconds": 0.62
+ }
+}

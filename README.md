@@ -72,6 +72,7 @@ decisions.
 | [m11: Quiet operations](docs/m11-quiet-operations.md) | What composite raster readers do without saying so, a ladder from hidden to separated, and REMA v2, COP30 and Sentinel-2 as the fixtures that expose it | Open; COP30 source table in [measurements/cop30](measurements/cop30/README.md) |
 | [m13: Four views of one byte table](docs/m13-four-views.md) | The mdim VRT, flat table, kerchunk and Icechunk views of the live BRAN2023 store; where the proofs sit; next steps by value; uses for learning, analysis and teaching | Open, for review |
 | [m15: mdim-refs/0.2 reconciliation](docs/m15-mdim-refs-reconciliation.md) | The spec against its R reference implementation, the fixtures and the BRAN2023 and MUR stores: placements and info encodings settled, placement-first chunk lookup, rank and codec rules, SQLite vs Parquet roles | Open, for review |
+| [m16: A versioned byte-ref table](docs/m16-versioned-byte-ref-table.md) | Lance, Parquet fragments with a create-only manifest commit, and Icechunk, each holding the same GHRSST MUR 2024 history; Icechunk features as table operations, measured; then the chunk bytes held in Lance (versioned, and mixed with refs in one blob column); bytes checked against GDAL | Open: recommends not adopting Lance for refs yet, Lance first for held bytes, and splitting daily-appended Icechunk repos by day |
 
 ## Reference specs
 

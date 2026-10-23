@@ -1,0 +1,47 @@
+{
+ "tag": "rescan",
+ "version": 186,
+ "gdal": "3.12.4",
+ "windows": {
+  "chunk-t0-y0-x0": {
+   "chunks": 1,
+   "lance_sha": "1167f4ae42c7660c",
+   "manifest_matches": true,
+   "gdal_now_matches": true,
+   "lance_seconds": 0.66,
+   "gdal_seconds": 0.85
+  },
+  "tile-tlast-y25-x63": {
+   "chunks": 1,
+   "lance_sha": "a7f826a61d64bb10",
+   "manifest_matches": true,
+   "gdal_now_matches": true,
+   "lance_seconds": 0.87,
+   "gdal_seconds": 113.19
+  },
+  "row-tmid-y17000": {
+   "chunks": 71,
+   "lance_sha": "58f0b76ad8cca366",
+   "manifest_matches": true,
+   "gdal_now_matches": true,
+   "lance_seconds": 21.76,
+   "gdal_seconds": 0.47
+  },
+  "edge-tlast-y35-x70": {
+   "chunks": 1,
+   "lance_sha": "ee7c8916c4367810",
+   "manifest_matches": true,
+   "gdal_now_matches": true,
+   "lance_seconds": 0.83,
+   "gdal_seconds": 0.41
+  },
+  "block-t0to9-hobart": {
+   "chunks": 10,
+   "lance_sha": "7ffaacc4f1cfeda6",
+   "manifest_matches": true,
+   "gdal_now_matches": true,
+   "lance_seconds": 6.25,
+   "gdal_seconds": 3.7
+  }
+ }
+}
