@@ -1,0 +1,69 @@
+{
+ "tags": {
+  "first-half": 1,
+  "year": 185,
+  "rescan": 186
+ },
+ "time_travel": {
+  "first-half": {
+   "rows": 465192,
+   "sources": 182
+  },
+  "year": {
+   "rows": 935496,
+   "sources": 366
+  },
+  "rescan": {
+   "rows": 935496,
+   "sources": 366
+  }
+ },
+ "diff": {
+  "delta_inserted_first_half_to_year": 470304,
+  "delta_updated_year_to_rescan": 2556,
+  "delta_transactions_first_half_to_year": 184,
+  "except_rows_first_half_to_year": 470304,
+  "except_seconds": 0.24
+ },
+ "view": {
+  "flat_rows": 935496,
+  "duckdb_rows": 935496,
+  "datafusion_rows": 935496,
+  "flat_hash": "5a9cf9f69695960e",
+  "duckdb_hash": "5a9cf9f69695960e",
+  "datafusion_hash": "5a9cf9f69695960e",
+  "duckdb_seconds": 0.49,
+  "datafusion_seconds": 1.17
+ },
+ "remap_example": {
+  "target": "s3direct",
+  "row": [
+   "0",
+   "0",
+   "0",
+   "1",
+   "https://s3.us-west-2.amazonaws.com/us-west-2.opendata.source.coop/ausantarctic/ghrsst-mur-v2/2024/01/01/20240101090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1_analysed_sst.tif",
+   "112876922",
+   "63"
+  ]
+ },
+ "box_query": {
+  "rows": 10,
+  "seconds": 0.026
+ },
+ "compaction": {
+  "bytes_before": 10122498,
+  "bytes_after": 14198973,
+  "fragments_after": 1,
+  "versions_after": 4,
+  "removed_versions": 184,
+  "tags_still_readable": {
+   "first-half": 465192,
+   "year": 935496,
+   "rescan": 935496
+  },
+  "seconds": 0.41,
+  "fragments_removed": 186,
+  "fragments_added": 1
+ }
+}

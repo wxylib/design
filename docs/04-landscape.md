@@ -175,6 +175,46 @@ fixtures:
 | `geodesy` | 9 | See below |
 | `miniproj` | 8 | Same datum only |
 
+**terrio's CRS engine (added 2026-10-21).** It is not in the table above
+because it is not a separate crate. [terrio](https://terrio.opengeos.org/)
+0.3.2 does not use PROJ. Its pure-Rust CRS engine is about 10.7k lines in
+`crates/terrio/src/crs`, inside the `terrio` crate. It takes projection
+formulas and a registry from `wbprojection`, and adds the rest itself:
+
+- its own EPSG table;
+- WKT1, WKT2 and PROJ string parsing, plus ESRI codes and rotated-pole
+  grids;
+- datum operation selection by area of use, following what GDAL picks;
+- PROJ-data GeoTIFF, NTv2 and GTX grids, with optional downloads from the
+  PROJ CDN;
+- vertical datums and coordinate epochs.
+
+Its published comparison with GDAL 3.12:
+
+| Case | Cases | Identical (1 mm) | Within tolerance | Different |
+|------|------:|-----------------:|-----------------:|----------:|
+| WGS 84 to each EPSG CRS | 6,354 | 6,353 | 1 | 0 |
+| CRS to CRS | 6,295 | 6,213 | 63 | 19 |
+| With datum grids | 19,253 | 19,109 | 115 | 29 |
+
+The "Why terrio?" page still says it applies no shift grids, which the CRS
+page and the conformance table contradict. On its own published numbers,
+this is the most complete pure-Rust PROJ alternative in this survey.
+
+It is not usable behind wxylib's CRS trait today, because depending on it
+means depending on the whole `terrio` crate. **Verdict: watch.** Two steps
+would settle it:
+
+1. Add terrio to the rust-proj-capability fixtures, through its CLI or
+   crate.
+2. Find out whether its authors would publish the engine as a standalone
+   crate. Michael has asked them about their PROJ stance.
+
+If it is published on its own, it becomes the leading pure-Rust backend
+candidate, for wasm as well. It also uses wbprojection's formulas, which
+rust-proj-capability found wrong in the towgs84 Helmert sign, so the
+fixtures need to show whether terrio's own datum code avoids that.
+
 Two further groups matter as much as the scores:
 
 - **Rust Geodesy** ([busstoptaktik/geodesy](https://github.com/busstoptaktik/geodesy),
@@ -446,7 +486,7 @@ Destination Earth's HEALPix Zarr data is a ready test corpus.
 | Project | Size and history | Reuse of the shared spine | Validation | Verdict |
 |---------|-----------------|---------------------------|------------|---------|
 | [OxiGDAL, renamed OxiGeo](https://github.com/cool-japan/oxigdal) (COOLJAPAN) | 78 crates, then 75. About 1.1M lines of Rust in 13 commits, one per release (the first adds 794k lines). v0.2.4, 2026-08-18. About 1k downloads of the top crate | none of zarrs, object_store, async-tiff, tiff, geoarrow, proj-core. It has its own Zarr, S3, codecs and `oxiproj` | test workflows disabled. Fixes driven by issues: Zarr codec dispatch stub, COG mask IFDs counted as overviews, VRT parsing, GPKG overflow pages | **avoid**. Mine its issues for test cases |
-| [terrio](https://github.com/opengeos/terrio) (Qiusheng Wu) | 2 crates, about 103k lines in 3 days, through reviewed PRs. 0.2.0, 2026-10-15 | builds on Whitebox crates. Its own Zarr, S3 SigV4 and HTTP; GDAL is optional | **a generated conformance table** against GDAL 3.12.2 and PROJ 9.7.1: 40,054 cases, 39,816 identical, 206 within tolerance, 32 different (all CRS or datum grid) | **watch**. **Copy the conformance harness idea** |
+| [terrio](https://github.com/opengeos/terrio) (Qiusheng Wu, opengeos) | 2 crates. About 103k lines in its first 3 days, through reviewed PRs. 0.3.2 and 121 commits by 2026-10-21; Python, JS/wasm and an MCP server | builds on Whitebox crates. Its own Zarr (with GeoZarr `spatial:`/`proj:`/`multiscales`), S3 SigV4, HTTP and a pure-Rust CRS engine with no PROJ (section 5.2). GDAL is optional | **a generated conformance table** against GDAL and PROJ (40,054 cases at 0.2.0: 39,816 identical, 206 within tolerance, 32 different, all CRS or datum grid) | **watch closely**. **Copy the conformance harness idea**; its CRS engine is a backend candidate if published on its own |
 | [Whitebox Next Gen](https://github.com/jblindsay/whitebox_next_gen) `wbraster`, `wbprojection` (John Lindsay) | a port of a mature codebase, 854 commits | its own GeoTIFF, projection and local Zarr | 471 tests. Recent polar stereographic accuracy fixes | **watch**. Its domain is credible, but remote access is weak |
 | surtgis, eorst, cogrs | small | partial | | **watch** |
 
@@ -594,7 +634,7 @@ Ranked by how directly each item can change a wxylib decision.
 | 9 | roteiro-gis crates (geotiff, proj, netcdf) | crates.io versions | candidate dependencies for G1 and G2 |
 | 10 | Apache SedonaDB raster | releases | the nearest Rust raster engine; a consumer of G3 |
 | 11 | ESA EOPF Zarr and DestinE HEALPix | sample services | real GeoZarr and DGGS corpora for fixtures |
-| 12 | terrio, gridr, OxiGeo | releases, issues | overlapping scope; test cases from their bugs |
+| 12 | terrio, gridr, OxiGeo | releases, issues; whether terrio publishes its CRS engine as its own crate | overlapping scope; test cases from their bugs; a possible pure-Rust CRS backend |
 
 Also on the radar: the Zarr Spec Committee and zarr-extensions, OGC DGGS
 and TMS work, CF-1.14, GeoParquet 2.0 final, Earthmover Zax and Flux,

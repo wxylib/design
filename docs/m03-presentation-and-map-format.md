@@ -36,7 +36,8 @@ and is evaluated by whoever opens it.
    Never applied by a reader unless asked; a renderer applies it after the
    warp to a screen grid (m01 section 2.1).
 3. *Map* (new, optional): an ordered list of layers, each a reference to a
-   source (virtual description from S7, or a plain URL) plus a
+   source (a mosaic VRT or an mdim-refs table, the inputs S7 reads, or a
+   plain URL) plus a
    presentation; one or more views (target CRS, extent, size or zoom
    states); and accoutrements as declarative items.
 
@@ -48,10 +49,11 @@ GeoZarr conventions work (gate 4 said yes to that work), as an optional
 `presentation:` or similar namespace.
 
 **Where the map lives.** A small JSON document that composes existing
-specs rather than inventing one where it can: S7's virtual description for
-data, the presentation schema above for raster appearance, a MapLibre style
-subset for vector appearance, and a thin view and accoutrement layer only
-where nothing fits. Views are explicit target grids (doc 05 W1), so a map
+specs rather than inventing one where it can: a mosaic VRT or an mdim-refs
+table for data (never its own source description), the presentation
+schema above for raster appearance, a MapLibre style subset for vector
+appearance, and a thin view and accoutrement layer only where nothing
+fits. Views are explicit target grids (doc 05 W1), so a map
 is not tied to one projection or to tiles.
 
 ## 3. What wxylib would and would not do
