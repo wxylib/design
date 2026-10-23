@@ -49,7 +49,8 @@ it, and is it worth doing now?
   reprocessed day changes only the new version, and the scan tag still
   reproduces GDAL. A mixed table of held and referenced chunks reads through
   one call. This is the zaro position ("the table is the store, Arrow is the
-  codec engine") with history added (section 7).
+  codec engine") with history added (section 7). Section 8 proposes,
+  provisionally, how mdim-refs `data` maps onto that column.
 - **Recommendation: do not adopt Lance for refs yet.** Nothing that reads the
   stores needs "as of" today; most versioning is already columns (sources
   keyed by file, prelim and final as distinct sources); and R and GDAL,
@@ -306,7 +307,72 @@ and that holds for this archive today. The case strengthens when the
 data is a mutable provider (NRT products, reprocessing) or when a
 derived chunk has no source file at all.
 
-## 8. Open questions
+## 8. Proposal: the `data` column as a Lance blob (provisional)
+
+Provisional default, for review. It extends the mdim-refs chunk table and
+m05's held columns. It is not a new schema. It applies only where a store is
+held in Lance. SQLite and the Parquet export keep `data` as BLOB / binary.
+
+**Columns.** The mdim-refs chunk table is unchanged
+(`source_id`, `dim_0..n`, `present`, `offset`, `size`, `info`). In Lance,
+`data` is a blob v2 column. m05's `held` and `hash` come along when a
+store holds bytes.
+
+**States.** Each block-info state, and each m05 held state, maps to one
+row form:
+
+| State | `present` | `offset`, `size` | `data` (Lance blob) | `held` |
+|---|---|---|---|---|
+| absent | 0 | null | null | `ref` |
+| referenced | 1 | set | null | `ref` |
+| inline (the only copy) | 1 | null | inline bytes (kind 0 or 1) | `inline` |
+| held copy of a referenced chunk | 1 | set | inline bytes | `copy` |
+| referenced, published render | 1 | set | external range (kind 3: uri, position = `offset`, size = `size`) | `ref` |
+
+Null and inline blob values are written and read side by side
+(`read_blobs` returns None for null), so the first four rows are one
+column with no special cases.
+
+**Remap stays a view in the store of record.** In the working store and
+in any Lance copy that is the store of record, a referenced row keeps
+`data` null. Its bytes are found through `sources` and the `remap` view,
+as now. This keeps relocation a one-row change and avoids storing a full
+uri on every row (56 MB against 10 MB for the 2024 refs).
+
+**External blobs are a render.** A Lance render for one remap target may
+fill `data` with external ranges, so that a reader needs only
+`read_blobs` and nothing else from mdim-refs. That binds the remap when the
+render is published, which is what "remap at publish" already means for
+the other renders. The target's scheme must be one Lance's object store
+reads: `s3://`, `gs://`, `az://` or `file://`. An `https://` target needs
+an s3-scheme twin in `remap` (for source.coop:
+`s3://us-west-2.opendata.source.coop/`, anonymous).
+
+**Promotion and expiry are upserts.** A cache moving a chunk from
+`ref` to `copy` is a `merge_insert` on the within-source key that sets
+`data`, `held` and `hash`. Dropping held bytes is the same upsert with
+`data` null. Tags keep earlier versions readable, so a cache can expire
+bytes without breaking a tagged read, until cleanup removes that tag.
+
+**Validity.** A held copy is valid while its source matches `sources`
+(`size`, `mtime`, `etag`), as in m05. When a source changes, the held
+row is kept: it is what was read. The new scan arrives as a new version,
+and the earlier tag still reads the old bytes.
+
+**Readers.** In order of reach:
+
+1. Any Lance reader (Python, Rust) through `read_blobs`, on a render with
+   external ranges.
+2. The same, on the store of record. Rows with null `data` and
+   `present = 1` resolve through `sources` and `remap`, as an mdim-refs
+   reader does now.
+3. R and GDAL: none yet. They keep the VRT and the Parquet export, where
+   held bytes are a plain binary `data` column.
+
+Not proposed: a Lance-only column, a different key, or putting
+`sources` and `placements` in the same dataset as the chunks.
+
+## 9. Open questions
 
 1. Is one chunk table per array the right Lance layout for a many-array
    store (BRAN has several variables), given that a Lance commit covers one
