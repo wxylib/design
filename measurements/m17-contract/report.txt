@@ -1,0 +1,241 @@
+
+arrays.json  [mdimrefs]  ice
+  strict_json      explicit   
+  chunk_to_row     explicit   each row carries its chunk key
+  missing_chunks   explicit   present = 0 row (spec, Presence rule)
+  dims             explicit   time,zlev,lat,lon
+  axis_roles       inferred   time=T zlev=Z lat=Y lon=X
+  fill             explicit   fill=-999
+  packing          explicit   scale_factor=0.009999999776482582 add_offset=0.0
+  codec            explicit   {"compressor": {"id": "zlib", "level": 1}, "filters": [{"id": "shuffle", "elementsize": 2}]}
+  coordinates      explicit   
+  time             explicit   days since 1978-01-01 12:00:00, standard
+  provenance       missing    
+  orientation      derived    Y ascending
+  lon_convention   derived    2.5 to 357.5, periodic
+  vertical         missing    
+  content_summary  derived    computable from the table
+
+arrays.json  [mdimrefs]  sst
+  strict_json      explicit   
+  chunk_to_row     explicit   each row carries its chunk key
+  missing_chunks   explicit   present = 0 row (spec, Presence rule)
+  dims             explicit   time,zlev,lat,lon
+  axis_roles       inferred   time=T zlev=Z lat=Y lon=X
+  fill             explicit   fill=-999
+  packing          explicit   scale_factor=0.009999999776482582 add_offset=0.0
+  codec            explicit   {"compressor": {"id": "zlib", "level": 1}, "filters": [{"id": "shuffle", "elementsize": 2}]}
+  coordinates      explicit   
+  time             explicit   days since 1978-01-01 12:00:00, standard
+  provenance       missing    
+  orientation      derived    Y ascending
+  lon_convention   derived    2.5 to 357.5, periodic
+  vertical         missing    
+  content_summary  derived    computable from the table
+
+oisst-198109/arrays.json  [mdimrefs]  anom
+  strict_json      explicit   
+  chunk_to_row     explicit   each row carries its chunk key
+  missing_chunks   explicit   present = 0 row (spec, Presence rule)
+  dims             explicit   time,zlev,lat,lon
+  axis_roles       inferred   time=T zlev=Z lat=Y lon=X
+  fill             explicit   fill=-999
+  packing          explicit   scale_factor=0.009999999776482582 add_offset=0.0
+  codec            explicit   {"compressor": {"id": "zlib", "level": 1}, "filters": [{"id": "shuffle", "elementsize": 2}]}
+  coordinates      explicit   
+  time             convention days since 1978-01-01 12:00:00, no calendar (CF default: standard)
+  provenance       missing    
+  orientation      derived    Y ascending
+  lon_convention   derived    0.125 to 359.875, periodic
+  vertical         explicit   down
+  content_summary  derived    computable from the table
+
+oisst-198109/arrays.json  [mdimrefs]  err
+  strict_json      explicit   
+  chunk_to_row     explicit   each row carries its chunk key
+  missing_chunks   explicit   present = 0 row (spec, Presence rule)
+  dims             explicit   time,zlev,lat,lon
+  axis_roles       inferred   time=T zlev=Z lat=Y lon=X
+  fill             explicit   fill=-999
+  packing          explicit   scale_factor=0.009999999776482582 add_offset=0.0
+  codec            explicit   {"compressor": {"id": "zlib", "level": 1}, "filters": [{"id": "shuffle", "elementsize": 2}]}
+  coordinates      explicit   
+  time             convention days since 1978-01-01 12:00:00, no calendar (CF default: standard)
+  provenance       missing    
+  orientation      derived    Y ascending
+  lon_convention   derived    0.125 to 359.875, periodic
+  vertical         explicit   down
+  content_summary  derived    computable from the table
+
+oisst-198109/arrays.json  [mdimrefs]  ice
+  strict_json      explicit   
+  chunk_to_row     explicit   each row carries its chunk key
+  missing_chunks   explicit   present = 0 row (spec, Presence rule)
+  dims             explicit   time,zlev,lat,lon
+  axis_roles       inferred   time=T zlev=Z lat=Y lon=X
+  fill             explicit   fill=-999
+  packing          explicit   scale_factor=0.009999999776482582 add_offset=0.0
+  codec            explicit   {"compressor": {"id": "zlib", "level": 1}, "filters": [{"id": "shuffle", "elementsize": 2}]}
+  coordinates      explicit   
+  time             convention days since 1978-01-01 12:00:00, no calendar (CF default: standard)
+  provenance       missing    
+  orientation      derived    Y ascending
+  lon_convention   derived    0.125 to 359.875, periodic
+  vertical         explicit   down
+  content_summary  derived    computable from the table
+
+oisst-198109/arrays.json  [mdimrefs]  sst
+  strict_json      explicit   
+  chunk_to_row     explicit   each row carries its chunk key
+  missing_chunks   explicit   present = 0 row (spec, Presence rule)
+  dims             explicit   time,zlev,lat,lon
+  axis_roles       inferred   time=T zlev=Z lat=Y lon=X
+  fill             explicit   fill=-999
+  packing          explicit   scale_factor=0.009999999776482582 add_offset=0.0
+  codec            explicit   {"compressor": {"id": "zlib", "level": 1}, "filters": [{"id": "shuffle", "elementsize": 2}]}
+  coordinates      explicit   
+  time             convention days since 1978-01-01 12:00:00, no calendar (CF default: standard)
+  provenance       missing    
+  orientation      derived    Y ascending
+  lon_convention   derived    0.125 to 359.875, periodic
+  vertical         explicit   down
+  content_summary  derived    computable from the table
+
+bran2023-temp-201001/arrays.json  [mdimrefs]  temp
+  strict_json      explicit   
+  chunk_to_row     explicit   each row carries its chunk key
+  missing_chunks   explicit   present = 0 row (spec, Presence rule)
+  dims             explicit   Time,st_ocean,yt_ocean,xt_ocean
+  axis_roles       explicit   Time=T st_ocean=Z yt_ocean=Y xt_ocean=X
+  fill             explicit   fill=-32768 _FillValue=-32768
+  packing          explicit   scale_factor=0.0078 add_offset=245.0
+  codec            explicit   {"compressor": {"id": "zlib", "level": 1}, "filters": [{"id": "shuffle", "elementsize": 2}]}
+  coordinates      explicit   
+  time             explicit   days since 1979-01-01 00:00:00, GREGORIAN
+  provenance       inferred   source_index,files
+  orientation      derived    Y ascending
+  lon_convention   derived    0.05 to 359.95, periodic
+  vertical         explicit   down
+  content_summary  derived    computable from the table
+
+https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/remote/ocean_temp_2023.parq  [kerchunk]  Time_bnds
+  strict_json      inferred   bare NaN/Infinity tokens; repaired before parsing
+  chunk_to_row     convention kerchunk Parquet: C order, file floor(i / record_size), row i mod record_size
+  missing_chunks   convention row with null path and null raw
+  dims             explicit   Time,nv
+  axis_roles       explicit   Time=T nv=N
+  fill             conflict   fill=9.96921e+36 missing_value=1e+20
+  packing          explicit   unpacked
+  codec            explicit   {"compressor": null, "filters": [{"id": "shuffle", "elementsize": 8}, {"id": "zlib", "level": 1}]}
+  coordinates      explicit   
+  time             explicit   days since 1979-01-01, GREGORIAN
+  provenance       missing    
+  orientation      inferred   needs the coordinate values
+  lon_convention   inferred   needs the coordinate values
+  content_summary  missing    
+
+https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/remote/ocean_temp_2023.parq  [kerchunk]  average_DT
+  strict_json      inferred   bare NaN/Infinity tokens; repaired before parsing
+  chunk_to_row     convention kerchunk Parquet: C order, file floor(i / record_size), row i mod record_size
+  missing_chunks   convention row with null path and null raw
+  dims             explicit   T,i,m,e
+  axis_roles       missing    T=T i=None m=None e=None
+  fill             conflict   fill=9.96921e+36 missing_value=1e+20
+  packing          explicit   unpacked
+  codec            explicit   {"compressor": null, "filters": [{"id": "shuffle", "elementsize": 8}, {"id": "zlib", "level": 1}]}
+  coordinates      missing    no coordinate for T,i,m,e
+  time             missing    
+  provenance       missing    
+  orientation      inferred   needs the coordinate values
+  lon_convention   inferred   needs the coordinate values
+  content_summary  missing    
+
+https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/remote/ocean_temp_2023.parq  [kerchunk]  average_T1
+  strict_json      inferred   bare NaN/Infinity tokens; repaired before parsing
+  chunk_to_row     convention kerchunk Parquet: C order, file floor(i / record_size), row i mod record_size
+  missing_chunks   convention row with null path and null raw
+  dims             explicit   T,i,m,e
+  axis_roles       missing    T=T i=None m=None e=None
+  fill             conflict   fill=9.96921e+36 missing_value=1e+20
+  packing          explicit   unpacked
+  codec            explicit   {"compressor": null, "filters": [{"id": "shuffle", "elementsize": 8}, {"id": "zlib", "level": 1}]}
+  coordinates      missing    no coordinate for T,i,m,e
+  time             missing    
+  provenance       missing    
+  orientation      inferred   needs the coordinate values
+  lon_convention   inferred   needs the coordinate values
+  content_summary  missing    
+
+https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/remote/ocean_temp_2023.parq  [kerchunk]  average_T2
+  strict_json      inferred   bare NaN/Infinity tokens; repaired before parsing
+  chunk_to_row     convention kerchunk Parquet: C order, file floor(i / record_size), row i mod record_size
+  missing_chunks   convention row with null path and null raw
+  dims             explicit   T,i,m,e
+  axis_roles       missing    T=T i=None m=None e=None
+  fill             conflict   fill=9.96921e+36 missing_value=1e+20
+  packing          explicit   unpacked
+  codec            explicit   {"compressor": null, "filters": [{"id": "shuffle", "elementsize": 8}, {"id": "zlib", "level": 1}]}
+  coordinates      missing    no coordinate for T,i,m,e
+  time             missing    
+  provenance       missing    
+  orientation      inferred   needs the coordinate values
+  lon_convention   inferred   needs the coordinate values
+  content_summary  missing    
+
+https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/remote/ocean_temp_2023.parq  [kerchunk]  temp
+  strict_json      inferred   bare NaN/Infinity tokens; repaired before parsing
+  chunk_to_row     convention kerchunk Parquet: C order, file floor(i / record_size), row i mod record_size
+  missing_chunks   convention row with null path and null raw
+  dims             explicit   Time,st_ocean,yt_ocean,xt_ocean
+  axis_roles       explicit   Time=T st_ocean=Z yt_ocean=Y xt_ocean=X
+  fill             conflict   fill=-32767 _FillValue=-32768 missing_value=-32768 (one of them is a valid_range bound)
+  packing          explicit   scale_factor=0.007782219909131527 add_offset=245.0
+  codec            explicit   {"compressor": null, "filters": [{"id": "shuffle", "elementsize": 2}, {"id": "zlib", "level": 1}]}
+  coordinates      explicit   
+  time             explicit   days since 1979-01-01, GREGORIAN
+  provenance       missing    
+  orientation      inferred   needs the coordinate values
+  lon_convention   inferred   needs the coordinate values
+  vertical         explicit   down
+  content_summary  missing    
+
+https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/zarr/ocean_temp.zarr  [kerchunk]  Time_bnds
+  strict_json      explicit   
+  chunk_to_row     convention kerchunk Parquet: C order, file floor(i / record_size), row i mod record_size
+  missing_chunks   convention row with null path and null raw
+  dims             explicit   Time,nv
+  axis_roles       explicit   Time=T nv=N
+  fill             explicit   fill=1e+20 _FillValue=1e+20
+  packing          explicit   unpacked
+  codec            explicit   {"compressor": {"id": "zlib", "level": 1}, "filters": [{"id": "shuffle", "elementsize": 8}]}
+  coordinates      explicit   
+  time             explicit   days since 1979-01-01 00:00:00, GREGORIAN
+  provenance       missing    
+  orientation      inferred   needs the coordinate values
+  lon_convention   inferred   needs the coordinate values
+  content_summary  missing    
+
+https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/zarr/ocean_temp.zarr  [kerchunk]  temp
+  strict_json      explicit   
+  chunk_to_row     convention kerchunk Parquet: C order, file floor(i / record_size), row i mod record_size
+  missing_chunks   convention row with null path and null raw
+  dims             explicit   Time,st_ocean,yt_ocean,xt_ocean
+  axis_roles       explicit   Time=T st_ocean=Z yt_ocean=Y xt_ocean=X
+  fill             explicit   fill=-32768 _FillValue=-32768
+  packing          explicit   scale_factor=0.0078 add_offset=245.0
+  codec            explicit   {"compressor": {"id": "zlib", "level": 1}, "filters": [{"id": "shuffle", "elementsize": 2}]}
+  coordinates      explicit   
+  time             explicit   days since 1979-01-01 00:00:00, GREGORIAN
+  provenance       missing    
+  orientation      inferred   needs the coordinate values
+  lon_convention   inferred   needs the coordinate values
+  vertical         explicit   down
+  content_summary  missing    
+
+DIFFER temp scale_factor: 0.0078 (bran2023-temp-201001/arrays.json) vs 0.007782219909131527 (https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/remote/ocean_temp_2023.parq)
+
+DIFFER temp fill: -32768.0 (bran2023-temp-201001/arrays.json) vs -32767.0 (https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/remote/ocean_temp_2023.parq)
+
+DIFFER Time_bnds fill: 9.969209968386869e+36 (https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/remote/ocean_temp_2023.parq) vs 1e+20 (https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/zarr/ocean_temp.zarr)
+
+DIFFER Time_bnds _FillValue: None (https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/remote/ocean_temp_2023.parq) vs 1e+20 (https://raw.githubusercontent.com/mdsumner/virtualized/1e9c46f/zarr/ocean_temp.zarr)

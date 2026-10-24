@@ -74,6 +74,7 @@ decisions.
 | [m14: What is missing](docs/m14-unreferenced-datasets.md) | Survey of widely used ocean, sea ice, reanalysis and topography datasets with no cloud copy or published byte-reference index, ranked by value and harvest difficulty | Open, for review |
 | [m15: mdim-refs/0.2 reconciliation](docs/m15-mdim-refs-reconciliation.md) | The spec against its R reference implementation, the fixtures and the BRAN2023 and MUR stores: placements and info encodings settled, placement-first chunk lookup, rank and codec rules, SQLite vs Parquet roles | Open, for review |
 | [m16: A versioned byte-ref table](docs/m16-versioned-byte-ref-table.md) | Lance, Parquet fragments with a create-only manifest commit, and Icechunk, each holding the same GHRSST MUR 2024 history; Icechunk features as table operations, measured; then the chunk bytes held in Lance (versioned, and mixed with refs in one blob column); bytes checked against GDAL | Open: recommends not adopting Lance for refs yet, Lance first for held bytes, and splitting daily-appended Icechunk repos by day |
+| [m17: Self-describing reference stores](docs/m17-self-describing-stores.md) | A description contract (what a published store must state, what may stay open) against mdim-refs/0.2 and the wxy readers; two BRAN2023 builds and the fixtures checked, a rounded scale_factor (about 0.5 C) and a fill conflict found; a one-file check with a GDAL oracle | Open: answers to five questions recommended |
 
 ## Reference specs
 
