@@ -1,0 +1,8 @@
+  oracle ice    scale_factor ok     source=0.009999999776482582 store=0.009999999776482582
+  oracle ice    add_offset   ok     source=0.0 store=0.0
+  oracle ice    fill         ok     source=-999.0 store=-999.0
+  oracle ice    units        ok     source='%' store='%'
+  oracle sst    scale_factor ok     source=0.009999999776482582 store=0.009999999776482582
+  oracle sst    add_offset   ok     source=0.0 store=0.0
+  oracle sst    fill         ok     source=-999.0 store=-999.0
+  oracle sst    units        ok     source='Celsius' store='Celsius'
