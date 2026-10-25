@@ -52,6 +52,51 @@ than the monthly landscape refresh does.
 
 ## 4. Log
 
+### 2026-10-25 (trigger fired: standalone CRS crate)
+
+terrio:
+- **Section 3's first trigger fired.** After opengeos/terrio#266 (benchmark
+  results and a request to split the CRS engine), the engine was extracted
+  the same day as **`terrio-crs` 0.1.0** on crates.io (#274, #276, #282).
+  It is MIT, builds for wasm32, and has two optional features:
+  `wbprojection-fallback` (projections it does not implement natively) and
+  `grid-transport` (PROJ CDN grids). terrio 0.5.0's own crate now depends on
+  it, with both features on.
+- **Benchmark** (rust-proj-capability, PRs #7 and #8, merged): CRS study
+  71 of 93 exact natively and 74 with the fallback, against the frozen PROJ
+  9.9.0 oracle. The best pure-Rust crate before was proj-core with 33.
+  Projections suite: 40 of 54 exact with the fallback. The moll, wag4, wag5
+  and ortho-inverse misses we reported were fixed upstream (#273). wintri
+  stays as the documented `lat_1` default difference.
+- **Footprint:** about 50 crates natively and 58 with the fallback (in the
+  benchmark harness's tree), against 186 for terrio built without default
+  features.
+- **Gaps tracked upstream:** geocentric CRSs, PROJJSON, IAU codes and more
+  projections (terrio #269 to #272).
+- What it means for wxylib: terrio-crs is now the leading candidate for a
+  pure-Rust backend behind the CRS trait (doc 04, LS4 and section 5.2). It
+  would sit alongside proj4rs, not replace it yet. Trying it out belongs to
+  core, so it was suggested to the planning thread; no wxylib decision has
+  changed.
+- Otherwise: no new release of `terrio` itself (still 0.5.0, 424
+  downloads). The conformance page's CRS and grid rows are unchanged.
+  terrio was archived on Zenodo, with a citation. New features: DWG and DXF
+  vector interchange, footprint attributes, and CRS and precision options
+  for zonal statistics and point sampling. It still does not use zarrs,
+  async-tiff, object_store or any proj crate.
+- Contributors: Qiusheng Wu wrote nearly all of the commits, with two
+  drive-by contributors (COG overviews; an HDF5 fix for HEC-RAS files) and
+  dependabot.
+
+RustGIS:
+- **v0.4.0** (2026-10-24). Since then: QGIS project and style import,
+  ellipsoidal buffers and Spatial Join distances, raster-stack trends, a
+  data-cube catalog, a PMTiles helper and Polish. It was also archived on
+  Zenodo.
+- It still uses `proj4rs` 0.2 (with `aeqd`) for CRS, not terrio-crs.
+  Moving to terrio-crs would make it the first shared core between the two
+  opengeos projects. Watch for that.
+
 ### 2026-10-24 (baseline catch-up since 0.3.2)
 
 terrio:
