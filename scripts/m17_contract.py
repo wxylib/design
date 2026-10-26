@@ -8,7 +8,11 @@ understood:
 - kerchunk Parquet: the store's `.zmetadata` (a local path or a URL; a
   directory or `.parq` store path gets `/.zmetadata` appended);
 - mdim-refs/0.2 export: `arrays.json` (with `manifest.json` beside it when
-  there is one).
+  there is one);
+- a multidimensional VRT view (`mdim.vrt`): one item per array,
+  `source_counts`, which is missing when any Source lacks a SourceSlab
+  count. GDAL then opens every such source on each read to learn its
+  shape, so a one-step read over a long series opens the whole series.
 
 Options:
 
@@ -22,7 +26,8 @@ Options:
 Two or more stores are compared on their packing and fill, the cheapest
 way to find two builds of the same data that decode differently.
 
-Exit status is 1 when any conflict row is found (or an oracle mismatch),
+Exit status is 1 when any conflict row is found (or an oracle mismatch,
+or a VRT source without a count),
 so the script can gate CI or a publish step. Standard library only, apart
 from osgeo.gdal for --oracle.
 """
@@ -51,6 +56,8 @@ def fetch(loc):
 
 def load(loc):
     """(kind, text) for a store location."""
+    if loc.endswith(".vrt"):
+        return "vrt", fetch(loc)
     if loc.endswith("arrays.json"):
         return "mdimrefs", fetch(loc)
     if not loc.endswith(".zmetadata"):
@@ -264,6 +271,31 @@ def check_array(name, a, arrays, kind, strict, manifest):
     return rows
 
 
+def check_vrt(text):
+    """{array: rows} for a multidimensional VRT: does every Source say its count?
+
+    Without a SourceSlab count GDAL cannot place a source without opening it,
+    so it opens every such source, in order, on each read (hypertidy/vrtstack#3).
+    """
+    import xml.etree.ElementTree as ET
+
+    out = {}
+    for arr in ET.fromstring(text).iter("Array"):
+        srcs = arr.findall("Source")
+        if not srcs:
+            continue
+        bare = [s for s in srcs if s.find("SourceSlab") is None
+                or s.find("SourceSlab").get("count") is None]
+        if bare:
+            first = bare[0].findtext("SourceFilename", "")
+            row = {"state": "missing", "note": "%d of %d sources have no SourceSlab count "
+                   "(each is opened on every read), first: %s" % (len(bare), len(srcs), first)}
+        else:
+            row = {"state": "explicit", "note": "%d sources, all with a SourceSlab count" % len(srcs)}
+        out[arr.get("name")] = {"source_counts": row}
+    return out
+
+
 def oracle(path, arrays):
     """Compare data arrays with osgeo.gdal's multidim reading of one source."""
     from osgeo import gdal
@@ -312,6 +344,16 @@ def main(argv=None):
     packing = {}
     for loc in args.stores:
         kind, text = load(loc)
+        if kind == "vrt":
+            for name, rows in check_vrt(text).items():
+                bad |= rows["source_counts"]["state"] != "explicit"
+                if args.json:
+                    print(json.dumps({"store": loc, "kind": kind, "array": name, "items": rows}))
+                else:
+                    print("\n%s  [%s]  %s" % (loc, kind, name))
+                    for item, r in rows.items():
+                        print("  %-16s %-10s %s" % (item, r["state"], r["note"]))
+            continue
         doc, strict = parse(text)
         arrays = arrays_from_kerchunk(doc) if kind == "kerchunk" else arrays_from_mdimrefs(doc)
         manifest = None

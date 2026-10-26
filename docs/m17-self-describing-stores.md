@@ -252,6 +252,13 @@ python scripts/m17_contract.py STORE [STORE ...] [--oracle SOURCE.nc] [--json]
   the description's equivalent of the byte oracle, and the only check
   that catches item 6.
 - Exit status 1 on any conflict or mismatch, so it can gate a step.
+- An `mdim.vrt` view is checked for one item, `source_counts`: every
+  `<Source>` must carry a `SourceSlab` count. Without one, GDAL opens each
+  source at or before the requested index to learn its shape, so a
+  one-day read of a daily series opens every earlier day
+  ([hypertidy/vrtstack#3](https://github.com/hypertidy/vrtstack/issues/3);
+  the docs explainer "Multidimensional VRT views" has the mechanism). A
+  missing count exits with status 1.
 
 What it does not do: read refs files (padding, file count and missing-chunk
 counts need the rows; DuckDB or pyarrow does that in a few lines), or
