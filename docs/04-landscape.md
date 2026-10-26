@@ -215,6 +215,14 @@ candidate, for wasm as well. It also uses wbprojection's formulas, which
 rust-proj-capability found wrong in the towgs84 Helmert sign, so the
 fixtures need to show whether terrio's own datum code avoids that.
 
+**Update 2026-10-25: both steps are done.** The engine is published as
+[`terrio-crs`](https://crates.io/crates/terrio-crs) 0.1.0, with
+wbprojection as an optional fallback. In rust-proj-capability's CRS study it
+is exact on 71 of 93 fixtures natively and 74 with the fallback. That
+includes the `towgs84` fixtures, so its own datum code avoids wbprojection's
+Helmert sign error. **Verdict: candidate backend**, alongside proj4rs.
+Details and the remaining gaps are in [watch/opengeos.md](watch/opengeos.md).
+
 Two further groups matter as much as the scores:
 
 - **Rust Geodesy** ([busstoptaktik/geodesy](https://github.com/busstoptaktik/geodesy),
