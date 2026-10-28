@@ -71,7 +71,9 @@ and OpenLayers all reproject rasters on the GPU or CPU by building an
 error-bounded triangle mesh in the target CRS. That is the same idea as GDAL's
 approximate transformer, which rwarp implements. rwarp-wasm's niche is exact,
 GDAL-identical warping. A shared mesh contract with these libraries would let
-each use the other.
+each use the other. deck.gl and math.gl (visgl) are now building the same
+thing for custom projections, with polar and seam-crossing fixtures; tracked
+in [watch/visgl.md](watch/visgl.md).
 
 **L5. The pure-Rust "GDAL replacement" projects show what not to do.**
 OxiGDAL/OxiGeo, terrio and the Whitebox Next Gen crates each wrote their own
