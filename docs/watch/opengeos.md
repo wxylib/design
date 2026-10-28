@@ -59,6 +59,33 @@ than the monthly landscape refresh does.
 
 ## 4. Log
 
+### 2026-10-28, evening (DGGS projections in terrio-crs; RustGIS rechecked)
+
+terrio (12 commits since the morning entry, no new crates.io release):
+- **CRS:** three projections behind discrete global grids, all contributed
+  by Michael Sumner: the quadrilateralized spherical cube (#359), HEALPix
+  and rHEALPix (#367), and the Icosahedral Snyder Equal Area projection
+  (#371). These are the projections under DGGS cell layouts, which
+  gate 1 placed in wxylib as an implicit mesh, later.
+- **wxylib's own CRS cases:** rerun on terrio-crs main (3c3706b); results
+  byte-identical, still 34 of 35. The PROJJSON `meridian` miss remains.
+- **Overlap with wxylib's plan:** `terrio validate-cog`, a GDAL-free port
+  of rio-cogeo's validator (#362); TIFF chunk metadata cached per image
+  level (#360); PMTiles and MBTiles pyramids and DEM colour relief streamed
+  in bounded memory (#368, #363).
+- **Stance:** the acknowledgements now credit GDAL and its developers
+  (#370).
+- **Reuse:** still no zarrs, async-tiff, object_store or proj crate.
+
+RustGIS (first recheck since 2026-10-25): no release since v0.4.0
+(2026-10-24), but 159 commits from 15 authors since then (Dominik
+Strebel, Qiusheng Wu, Daniel Hofbauer, Mavrick Fitzgerald and Li-Sheng
+Chou lead). Still on `proj4rs` 0.2 and `geo`, with no terrio dependency.
+Points of overlap: GeoTIFFs read in place from URLs without a file name
+(#1052), a Data Cubes pane with a catalogue (#683), WMS and WMTS time
+dimensions on a time slider (#1100, #1106), and vector export to PMTiles
+(#1006).
+
 ### 2026-10-28 (terrio fills most CRS gaps; contributors widen)
 
 terrio (about 60 commits since 2026-10-25, no new crates.io release; still

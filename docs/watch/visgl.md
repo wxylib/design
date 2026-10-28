@@ -87,6 +87,17 @@ Decision triggers:
 
 ## 4. Log
 
+- **2026-10-28, evening.** math.gl 5.0.0-beta.1 released the same day.
+  Its release notes list an opt-in CRS definition resolver, descriptor
+  builders, target-plane domains, an external-engine path with proj-wasm
+  integration, and clipping of triangle meshes with attribute provenance;
+  raster mesh refinement and domain clipping are documented as recipes,
+  not an API. This is the math.gl half of the proj-wasm trigger in
+  section 3; deck.gl itself has not released anything since 9.4.0.
+  math.gl#367 and #368 are still open with no human review, and the pole
+  finding has no reply. deck.gl#10874 (arbitrary CRS strings in
+  `Layer.coordinateSystem`, per-view `toCrs`) is open; a reviewer asked
+  for PROJJSON in the CRS type.
 - **2026-10-28.** Started. math.gl#367 opened (qualified inverse-mesh
   recipe for polar and seam-crossing rasters, example-owned, 32 tests),
   with #368 stacked on it (async proj-wasm batches). Both open and
