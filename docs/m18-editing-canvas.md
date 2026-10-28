@@ -44,11 +44,14 @@ with the corner](img/m18-drag.jpg)
   coordinates beside the frame ones; a vertex no operation touched is
   written back exactly as read, and the edit itself is a replayable log
   of operations against feature ids, a diff rather than a rewrite.
-- **Recommended next.** A COG underlay warped to the edit frame (reuses
-  the existing wasm `Cog` class), then construction guides and typed
-  relative input, then features from the GeoParquet page as a source.
-  Port the engine to a Rust crate only when a second front end wants
-  it.
+- **The grid meets the ground.** With a CRS the frame is a projection,
+  and the canvas applies what surveyors apply: distances on the grid or
+  on the ellipsoid (point scale factor, or the exact geodesic), angles
+  from grid or true north (grid convergence), and edges as straight grid
+  lines or as geodesics, drawn and snapped to as curves (section 5.4).
+- **Recommended next.** Construction guides and typed relative input,
+  then features from the GeoParquet page as a source. Port the engine to
+  a Rust crate only when a second front end wants it.
 
 ## 1. The aim
 
@@ -287,8 +290,8 @@ decided.
 | Slot | Now | Candidates |
 |------|-----|------------|
 | Source | a GeoJSON file or URL | the GeoParquet page's query result (DuckDB-wasm); FlatGeobuf over ranges; a feature table from a wxylib reader |
-| Frame | data coordinates if projected; for longitude and latitude, a local plane about the data's centre (equirectangular, metres) | a chosen CRS through proj4rs in wasm (already in `wxy-web`) or terrio-crs |
-| Underlay | none | a COG warped to the edit frame by `wxy-warp` in wasm (the existing `Cog` class); other features read only |
+| Frame | a data CRS and an edit CRS through proj4rs in wasm (`Transform` in `wxy-web`); a local plane for longitude and latitude with no edit CRS | terrio-crs as a second backend; PROJ in wasm for datum grids |
+| Underlay | a COG warped to the edit frame by `wxy-warp` in wasm (`Cog`) | several COGs or a mosaic; other features read only |
 | Store and write | download the edited GeoJSON and the log | the log in browser storage (OPFS); the log as a table (one row per operation); apply to the source (GeoJSON rewrite, GeoParquet rewrite of touched row groups, a database) |
 
 The store slot is where the bytes-in-place idea lands for vectors. The
@@ -299,12 +302,51 @@ prototype writes untouched vertices back exactly as read, z values
 included, even when the edit frame is a projection of longitude and
 latitude.
 
-### 5.4 Where it sits in wxylib
+### 5.4 The frame meets the ground
+
+A projected frame is a plane that is not the ground. At any point the
+projection stretches lengths by the point scale factor k and turns
+directions by the grid convergence (the angle from true north to grid
+north). Survey practice reduces between the two all the time ("grid
+distance" and "ground distance", "grid bearing" and "true bearing");
+GIS editing tools mostly leave the user in the grid.
+
+The canvas makes the choice explicit, with three switches that the
+constraint step (section 4) honours:
+
+| Switch | Grid | Ground |
+|--------|------|--------|
+| distances | a locked d is frame units | a locked d is metres on the ellipsoid: d times k at the previous vertex, or the exact geodesic point when the angle is also locked |
+| north | a locked angle or bearing step is a grid direction | it is a true azimuth: the convergence at the previous vertex is applied |
+| edges | a segment is the straight grid line between its vertices | a segment is the geodesic between them: drawn as a curve, snapped to along the curve, and split at the geodesic middle |
+
+k and the convergence are not taken from projection formulas: they are
+measured at the point, by stepping a metre along a direction and asking
+the ellipsoid (Vincenty's solutions on WGS84) how far and which way
+that went. That works for any CRS proj4rs can transform, conformal or
+not, and it is the same check a surveyor makes. The readout shows grid
+distance and angle beside ground distance and true azimuth, and k and
+the convergence at the pointer.
+
+Exported vertices are vertices: an edge drawn as a geodesic is still two
+vertices in the GeoJSON, and what the edge means (grid line, geodesic,
+or a loxodrome, not offered) belongs with the data's description, not
+in extra vertices.
+
+![Sample parcels over the Sentinel-2 Hobart scene, warped into the data's
+own UTM grid: a line locked at true azimuth 45 degrees, with its ground
+length, the scale factor and the convergence in the readout](img/m18-underlay.jpg)
+
+![A route from Hobart to Casey to Dumont d'Urville edited on south polar
+stereographic: the edges are geodesics, the dashed chords are the straight
+grid lines between the same vertices](img/m18-geodesic.jpg)
+
+### 5.5 Where it sits in wxylib
 
 In wxylib/web, as a page beside the others, sharing their style and
-landing card. It does not need the wasm module until the underlay or a
-real CRS arrives; then it imports the same `wxy_web.js` the COG page
-uses. Nothing in wxylib/core changes. If the engine becomes a crate
+landing card. It imports the same `wxy_web.js` the COG page uses, for
+CRS transforms and the underlay, and still edits without it (data
+coordinates or a local plane). Nothing in wxylib/core changes. If the engine becomes a crate
 (question 2), it is geometry with no geospatial dependency beyond
 `geo-types`, which makes it a candidate for its own repository rather
 than a `wxy-` crate, in the spirit of m09's modules that do not exist
@@ -341,27 +383,37 @@ piece of it is usable from a browser page, a notebook or a script.
 
 ## 7. The prototype
 
-`www/edit.html` in wxylib/web, with `www/edit-core.js` (the engine) and
+`www/edit.html` in wxylib/web, with `www/edit-core.js` (the engine),
+`www/edit-geo.js` (geodesics, convergence, scale factor) and
 `www/edit.js` (the canvas). It opens on a synthetic sample (six parcels
 sharing boundaries on a block turned 7 degrees, a road, a creek and four
-trees, on a projected grid) so it runs with no network, and takes any
+trees, in UTM zone 55 south over Hobart) so it runs with no network, and takes any
 GeoJSON by file, drop or `?url=`.
 
-What it does is the "prototype" rows of section 3. The engine has fourteen
-tests under node, run in the web repo's CI: exact round trips (z kept),
+What it does is the "prototype" rows of section 3 and the switches of
+section 5.4. The engine has seventeen tests under node, run in the web
+repo's CI: exact round trips (z kept),
 local-frame edits that leave untouched longitude and latitude bit for
 bit, snap priority, each lock and their combinations, both angle
 conventions, batch operations, the nudge brush (densify, push to the
-rim, smudge falloff), and undo and redo restoring geometry and
+rim, smudge falloff), Vincenty against its published example, the
+convergence and a true-north, ground-distance lock on a turned plane,
+snapping along a geodesic edge, and undo and redo restoring geometry and
 source. The canvas was driven headless: a vertex dragged under a 45 m
 distance lock lands 45.000 m from its neighbour, shared corners move
 with it, a line drawn with the angle picked from the road meets it at
 90 degrees, a coordinate typed into the table moves the vertex and
 undoes, and a MultiPolygon with a hole in longitude and latitude comes
-back identical after an edit and its undo.
+back identical after an edit and its undo. With the CRS switches, a
+line locked at true north and 50 m on the ellipsoid from a parcel corner
+in UTM 55 south comes out 49.98 m on the grid (k 0.99961) at grid
+bearing 0.218 degrees (the convergence); the same data reframed to south
+polar stereographic still exports its untouched vertices unchanged; and
+the Sentinel-2 scene warps into either frame (two range requests,
+2.4 MB, at full resolution).
 
 Known limits: brute-force snapping (fine to some tens of thousands of
-vertices), no underlay, no attribute editing, shared vertices found by
+vertices), no attribute editing, no datum shifts (proj4rs, no grids), shared vertices found by
 exact coincidence only, and the local plane is an approximation (a few
 parts per thousand across a city), labelled as such on the page.
 
@@ -373,29 +425,31 @@ the stroke did not move are dropped when it ends:
 
 ## 8. Next steps, by value
 
-1. **Underlay**: warp a COG into the edit frame with the existing wasm
-   `Cog` class, behind the canvas. This is the wxylib-specific part and
-   makes the canvas useful for digitizing from imagery.
-2. **Construction guides and typed relative input**: reference points
+Done since the first draft: the underlay, a frame from a CRS, and the
+grid-and-ground switches (section 5.4).
+
+
+1. **Construction guides and typed relative input**: reference points
    that are not vertices, guides that can be snapped to, and a one-line
    command box taking `@dx,dy` and `@d<a`.
-3. **Topological insert and multi-vertex selection**: inserting into a
+2. **Topological insert and multi-vertex selection**: inserting into a
    shared segment inserts into both features; move, rotate and scale a
    selection by typed values.
-4. **A source from the GeoParquet page**: open a query result in the
+3. **A source from the GeoParquet page**: open a query result in the
    canvas, with feature ids from the source rows, so the log is keyed to
    them.
-5. **A frame from a CRS**: choose the edit CRS (proj4rs in wasm),
-   replacing the local plane.
-6. **The log as a table**: one row per operation, kept in browser
+4. **More ground**: loxodromes as a third edge model; geodesic areas
+   and lengths in the feature panel; a traverse entered as true bearings
+   and ground distances (survey style) closing with its misclose shown.
+5. **The log as a table**: one row per operation, kept in browser
    storage between visits, downloadable as Parquet. Only then think about
    writing back to a source.
 
 ## 9. Questions
 
 1. **The edit frame.** Always planar: projected data in its own
-   coordinates, longitude and latitude in a local plane, and later a
-   chosen CRS. Recommended: yes; never edit in degrees.
+   coordinates or a chosen edit CRS, longitude and latitude in a local
+   plane when none is chosen. Recommended: yes; never edit in degrees.
 2. **Where the engine lives.** Recommended: JavaScript in wxylib/web
    while the operation set is settling; a Rust crate (on `geo` and
    `rstar`) when a second front end wants it, probably in its own
