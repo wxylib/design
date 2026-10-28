@@ -8,6 +8,11 @@ doc 02's ladder, checks what wxylib reads and warps today, and ends with a
 small set of Zarr fixtures and four decisions. It becomes work only
 through a numbered document.
 
+**Implementation (2026-10-28):** Partly implemented. Fixtures I1 and I3
+([fixtures 4828179](https://github.com/wxylib/fixtures/commit/4828179), tests in [core 3abd248](https://github.com/wxylib/core/commit/3abd248)). I2, I4 and I5,
+the vertical mapping (`formula_terms`), periodic dimensions and CF
+`grid_mapping` are open.
+
 ## 1. Summary
 
 The playproj pages, starting with

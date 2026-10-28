@@ -11,6 +11,9 @@ source-table pass: 26,475 rows from one VRT download, kept in
 cross-distribution read); claims about Sentinel-2 are stated as
 predicates to run. It becomes work only through a numbered document.
 
+**Implementation (2026-10-28):** Open. Measurements only (COP30 source table in
+`measurements/cop30`); none of the fixture trilogy is built.
+
 ## 1. The failure mode: honesty does not compose
 
 Exhibit: the OpenTopography COP30 VRT. Every child file reports its true

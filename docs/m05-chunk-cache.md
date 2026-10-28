@@ -5,6 +5,12 @@ Status: musing, 2026-10-17; its four questions answered the same day
 ends with a smallest pilot and the decisions that turn it into work; it
 becomes work only through a numbered document.
 
+**Implementation (2026-10-28):** Implemented (pilot C1). `wxy-cache` and `wxy warp --cache`
+([core 353d1f7](https://github.com/wxylib/core/commit/353d1f7)), keyed on the source and partitioned
+([core 650f7c1](https://github.com/wxylib/core/commit/650f7c1), [core ba84338](https://github.com/wxylib/core/commit/ba84338)), and inside the flat refs store
+([core 9b486a6](https://github.com/wxylib/core/commit/9b486a6)). C2 was replaced by S3c. T1 target rows and the
+`copy` state are open.
+
 ## 1. Summary
 
 Every read wxylib makes already passes through a row of a

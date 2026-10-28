@@ -6,6 +6,12 @@ choices in the core can be checked against where the pieces might one day
 be used, including the idea that QGIS could itself be a more modular set
 of resources.
 
+**Implementation (2026-10-28):** Partly implemented. Rendering as a warp to a screen grid (2.1) is the
+browser demos in wxylib/web ([web #2](https://github.com/wxylib/web/pull/2), [web #3](https://github.com/wxylib/web/pull/3)); plans a user
+can see (2.2) are `Explain` and `--dry-run` ([core 50ed027](https://github.com/wxylib/core/commit/50ed027)). The
+operation catalogue (2.4), the map document (2.5), styles as data (2.6),
+the dimension navigator (2.7) and the QGIS consumer (2.8) are open.
+
 The "m" series sits beside the numbered, gated documents. A musing becomes
 work only by being picked up into a numbered document and passing a gate.
 

@@ -4,6 +4,11 @@ Status: musing. An assessment, not a plan; nothing here is scheduled. It
 rereads the aspirations in doc 03 section 5 and musings m01 to m03 against
 what has landed, so the next choices are made with a current map.
 
+**Implementation (2026-10-28):** Assessment. Of the order in section 5, three of four items are
+done: serialisable plans and `--dry-run` ([core 50ed027](https://github.com/wxylib/core/commit/50ed027)), the browser
+COG warp demo ([web #2](https://github.com/wxylib/web/pull/2)) and the explainers ([docs #5](https://github.com/wxylib/docs/pull/5)).
+Bindings that open sources are open.
+
 What has landed since those documents were written: S1 to S5, S4b
 (streamed mdim warp), S4c (points, interpolated points, zonal statistics
 with exact coverage), S5b (curvilinear and CF coordinates), the

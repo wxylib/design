@@ -7,6 +7,12 @@ architecture that fits wxylib's layers and the web repo, and what to
 reuse. A first prototype is built in wxylib/web (`www/edit.html`).
 Open: six questions with recommended answers (section 9).
 
+**Implementation (2026-10-28):** Partly implemented. The prototype `www/edit.html` in
+wxylib/web: snapping, locks and the operation log ([web #11](https://github.com/wxylib/web/pull/11)), the
+nudge brush ([web #12](https://github.com/wxylib/web/pull/12)), the CRS frame, ground measures and COG
+underlay ([web #13](https://github.com/wxylib/web/pull/13)), simple rings under the brush
+([web #14](https://github.com/wxylib/web/pull/14)). The next steps of section 8 are open.
+
 ![Dragging a corner two parcels share, its distance from the previous
 corner locked at 42 m: the circle is the lock, the shared boundary moves
 with the corner](img/m18-drag.jpg)
