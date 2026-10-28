@@ -42,7 +42,7 @@ crates)?
 - **Releases unblock wxylib's pins.** controlledburn 0.2.2 is published.
   rwarp's 0.2.0 has every dependency on crates.io now (proj4rs 0.3.0,
   controlledburn 0.2.2), yet crates.io still serves 0.1.1, so wxylib
-  pins rwarp by git revision, and core and web pin different ones.
+  pins rwarp by git revision in core and web, bumped by hand in both.
   bigcurve is unpublished and should stay so until its edge-model API
   (stage 2) is fixed.
 - **Keep them in hypertidy.** Each is useful outside wxylib, has an R or
@@ -65,7 +65,7 @@ wxylib, meeting in index space](img/m20-crates.svg)
 | crates.io | 0.1.1; 0.2.0 on main, unreleased | 0.2.2 (2026-10-28) | unpublished, name free |
 | Dependencies | vaster, controlledburn, proj or proj4rs, optional half | none (serde, geo-types optional) | none |
 | wasm | yes with proj4rs; browser demo on its book | yes | yes |
-| Used by wxylib | every warp method since core #22, by git revision c42d130 (web: 4f1ab19) | zonal `--coverage` and the cover module, 0.2.1 | not yet |
+| Used by wxylib | every warp method since core #22, by git revision c42d130 (web the same) | zonal `--coverage` and the cover module, 0.2.1 | not yet |
 
 Recently landed: rwarp's 0.2 API (`warp()` with `WarpOptions`, area
 methods, mode ties, per-band nodata, separate source and output types,
@@ -317,7 +317,7 @@ wxylib repos.
 ### rwarp
 
 1. Release 0.2.0 on crates.io; wxylib core and web switch from git
-   revisions to the version (one pin, no drift between core and web).
+   revisions to the version (one version to bump, not two revisions).
 2. wxylib: bump wxy-warp to rwarp main (28e3b47: exact footprint 2 to 6x
    faster, approximate transformer fix), with the oracles as the check.
 3. Absorb the exact retry and GDAL's chunk planning from wxy-warp's
