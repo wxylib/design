@@ -49,6 +49,15 @@ with the corner](img/m18-drag.jpg)
   on the ellipsoid (point scale factor, or the exact geodesic), angles
   from grid or true north (grid convergence), and edges as straight grid
   lines or as geodesics, drawn and snapped to as curves (section 5.4).
+- **Field planning.** The CRS constraints earn their keep in survey
+  layout: parallel transects, transects filling a survey polygon, a
+  lawnmower track and repeated shapes, all in ground metres and true
+  azimuths, so the same tool lays 5 m quadrat lines and 2000 km vessel
+  lines (section 5.5).
+- **A quiet cockpit.** The canvas offers control and does not impose
+  correctness: every snap, lock, ground rule and pattern is reached for
+  when wanted, shows what it is doing, and lets go after. Parametric
+  shapes and curves follow the same rule (section 8).
 - **Recommended next.** Construction guides and typed relative input,
   then features from the GeoParquet page as a source. Port the engine to
   a Rust crate only when a second front end wants it.
@@ -65,6 +74,14 @@ x = 526100; and the numbers are always visible and always editable.
 What it is not: a desktop GIS rebuilt. The point of m01 was that QGIS's
 resources could be separate pieces; an editing canvas is one such piece,
 and it is worth having alone.
+
+The governing principle is control, not correctness. The canvas is a
+quiet cockpit: it does not decide what a valid shape is, warn about
+choices or hold constraints the user did not ask for. Every aid (a
+snap, a lock, the ground switches, a pattern, a brush) is reached for
+when it is needed, says plainly what it is doing, and lets go when the
+gesture ends. Defaults are the plain ones; the depth is there when
+asked for.
 
 Input and output are deliberately open. Where features come from, how
 edits are cached, where they are stored, how they are reconciled with a
@@ -341,7 +358,42 @@ length, the scale factor and the convergence in the readout](img/m18-underlay.jp
 stereographic: the edges are geodesics, the dashed chords are the straight
 grid lines between the same vertices](img/m18-geodesic.jpg)
 
-### 5.5 Where it sits in wxylib
+### 5.5 Field planning
+
+Where the grid-and-ground switches stop being abstract is planning
+fieldwork: long vessel transects across an ocean, short transects across
+a rocky or grassy site, sets of parallel lines, and a shape repeated
+along a direction. The pattern tool lays these out from an origin
+(pressed on the canvas, snapping applies) and a direction (dragged, or
+typed):
+
+| Pattern | Parameters | On the ground |
+|---------|------------|---------------|
+| transects | count, spacing, length, azimuth, centred or to the right | each line a geodesic from its own start at the true azimuth; starts stepped across by geodesic offsets |
+| fill | spacing, azimuth, margin, a selected polygon | the transects covering the polygon, phased through the origin, clipped to its edges as drawn (curves when edges are geodesics) |
+| lawnmower | as fill or transects | one track through the lines, alternating direction |
+| repeat | count, step, azimuth, a selected feature | each copy's vertices moved on the ellipsoid, so copies keep their ground shape |
+
+A dashed preview follows every change, and creating the pattern is one
+batch operation, so one undo removes it. The new features carry the
+pattern's parameters as properties (azimuth, spacing, units), which is
+the first step towards the parametric features of section 8: the
+parameters that made a shape kept beside the vertices it produced.
+
+Two things the ground model does not yet cover, both relevant at ocean
+scale: a vessel steers loxodromes (constant heading), not geodesics, so
+long lines want a loxodrome edge model; and parallel geodesics do not
+stay parallel, so "spacing" is exact at the starts and drifts along long
+lines: lines 10 km apart running 2000 km south from Hobart end 6.7 km
+apart (meridians converge), and lines running east end 9.5 km apart. Whether spacing should
+hold at the start, the middle or along the whole line is a planning
+choice to offer, not one to make.
+
+![Transects at true azimuth 45 and 5 m spacing filling one parcel as a
+single lawnmower track, and a preview of centred transects clipped to the
+next parcel](img/m18-pattern.jpg)
+
+### 5.6 Where it sits in wxylib
 
 In wxylib/web, as a page beside the others, sharing their style and
 landing card. It imports the same `wxy_web.js` the COG page uses, for
@@ -384,21 +436,24 @@ piece of it is usable from a browser page, a notebook or a script.
 ## 7. The prototype
 
 `www/edit.html` in wxylib/web, with `www/edit-core.js` (the engine),
-`www/edit-geo.js` (geodesics, convergence, scale factor) and
+`www/edit-geo.js` (geodesics, convergence, scale factor),
+`www/edit-pattern.js` (transects, cover, clip, repeat) and
 `www/edit.js` (the canvas). It opens on a synthetic sample (six parcels
 sharing boundaries on a block turned 7 degrees, a road, a creek and four
 trees, in UTM zone 55 south over Hobart) so it runs with no network, and takes any
 GeoJSON by file, drop or `?url=`.
 
 What it does is the "prototype" rows of section 3 and the switches of
-section 5.4. The engine has seventeen tests under node, run in the web
+sections 5.4 and 5.5. The engine has nineteen tests under node, run in the web
 repo's CI: exact round trips (z kept),
 local-frame edits that leave untouched longitude and latitude bit for
 bit, snap priority, each lock and their combinations, both angle
 conventions, batch operations, the nudge brush (densify, push to the
 rim, smudge falloff), Vincenty against its published example, the
 convergence and a true-north, ground-distance lock on a turned plane,
-snapping along a geodesic edge, and undo and redo restoring geometry and
+snapping along a geodesic edge, transects, cover, clip and a lawnmower
+track on the grid and on the ellipsoid (ground spacing within 1e-5 m),
+and undo and redo restoring geometry and
 source. The canvas was driven headless: a vertex dragged under a 45 m
 distance lock lands 45.000 m from its neighbour, shared corners move
 with it, a line drawn with the angle picked from the road meets it at
@@ -410,7 +465,10 @@ in UTM 55 south comes out 49.98 m on the grid (k 0.99961) at grid
 bearing 0.218 degrees (the convergence); the same data reframed to south
 polar stereographic still exports its untouched vertices unchanged; and
 the Sentinel-2 scene warps into either frame (two range requests,
-2.4 MB, at full resolution).
+2.4 MB, at full resolution). A parcel selected and filled at 5 m
+spacing gives one lawnmower track, created and undone as one step;
+five transects 2600 km long from Hobart at true azimuth 200, 150 km
+apart, drawn in south polar stereographic as geodesics.
 
 Known limits: brute-force snapping (fine to some tens of thousands of
 vertices), no attribute editing, no datum shifts (proj4rs, no grids), shared vertices found by
@@ -425,8 +483,8 @@ the stroke did not move are dropped when it ends:
 
 ## 8. Next steps, by value
 
-Done since the first draft: the underlay, a frame from a CRS, and the
-grid-and-ground switches (section 5.4).
+Done since the first draft: the underlay, a frame from a CRS, the
+grid-and-ground switches (section 5.4) and field patterns (section 5.5).
 
 
 1. **Construction guides and typed relative input**: reference points
@@ -441,7 +499,15 @@ grid-and-ground switches (section 5.4).
 4. **More ground**: loxodromes as a third edge model; geodesic areas
    and lengths in the feature panel; a traverse entered as true bearings
    and ground distances (survey style) closing with its misclose shown.
-5. **The log as a table**: one row per operation, kept in browser
+5. **Parametric shapes and curves**: arcs, circles and circular
+   strings, offsets, and shapes held to a parameter (an area, a minimum
+   angle, a width). Each is a feature that keeps its parameters beside
+   the vertices it produces, so either can be edited: change the radius
+   and the vertices follow, drag a vertex and the shape becomes plain
+   geometry again unless asked to re-solve. Patterns (5.5) are the first
+   case. A solver (2.4) only runs when asked; nothing is held without
+   being chosen.
+6. **The log as a table**: one row per operation, kept in browser
    storage between visits, downloadable as Parquet. Only then think about
    writing back to a source.
 
@@ -454,9 +520,10 @@ grid-and-ground switches (section 5.4).
    while the operation set is settling; a Rust crate (on `geo` and
    `rstar`) when a second front end wants it, probably in its own
    repository rather than as a `wxy-` crate.
-3. **One-shot or persistent constraints.** Recommended: one-shot, as
-   GIS tools do; persistent constraints only if a real need appears, and
-   then through an existing solver.
+3. **One-shot or persistent constraints.** Recommended: one-shot by
+   default, as GIS tools do; persistence opt-in, per feature, as a
+   parametric feature (section 8, item 5), and through an existing
+   solver if one is ever needed.
 4. **The write path.** Recommended: the log is the edit; "source plus
    log" and "rewrite touched vertices only" are both valid write-backs,
    and neither is chosen until a real source is being edited.
