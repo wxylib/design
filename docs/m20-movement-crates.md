@@ -508,3 +508,63 @@ choice and the rest of the options are in the image's own README.
 4. The GHRSST real-data case against xESMF.
 5. After rwarp's spherical measure: areas in steradians and the full
    SCRIP grid variables, so CDO and NCO read the export too.
+
+## 9. The GPU path beside rwarp
+
+Browser maps in any CRS draw rasters by a mesh warp: a grid of
+triangles in display space, each vertex given texture coordinates by the
+inverse projection, the GPU interpolating linearly inside each triangle.
+It is approximate by construction (the error is the curvature inside a
+triangle) and fast enough to redraw while panning. rwarp is the exact
+engine; the two are complementary, and neither replaces the other.
+
+Two implementations now exist:
+
+- **Michael's ortho-cog-viewer and wgis mesh engine**, with refinement by
+  screen-pixel texture error, the map edge found by bisection and
+  classified as a limb, a cut or a hole, and poles handled in periodic
+  textures; rwarp already serves it as the exact warp.
+- **math.gl 5.0.0-beta.1** (visgl/math.gl#367, #368): the same mesh plus
+  texture warp, packaged as a renderer-neutral npm module with a CRS
+  resolver over proj-wasm (batched in a worker) and mesh clipping that
+  keeps provenance. deck.gl layers will use it once per-view CRS
+  (visgl/deck.gl#10874) lands. Its Antarctic pole fixture is currently
+  wrong, which is the case the wgis pole handling covers.
+
+### 9.1 Decisions
+
+1. **Should the browser mesh core target math.gl's mesh and CRS types,
+   or stay separate and be compared?** Recommended: stay separate while
+   math.gl is in beta, and keep the core's output to plain typed arrays
+   (positions, texture coordinates, triangle indices, a parent index per
+   triangle) so an adapter to math.gl's types is a few lines when it
+   settles. Compare the two on one shared case set (the Antarctic pole,
+   an orthographic limb, an antimeridian cut, a hole in the source),
+   scored against rwarp (9.2). Revisit when math.gl 5.0 is released and
+   deck.gl#10874 is merged. Get: no tracking of a moving API, and a
+   measured answer when the choice is made. Cost: a second
+   implementation lives on for now. If not: either the core is rewritten
+   to a beta API, or the comparison is never made and the better
+   refinement stays unknown to the ecosystem.
+2. **Should the wgis edge and pole handling be offered upstream?**
+   Recommended: yes, first as an issue on math.gl with the pole fixture's
+   failure reproduced, the bisection and pole approach described, and a
+   pull request offered if the maintainers want one. This is the
+   upstream-first principle of doc 04: the packaged module is where
+   deck.gl users will get their warp, so a fix there reaches more people
+   than a separate engine does. It is Michael's code and his call to make
+   the contact.
+
+### 9.2 What rwarp offers the GPU path
+
+An oracle. A mesh warp's error is the difference between its frame and
+an exact warp of the same view, and rwarp computes the exact warp in the
+browser too (`rwarp-wasm`, nearest or bilinear, the same transformer).
+So one harness can score any mesh engine, wgis or math.gl, in screen
+pixels of texture error per case: the measurement behind 9.1's
+comparison, and a test either project could adopt. Nothing in rwarp
+changes for it. Where the mesh needs exactness (a measured overlay, a
+conservative regrid), the answer stays rwarp, not a finer mesh.
+
+Roadmap additions: wxylib/web gains the comparison page (the case set,
+both engines, the rwarp difference image); rwarp gains nothing new.
