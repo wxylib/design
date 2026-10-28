@@ -1,0 +1,14 @@
+[package]
+name = "fpbench"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+rwarp = { git = "https://github.com/hypertidy/rwarp", rev = "4ae1446", default-features = false, features = ["proj4rs"] }
+controlledburn = { git = "https://github.com/hypertidy/controlledburn-rs", rev = "c66deb2" }
+
+[profile.release]
+debug = 1
+
+[workspace]

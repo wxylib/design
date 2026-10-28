@@ -1,0 +1,12 @@
+    with ApproxTransformer(0.125): new 0.33 us (7.5x old exact), max diff vs exact 0.85
+2.5km d=1: average old 2.53 us new 0.68 us (3.7x), max diff 0.0e0, nan mismatch 0; mode new 0.60 us, 0 of 16384 differ
+    with ApproxTransformer(0.125): new 2.41 us (2.9x old exact), max diff vs exact 0.91
+2.5km d=4: average old 7.04 us new 3.36 us (2.1x), max diff 0.0e0, nan mismatch 0; mode new 3.87 us, 0 of 16384 differ
+    with ApproxTransformer(0.125): new 0.64 us (9.0x old exact), max diff vs exact 0.41
+10km d=1: average old 5.73 us new 1.11 us (5.2x), max diff 0.0e0, nan mismatch 0; mode new 0.89 us, 0 of 16384 differ
+    with ApproxTransformer(0.125): new 2.17 us (3.9x old exact), max diff vs exact 0.39
+10km d=4: average old 8.46 us new 3.22 us (2.6x), max diff 0.0e0, nan mismatch 0; mode new 3.45 us, 0 of 16384 differ
+    with ApproxTransformer(0.125): new 2.11 us (6.0x old exact), max diff vs exact 0.18
+50km d=1: average old 12.74 us new 2.32 us (5.5x), max diff 0.0e0, nan mismatch 0; mode new 2.59 us, 0 of 16384 differ
+    with ApproxTransformer(0.125): new 3.69 us (4.3x old exact), max diff vs exact 0.35
+50km d=4: average old 15.75 us new 5.14 us (3.1x), max diff 2.4e-7, nan mismatch 0; mode new 5.25 us, 0 of 16384 differ
