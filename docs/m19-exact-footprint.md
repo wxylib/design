@@ -50,11 +50,18 @@ how much of the cost is necessary?
   2 to 5x, against 13 to 20x for rwarp 0.2. From about 16:1 both are faster
   than the box.
 - **Patches.** controlledburn-rs gains `CoverageWindow` and `RowPrefix`
-  (version 0.2.2, property-tested against `burn`). rwarp's exact footprint
-  uses the lattice and the window: unchanged output under exact
-  transforms, 2.4 to 6x faster, and up to 8x with the approximate
-  transformer. Both are in `/mnt/project-files/exact-footprint/` for
-  review; nothing is pushed to hypertidy.
+  (version 0.2.2, property-tested against `burn`, with segments clipped to
+  the window before the walk; hypertidy/controlledburn-rs#13). rwarp's
+  exact footprint uses the lattice and the window (hypertidy/rwarp#11):
+  output unchanged under exact transforms except in pixels that straddle
+  the antimeridian, 2.4 to 6x faster, and up to 8x with the approximate
+  transformer. Checking it found an off-by-one in rwarp's
+  `ApproxTransformer` that dropped whole columns to nodata under either
+  footprint (hypertidy/rwarp#10).
+- **Next: adaptive densify with bigcurve.** Refine only the lattice edges
+  that bend more than a fraction of a source cell, with hypertidy/bigcurve-rs
+  as the engine once it has a planar edge model and a batched forward map
+  (section 5.4).
 
 ## 1. The call path
 
@@ -280,18 +287,64 @@ exact only for axis-aligned pixels, and there the boundary integral is
 already cheap: horizontal edges have `dy = 0` and contribute nothing, so
 only the two vertical edges are walked. The window has the same property.
 
-Densify can be chosen per lattice edge. The midpoint of each edge is on
-the densify-2 lattice, itself a scanline, so transforming it costs one
-more approximate line per band. The area between edge and chord is about
-two thirds of the edge length times the sagitta (the midpoint's distance
-from the chord), and the error falls as 1/d^2, so `d = ceil(sqrt(sagitta /
-tolerance))` per edge reaches a tolerance with no wasted points. Not built;
-the 1/d^2 law in section 3 is the evidence it would work.
+Densify can be chosen per lattice edge. The area between an edge and its
+chord is about two thirds of the edge length times the sagitta (the
+midpoint's distance from the chord), and the error falls as 1/d^2
+(section 3), so refining only the edges whose sagitta exceeds a tolerance
+reaches that tolerance with no wasted points. Most edges need nothing: in
+the EPSG:3031 cases, densify 1 is already within 1e-3 of densify 64 except
+for pixels of 100 km and more.
+
+That is the job hypertidy/bigcurve-rs is built for: an adaptive densifier
+that inserts vertices only where a forward map bends an edge, judged in
+the target plane, with identical refinement of shared edges. Here:
+
+| bigcurve | in the exact footprint |
+|---|---|
+| source plane, edge model | destination pixel space, planar (pixel edges are straight there) |
+| forward map | the warp's transformer, destination to source; any `Transformer`, not only a CRS: geolocation arrays, GCPs |
+| target plane, tolerance | source pixel space; a fraction of a source cell, the same unit for every grid and CRS |
+| midpoint test | the sagitta test above (d3-geo's perpendicular distance) |
+| shared segments refined once | each lattice edge refined once and read by both of its pixels, as the shared-edge integral of 5.3 requires |
+
+The shape is a hybrid: transform the lattice at densify 1 as scanlines
+(section 5.1), test each edge, and hand only the failing edges to bigcurve.
+Conditions for it to work:
+
+- **Refinement goes through the exact transformer.** An
+  `ApproxTransformer` interpolates linearly between exact samples, so a
+  midpoint transformed through it lies on the chord by construction and
+  refinement would never trigger. Either the refinement points use the
+  exact transformer, or the approximation's error threshold is itself the
+  tolerance.
+- **A batched forward map.** bigcurve transforms one midpoint at a time;
+  the lattice's gain came from batching. The forward map needs the shape
+  of rwarp's `Transformer::transform` (slices in, per-point success out),
+  so a row band's failing edges refine level by level in one call each.
+- **A planar edge model.** bigcurve-rs has the great-circle model only; the
+  planar model is its stage 2. It stays pure Rust and builds for wasm.
+- **A rule for failed points.** A pixel with any failed point is skipped
+  today. Near the rim of a transform's valid region (an orthographic
+  limb, a pole), refinement needs a rule: give up on the edge, or bisect
+  towards the boundary.
+- **Scope.** Only `Footprint::Exact` gains from it. The box footprint and
+  the kernels use no edges, so GDAL parity is unaffected.
+
+Source-window planning is a related but different case. rwarp's
+`compute_source_window` follows GDAL (a fixed number of samples per side).
+An adaptive version would be opt-in and must guarantee containment, since
+under-sampling a sagging edge there cuts data; in practice windows fail at
+poles and the antimeridian more often than from too few samples.
+
+The lattice is the structure adaptive refinement extends, so nothing in
+the patches waits on bigcurve.
 
 ## 6. The patches
 
-Both are in `/mnt/project-files/exact-footprint/`, as `git format-patch`
-files on the current `main` of each repository.
+Both were delivered as `git format-patch` files and are now pull requests:
+hypertidy/controlledburn-rs#13 and hypertidy/rwarp#11 (which builds on
+hypertidy/rwarp#10). The description below is of the patches as revised in
+review.
 
 **controlledburn-rs** (`0001-CoverageWindow-and-RowPrefix...patch`, on
 c66deb2): a new module `window` with
@@ -306,10 +359,23 @@ c66deb2): a new module `window` with
   mean), `integrate_ring` and `integrate_polyline` for shared edges.
 - `ring_area`.
 
+Segments are clipped to the window before the walk
+(`for_each_piece_in`): parts above or below are dropped, parts left or
+right become vertical segments on the side wall over the same rows (exact,
+since both tools book a piece by its height and its x clamped to the box),
+and clip points take the wall's coordinate exactly, interpolating the
+other from the nearer end. Without it the walk stepped through every cell
+wall a segment crosses, so a vertex far away (a transform near a
+singularity can return a huge but finite coordinate) cost time in
+proportion to its distance: 1.5 ms at 1e5 cells, 1.5 s at 1e8, for a 2 x 2
+window.
+
 Tests check both against `burn` in coverage mode on star-shaped rings,
 rings with every vertex on the lattice (edges along cell walls), a ring
 partly outside the window, holes, and shared edges, 20,000 random cases
-clean. Version 0.2.2: additive API. The module docs carry a C++ port note:
+clean, plus any sub-window against the same cells of a window holding the
+whole ring, and rings with vertices at 1e3, 1e8 and 1e12 cells (about
+1e-8 from `burn` at every distance). Version 0.2.2: additive API. The module docs carry a C++ port note:
 both are plain loops over `double` and port line for line to the C++
 controlledburn.
 
@@ -318,13 +384,15 @@ The window is also the natural backend for wxy-warp's index-space cover
 `RowPrefix` gives a zonal mean over a polygon in time proportional to its
 perimeter.
 
-**rwarp** (`0001-Exact-footprint-shared-lattice...patch`, on 4ae1446):
+**rwarp** (written on 4ae1446, ported onto rwarp's later area loop with
+separate source and output types):
 `Footprint::Exact` uses a `Lattice` (section 5.1, with each densify level
 transformed as its own scanline) and a reused `CoverageWindow`. Weights
 follow what `burn` gave (within 1e-6 of 1 is 1, at or below 1e-6 is
 dropped, others rounded to `f32`; full cells reduced before partial ones),
 so every reducer and tie rule sees the same sequence as before. It needs
-controlledburn 0.2.2 (test locally with a `[patch.crates-io]` path entry).
+controlledburn 0.2.2 (built from the controlledburn-rs branch through
+`[patch.crates-io]` until that is published).
 
 | EPSG:3031 tile | rwarp 0.2 | patch, exact | patch, approximate |
 |---|---|---|---|
@@ -338,19 +406,36 @@ controlledburn 0.2.2 (test locally with a `[patch.crates-io]` path entry).
 (Microseconds per pixel, average; speed-up against rwarp 0.2 with exact
 transforms. Mode costs within about 25% of average.)
 
-With exact transforms the patched output equals rwarp 0.2's: average
-identical to 2.4e-7, mode identical in every pixel, nodata pattern
-identical, on all six cases with a source full of nodata blocks. All rwarp
-tests pass, including the mode fixtures that run through the exact
-footprint. rwarp's timing test goes from 327 to 55 ms at densify 1 and
-361 to 84 ms at densify 4, against 18 ms for the box. With the approximate
-transformer the output differs by the approximation itself (up to 0.9
-field units on a blocky field), as the box path's does.
+Output against rwarp's main branch, for EPSG:4326 0.1 degree (south of
+-50) into EPSG:3031 at 50, 25 and 2.5 km; Average, Med, Rms and Mode;
+densify 1 and 4; nodata holes, three bands with per-band nodata, Float32
+to Byte, and a tile with a destination offset:
+
+- **Exact transformer, densify 1:** unchanged apart from last-bit float
+  differences (at most 4e-6). All rwarp tests pass, including the mode
+  fixtures that run through the exact footprint.
+- **Exact transformer, densify 4:** a few dozen to a few hundred pixels
+  differ (up to 0.03 in a mean, two categories in a mode), all in one
+  column: the 180 degree meridian below the pole. The exact footprint has
+  never handled the antimeridian; the outline folds there, and `burn`'s
+  winding rule and the window's signed sum give different wrong answers
+  (section 7).
+- **ApproxTransformer:** whole columns of the 50 km case went to nodata
+  even at a 1e-9 threshold, under the box footprint too. The cause was an
+  off-by-one in rwarp's `ApproxTransformer`: when subdivision reached a
+  left half of two points it returned the point untransformed and flagged
+  it failed, where GDAL transforms it (fixed in hypertidy/rwarp#10, with
+  tests). With the fix a near-zero threshold reproduces the exact output
+  everywhere, and at 0.125 both footprints differ from exact by similar
+  amounts, with no nodata changes.
+
+rwarp's timing test goes from 327 to 53 ms at densify 1 and 361 to 94 ms
+at densify 4, against 17 ms for the box.
 
 Not in the patch, as follow-ups by value: the boundary integral for
 `Average` and `Rms` without thresholds (a further 1.5 to 2x at low ratios,
 more at high ratios, but per-band prefixes under `BandNodata` and a second
-code path); adaptive densify; and reusing burn scratch inside controlledburn
+code path); adaptive densify (section 5.4); and reusing burn scratch inside controlledburn
 itself (worth about 40% of every `burn` call, for every caller, not only
 rwarp).
 
@@ -364,8 +449,9 @@ rwarp).
   is no better.
 - **Antimeridian.** Neither the exact footprint nor the patch handles a
   pixel that straddles the source's longitude seam: its outline spans the
-  whole source width. The box has GDAL's wrap detection. Unchanged by the
-  patch.
+  whole source width and folds. The box has GDAL's wrap detection. With
+  densify above 1 the patch's answer there differs from rwarp 0.2's, both
+  wrong (section 6).
 - **Precision.** Row prefix sums are `f64` and local to the source window,
   so a lookup differences numbers no larger than a row's sum; at 8,000
   columns of values near 1e4 that is about 1e-8 absolute. The window keeps
