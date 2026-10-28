@@ -520,7 +520,7 @@ engine; the two are complementary, and neither replaces the other.
 
 Two implementations now exist:
 
-- **Michael's ortho-cog-viewer and wgis mesh engine**, with refinement by
+- **The ortho-cog-viewer and wgis mesh engine**, with refinement by
   screen-pixel texture error, the map edge found by bisection and
   classified as a limb, a cut or a hole, and poles handled in periodic
   textures; rwarp already serves it as the exact warp.
@@ -552,8 +552,8 @@ Two implementations now exist:
    pull request offered if the maintainers want one. This is the
    upstream-first principle of doc 04: the packaged module is where
    deck.gl users will get their warp, so a fix there reaches more people
-   than a separate engine does. It is Michael's code and his call to make
-   the contact.
+   than a separate engine does. Making that contact is for the wgis
+   maintainer.
 
 ### 9.2 What rwarp offers the GPU path
 
