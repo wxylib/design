@@ -8,6 +8,9 @@ more domain on the ladder and moves them between rungs, but does not
 become a point cloud processing toolkit. Nothing is built from it; it
 becomes work only through a numbered document.
 
+**Implementation (2026-10-28):** Decided, not built. The stance in section 8 holds; no point
+cloud stage has been opened.
+
 ## 1. Summary
 
 How do PDAL, lidar and points generally fit on the type ladder, and what

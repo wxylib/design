@@ -6,6 +6,11 @@ document. Claims are marked measured (read from the files, or from a
 source table kept in `measurements/`), reported (from header reads made
 elsewhere, not repeated here) or inferred.
 
+**Implementation (2026-10-28):** Open. One prerequisite landed: the TIFF horizontal predictor
+(Predictor=2) as a codec, `wxy-predictor` ([core #13](https://github.com/wxylib/core/pull/13)). Predictor=3,
+a rectilinear `ChunkGrid`, per-axis chunk edges in mdim-refs and the
+truncate codec (section 8) are open.
+
 The question: virtualise a COG mosaic whose files overlap, which needs what
 Zarr calls rectilinear chunks. REMA v2 2 m (5800 COGs,
 AustralianAntarcticDivision/remav2 `data-raw/rema_index2m.parquet`) and the

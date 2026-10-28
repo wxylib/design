@@ -5,6 +5,12 @@ says where it would land, and becomes work only when the owning document
 or repository picks it up. Changes it proposes to doc 03 are listed in
 section 5.
 
+**Implementation (2026-10-28):** Partly implemented. The section 6 decisions are built as
+stage S3c: `wxy-refs` ([core 9b486a6](https://github.com/wxylib/core/commit/9b486a6); [core #10](https://github.com/wxylib/core/pull/10) to
+[core #14](https://github.com/wxylib/core/pull/14)) with the cache inside. Open: the Bluelink-shaped CI
+fixture, r and py bindings pinned to an old core, and tables of tens of
+millions of rows (section 8).
+
 An assessment of wxylib was written from the adjacent cogcache,
 blocklist, sds and bowerbird work (2026-10-17). Its scheme:
 bowerbird and sds as the catalog, a `gdal mdim mosaic` VRT as the plan,

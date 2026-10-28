@@ -6,6 +6,15 @@ that add the most value, and a set of uses to aim the work at. It does
 not change any decision; anything here becomes work by being picked up
 into a numbered document or [commit-criteria.md](commit-criteria.md).
 
+**Implementation (2026-10-28):** Partly implemented. wxy reads the flat, kerchunk and Icechunk
+views identically to GDAL on the `mdim.vrt` ([core #11](https://github.com/wxylib/core/pull/11),
+[core #12](https://github.com/wxylib/core/pull/12), [core #14](https://github.com/wxylib/core/pull/14); oracle [fixtures #6](https://github.com/wxylib/fixtures/pull/6),
+[fixtures #7](https://github.com/wxylib/fixtures/pull/7)); the BRAN2023 example ([docs #16](https://github.com/wxylib/docs/pull/16),
+[docs #17](https://github.com/wxylib/docs/pull/17)) and web page ([web #9](https://github.com/wxylib/web/pull/9)); the second dataset
+(5.4) is GHRSST MUR ([core #13](https://github.com/wxylib/core/pull/13), [docs #23](https://github.com/wxylib/docs/pull/23)). Open: a
+permanent public home (5.1), the CI fixture (5.2), `stored_bytes` and
+leading-dimension selection in plans (5.3), and scale (5.5).
+
 ## Summary
 
 - A year of BRAN2023 daily ocean temperature (60 GB in twelve netCDF

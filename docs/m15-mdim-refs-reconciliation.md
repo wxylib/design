@@ -9,6 +9,12 @@ and GHRSST MUR analysed_sst (935,496 chunks for 2024 and 22,766,292 for
 the full series, COGs on source.coop). The spec edits recommended in
 section 4 are made in the same change.
 
+**Implementation (2026-10-28):** Implemented on the wxylib side. The spec edits of section 4
+are in the same change ([design #30](https://github.com/wxylib/design/pull/30)) and the fixtures use the
+settled placements and info forms ([fixtures #9](https://github.com/wxylib/fixtures/pull/9)). The
+implementation patch of section 5 belongs to the producer. Per-axis
+chunk edges remain open in the spec.
+
 ## Summary
 
 - The 2026-10-03 draft and the wxylib copy of the spec say the same

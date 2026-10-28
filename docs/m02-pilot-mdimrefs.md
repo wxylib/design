@@ -3,6 +3,10 @@
 Status: musing, 2026-10-16. A small proposal in three slices, each with its
 own gate. It becomes work only by being picked up into a numbered document.
 
+**Implementation (2026-10-28):** Implemented. P1 fixture [fixtures #1](https://github.com/wxylib/fixtures/pull/1), P2 reader in
+`wxy-virtual` [core #2](https://github.com/wxylib/core/pull/2), P3 real data as the OISST walk-through
+[docs #3](https://github.com/wxylib/docs/pull/3). The table is now read directly by `wxy-refs` (stage S3c).
+
 ## Why this pilot
 
 wxylib's design leaves one question open at gate 4 (design doc 03, "Open
