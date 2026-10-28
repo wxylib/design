@@ -153,7 +153,17 @@ and edge snapping. None found offers typed locks on distance, angle or
 coordinates, and all draw on the map library's frame, which is Web
 Mercator for most.
 
-### 2.7 What to take
+### 2.7 Brushes that reshape
+
+Landscape Mapper had a Nudge tool: a soft ball, sized and weighted to
+taste, that densified a segment as it touched it and let the line be
+pushed into shape, which suits tracing fine detail far better than
+placing vertex after vertex. Inkscape's Tweak tool is the same family in
+a drawing program (push, shrink and roughen modes, with a width and a
+force). The idea for this canvas: a brush is an operation on a ring
+like any other, so it lands in the log as one reshape per stroke.
+
+### 2.8 What to take
 
 | Idea | From | Taken |
 |------|------|-------|
@@ -168,6 +178,7 @@ Mercator for most.
 | Inferred alignments (extension, x or y of a visited vertex) | QGIS, CAD | next |
 | Edit as a pending transaction on a record | Manifold | as the operation log |
 | Edit session as a diff against a source | OSM editors | as the operation log |
+| A nudge brush that densifies as it pushes | Landscape Mapper, Inkscape | yes, prototype |
 | Persistent constraints with a solver | Sketchers | later, if ever |
 
 ## 3. The editing primitives
@@ -186,6 +197,8 @@ Grouped by what the person does, with where each stands.
 | Place | two-circle and circle-line intersections from typed radii | later |
 | Reshape | move, insert (midpoint drag, double click), delete vertex | prototype |
 | Reshape | shared vertices move together | prototype |
+| Reshape | nudge brush: densify what the ball touches (spacing in screen pixels), push out of the ball or smudge along; size, spacing, power | prototype |
+| Reshape | brush variants: smooth, simplify under the brush, pull toward a snapped target | later |
 | Reshape | insert into a neighbour's shared segment (topological insert) | next |
 | Reshape | select many vertices; move, rotate, scale by typed values | next |
 | Reshape | split a line at a vertex; merge; reverse; close and open | next |
@@ -244,8 +257,9 @@ No input or output, no DOM, no map library. Five pieces:
 - **snap**: candidates from the document near a point;
 - **constrain**: section 4, a pure function of the pointer, the previous
   vertex, the previous direction, the locks and the snapped segment;
-- **operations**: move, insert, delete, add, remove and batch, each a
-  plain object with an exact inverse;
+- **operations**: move, insert, delete, add, remove, batch and reshape
+  (a ring replaced whole, as a brush stroke does), each a plain object
+  with an exact inverse;
 - **log**: the applied operations in order; undo and redo walk it, and
   replaying it over the source gives the edited features.
 
@@ -333,11 +347,12 @@ sharing boundaries on a block turned 7 degrees, a road, a creek and four
 trees, on a projected grid) so it runs with no network, and takes any
 GeoJSON by file, drop or `?url=`.
 
-What it does is the "prototype" rows of section 3. The engine has twelve
+What it does is the "prototype" rows of section 3. The engine has fourteen
 tests under node, run in the web repo's CI: exact round trips (z kept),
 local-frame edits that leave untouched longitude and latitude bit for
 bit, snap priority, each lock and their combinations, both angle
-conventions, batch operations, and undo and redo restoring geometry and
+conventions, batch operations, the nudge brush (densify, push to the
+rim, smudge falloff), and undo and redo restoring geometry and
 source. The canvas was driven headless: a vertex dragged under a 45 m
 distance lock lands 45.000 m from its neighbour, shared corners move
 with it, a line drawn with the angle picked from the road meets it at
@@ -349,6 +364,12 @@ Known limits: brute-force snapping (fine to some tens of thousands of
 vertices), no underlay, no attribute editing, shared vertices found by
 exact coincidence only, and the local plane is an approximation (a few
 parts per thousand across a city), labelled as such on the page.
+
+The nudge brush pushing a bend into the creek. The spacing is in screen
+pixels, so the same stroke zoomed in adds finer vertices; new vertices
+the stroke did not move are dropped when it ends:
+
+![A nudge stroke pushing a bend into a line](img/m18-nudge.jpg)
 
 ## 8. Next steps, by value
 
