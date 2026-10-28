@@ -1,0 +1,105 @@
+{"engine":"proj4rs 0.1.10","fwd":[892545.3215649184,-1374399.2692944375],"fwd_err":null,"id":"3031","inv":[147.0,-74.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[892545.3215649184,-1374399.2692944375],"fwd_err":null,"id":"3031","inv":[147.0,-74.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[892545.3215649184,-1374399.2692944375],"fwd_err":null,"id":"3031","inv":[147.0,-74.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[0.0,2187973.8190250075],"fwd_err":null,"id":"3412","inv":[0.0,-69.99999999999994],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[0.0,2187973.8190250075],"fwd_err":null,"id":"3412","inv":[0.0,-69.99999999999994],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[0.0,2187973.8190250075],"fwd_err":null,"id":"3412","inv":[0.0,-69.99999999999994],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[0.0,-1633879.4974707842],"fwd_err":null,"id":"3413","inv":[-45.0,74.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[0.0,-1633879.4974707842],"fwd_err":null,"id":"3413","inv":[-45.0,74.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[0.0,-1633879.4974707842],"fwd_err":null,"id":"3413","inv":[-45.0,74.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[2708465.2282142835,-477575.496044888],"fwd_err":null,"id":"3976","inv":[100.0,-64.99999999999969],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[2708465.2282142835,-477575.496044888],"fwd_err":null,"id":"3976","inv":[100.0,-64.99999999999969],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[2708465.2282142835,-477575.496044888],"fwd_err":null,"id":"3976","inv":[100.0,-64.99999999999969],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[1185134.122577054,2052712.5140870197],"fwd_err":null,"id":"9354","inv":[29.999999999999993,-67.9999999999999],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":null,"fwd_err":"dst: Projection not found","id":"9354","inv":null,"inv_err":""}
+{"engine":"terrio-crs 0.1.0","fwd":[1185134.122577054,2052712.5140870197],"fwd_err":null,"id":"9354","inv":[29.999999999999993,-67.9999999999999],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[1362365.5637248761,-3902190.4297908046],"fwd_err":null,"id":"3577","inv":[147.0,-35.000000000000014],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[1362365.5637248764,-3902190.429790802],"fwd_err":null,"id":"3577","inv":[147.0,-35.0],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[1362365.5637248764,-3902190.429790802],"fwd_err":null,"id":"3577","inv":[147.0,-35.000000000000036],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[500000.0000000014,5350223.775180822],"fwd_err":null,"id":"32755","inv":[147.0,-41.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[500000.0000000014,5350223.775180822],"fwd_err":null,"id":"32755","inv":[147.0,-41.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[500000.0,5350223.775180822],"fwd_err":null,"id":"32755","inv":[147.00000000000003,-42.0],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[16363965.146611214,-5160979.444049781],"fwd_err":null,"id":"3857","inv":[147.0,-42.0],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[16363965.146611214,-5160979.444049779],"fwd_err":null,"id":"3857","inv":[147.0,-41.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[16363965.146611214,-5160979.444049781],"fwd_err":null,"id":"3857","inv":[147.0,-42.0],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Projection not found","id":"6933","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":[14183483.196881786,-4900750.206464033],"fwd_err":null,"id":"6933","inv":[147.0,-41.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[14183483.196881786,-4900750.206464033],"fwd_err":null,"id":"6933","inv":[147.0,-41.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[-99779.5629638888,-2842254.806876369],"fwd_err":null,"id":"3112","inv":[133.0,-24.999999999999257],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[-99779.5629638888,-2842254.806876369],"fwd_err":null,"id":"3112","inv":[133.0,-24.999999999999257],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[-99779.5629638888,-2842254.806876369],"fwd_err":null,"id":"3112","inv":[133.0,-25.00000000000001],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[147.0,-42.0],"fwd_err":null,"id":"4283-7844","inv":[147.00000504277864,-41.999987009918144],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[147.0,-42.0],"fwd_err":null,"id":"4283-7844","inv":[147.00000504277864,-41.999987009918144],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[147.00000504277864,-41.99998700991814],"fwd_err":null,"id":"4283-7844","inv":[146.99999999999704,-41.99999999999935],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: NAD grid not available","id":"4269-26711","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":null,"fwd_err":"dst: NAD grid not available","id":"4269-26711","inv":null,"inv_err":""}
+{"engine":"terrio-crs 0.1.0","fwd":[500079.2805508851,3761959.566469227],"fwd_err":null,"id":"4269-26711","inv":[-117.00000000287777,34.00000000093466],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"Tolerance condition not satisfied","id":"laea-south","inv":[147.0,-69.99999999905758],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[1210008.6882868956,-1863249.9850042306],"fwd_err":null,"id":"laea-south","inv":[147.0,-69.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[1210008.6882868945,-1863249.985004229],"fwd_err":null,"id":"laea-south","inv":[147.0,-69.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[385789.1009893843,-2187918.7146477555],"fwd_err":null,"id":"laea-north","inv":[10.0,69.99999999905758],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[385789.1009893824,-2187918.7146477452],"fwd_err":null,"id":"laea-north","inv":[10.0,69.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[385789.1009893821,-2187918.7146477434],"fwd_err":null,"id":"laea-north","inv":[10.0,69.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[1823393.1637379192,-2807779.248099047],"fwd_err":null,"id":"aeqd-south","inv":[147.0,-59.999999999978535],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[1823393.1637392212,-2807779.2481010524],"fwd_err":null,"id":"aeqd-south","inv":[147.0,-59.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[1823393.1637379192,-2807779.248099047],"fwd_err":null,"id":"aeqd-south","inv":[147.0,-59.999999999978535],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[256182.9858450904,217677.0705922459],"fwd_err":null,"id":"aeqd-oblique","inv":[150.0,-39.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[256182.9858450904,217677.0705922459],"fwd_err":null,"id":"aeqd-oblique","inv":[150.0,-39.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[256182.9858458908,217677.07059220175],"fwd_err":null,"id":"aeqd-oblique","inv":[149.9999999999906,-39.99999999999988],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[892545.3215649184,-1374399.2692944375],"fwd_err":null,"id":"stere-south","inv":[147.0,-74.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[892545.3215649184,-1374399.2692944375],"fwd_err":null,"id":"stere-south","inv":[147.0,-74.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[892545.3215649184,-1374399.2692944375],"fwd_err":null,"id":"stere-south","inv":[147.0,-74.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Projection not found","id":"ob_tran-cordex","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":null,"fwd_err":"dst: Projection not found","id":"ob_tran-cordex","inv":null,"inv_err":""}
+{"engine":"terrio-crs 0.1.0","fwd":[167.91934779281974,77.13262375623069],"fwd_err":null,"id":"ob_tran-cordex","inv":[9.99999999999999,49.999999999999986],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Projection not found","id":"ortho","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":[-673725.0068057647,1294242.3825128307],"fwd_err":null,"id":"ortho","inv":[140.0,-30.000000000000004],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[-673725.0068057647,1294242.3825128307],"fwd_err":null,"id":"ortho","inv":[140.0,-29.999999999999993],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[497786.8934945899,-4039773.456106124],"fwd_err":null,"id":"geos-himawari","inv":[147.0,-41.99999999999997],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[497786.8934945899,-4039773.456106124],"fwd_err":null,"id":"geos-himawari","inv":[147.0,-41.99999999999997],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[497786.8934945899,-4039773.456106124],"fwd_err":null,"id":"geos-himawari","inv":[146.99999999999997,-41.99999999999986],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[-468595.77315508184,3087367.4762363513],"fwd_err":null,"id":"geos-goes","inv":[-79.99999999999999,29.999999999999932],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[-468595.77315508184,3087367.4762363513],"fwd_err":null,"id":"geos-goes","inv":[-79.99999999999999,29.999999999999932],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[-468595.7731550819,3087367.4762363518],"fwd_err":null,"id":"geos-goes","inv":[-80.00000000000001,30.000000000000075],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Projection not found","id":"sinu-modis","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":[12147202.041785443,-4670192.183019398],"fwd_err":null,"id":"sinu-modis","inv":[147.0,-42.0],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[12147202.041785443,-4670192.183019398],"fwd_err":null,"id":"sinu-modis","inv":[147.0,-42.0],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":[12249358.90964633,-5011701.366996126],"fwd_err":null,"id":"moll","inv":[146.99999999999994,-41.99999999999998],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[12249358.90964633,-5011701.366996126],"fwd_err":null,"id":"moll","inv":[146.99999999999994,-41.99999999999998],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[12249358.90964633,-5011701.366996126],"fwd_err":null,"id":"moll","inv":[146.99999999999994,-41.999999999999986],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Projection not found","id":"eqearth","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":[12332167.823895983,-5142316.902045586],"fwd_err":null,"id":"eqearth","inv":[146.99999999999997,-41.999999999999986],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[12332167.823895983,-5142316.902045586],"fwd_err":null,"id":"eqearth","inv":[146.99999999999997,-41.999999999999986],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Projection not found","id":"robin","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":[12664073.708605956,-4488495.335151117],"fwd_err":null,"id":"robin","inv":[147.0,-41.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[12664073.708605956,-4488495.335151117],"fwd_err":null,"id":"robin","inv":[147.0,-42.0],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Projection not found","id":"igh","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":null,"fwd_err":"dst: Projection not found","id":"igh","inv":null,"inv_err":""}
+{"engine":"terrio-crs 0.1.0","fwd":null,"fwd_err":"dst: coordinate reference system: unsupported projection: +proj=igh; enable the wbprojection-fallback feature","id":"igh","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.1.10","fwd":[16363965.146611214,-4675418.613317491],"fwd_err":null,"id":"eqc","inv":[147.0,-41.786365050926726],"inv_err":null}
+{"engine":"proj4rs 0.3.0","fwd":[16363965.146611214,-4675418.613317491],"fwd_err":null,"id":"eqc","inv":[147.0,-41.786365050926726],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[16363965.146611214,-4651636.87957148],"fwd_err":null,"id":"eqc","inv":[147.0,-41.99999999999574],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Projection not found","id":"gnom-south","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":[2003344.9809426307,-3084880.7465873486],"fwd_err":null,"id":"gnom-south","inv":[147.0,-59.999999999999986],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":[2003344.9809426307,-3084880.746587348],"fwd_err":null,"id":"gnom-south","inv":[147.0,-59.999999999999986],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Projection not found","id":"tpers","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":[-234304.8698010481,150391.3027602154],"fwd_err":null,"id":"tpers","inv":[145.0,-39.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":null,"fwd_err":"dst: coordinate reference system: unsupported projection: +proj=tpers; enable the wbprojection-fallback feature","id":"tpers","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Projection not found","id":"nsper","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":[-170170.86224344166,220154.73629119326],"fwd_err":null,"id":"nsper","inv":[145.0,-39.99999999999999],"inv_err":null}
+{"engine":"terrio-crs 0.1.0","fwd":null,"fwd_err":"dst: coordinate reference system: unsupported projection: +proj=nsper; enable the wbprojection-fallback feature","id":"nsper","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Unrecognized format","id":"3031-wkt2","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":null,"fwd_err":"dst: Unrecognized format","id":"3031-wkt2","inv":null,"inv_err":""}
+{"engine":"terrio-crs 0.1.0","fwd":[892545.3215649184,-1374399.2692944375],"fwd_err":null,"id":"3031-wkt2","inv":[147.0,-74.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Unrecognized format","id":"3031-projjson","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":null,"fwd_err":"dst: Unrecognized format","id":"3031-projjson","inv":null,"inv_err":""}
+{"engine":"terrio-crs 0.1.0","fwd":null,"fwd_err":"dst: coordinate reference system: cannot parse '{\"$schema\":\"https://proj.org/schemas/v0.7/projjson.schema.json\",\"type\":\"ProjectedCRS\",\"name\":\"WGS 84 / Antarctic Polar Stereographic\",\"base_crs\":{\"type\":\"GeographicCRS\",\"name\":\"WGS 84\",\"datum_ensemble\":{\"name\":\"World Geodetic System 1984 ensemble\",\"members\":[{\"name\":\"World Geodetic System 1984 (Transit)\",\"id\":{\"authority\":\"EPSG\",\"code\":1166}},{\"name\":\"World Geodetic System 1984 (G730)\",\"id\":{\"authority\":\"EPSG\",\"code\":1152}},{\"name\":\"World Geodetic System 1984 (G873)\",\"id\":{\"authority\":\"EPSG\",\"code\":1153}},{\"name\":\"World Geodetic System 1984 (G1150)\",\"id\":{\"authority\":\"EPSG\",\"code\":1154}},{\"name\":\"World Geodetic System 1984 (G1674)\",\"id\":{\"authority\":\"EPSG\",\"code\":1155}},{\"name\":\"World Geodetic System 1984 (G1762)\",\"id\":{\"authority\":\"EPSG\",\"code\":1156}},{\"name\":\"World Geodetic System 1984 (G2139)\",\"id\":{\"authority\":\"EPSG\",\"code\":1309}},{\"name\":\"World Geodetic System 1984 (G2296)\",\"id\":{\"authority\":\"EPSG\",\"code\":1383}}],\"ellipsoid\":{\"name\":\"WGS 84\",\"semi_major_axis\":6378137,\"inverse_flattening\":298.257223563},\"accuracy\":\"2.0\",\"id\":{\"authority\":\"EPSG\",\"code\":6326}},\"coordinate_system\":{\"subtype\":\"ellipsoidal\",\"axis\":[{\"name\":\"Geodetic latitude\",\"abbreviation\":\"Lat\",\"direction\":\"north\",\"unit\":\"degree\"},{\"name\":\"Geodetic longitude\",\"abbreviation\":\"Lon\",\"direction\":\"east\",\"unit\":\"degree\"}]},\"id\":{\"authority\":\"EPSG\",\"code\":4326}},\"conversion\":{\"name\":\"Antarctic Polar Stereographic\",\"method\":{\"name\":\"Polar Stereographic (variant B)\",\"id\":{\"authority\":\"EPSG\",\"code\":9829}},\"parameters\":[{\"name\":\"Latitude of standard parallel\",\"value\":-71,\"unit\":\"degree\",\"id\":{\"authority\":\"EPSG\",\"code\":8832}},{\"name\":\"Longitude of origin\",\"value\":0,\"unit\":\"degree\",\"id\":{\"authority\":\"EPSG\",\"code\":8833}},{\"name\":\"False easting\",\"value\":0,\"unit\":\"metre\",\"id\":{\"authority\":\"EPSG\",\"code\":8806}},{\"name\":\"False northing\",\"value\":0,\"unit\":\"metre\",\"id\":{\"authority\":\"EPSG\",\"code\":8807}}]},\"coordinate_system\":{\"subtype\":\"Cartesian\",\"axis\":[{\"name\":\"Easting\",\"abbreviation\":\"E\",\"direction\":\"north\",\"meridian\":{\"longitude\":90},\"unit\":\"metre\"},{\"name\":\"Northing\",\"abbreviation\":\"N\",\"direction\":\"north\",\"meridian\":{\"longitude\":0},\"unit\":\"metre\"}]},\"scope\":\"Antarctic Digital Database and small scale topographic mapping.\",\"area\":\"Antarctica.\",\"bbox\":{\"south_latitude\":-90,\"west_longitude\":-180,\"north_latitude\":-60,\"east_longitude\":180},\"id\":{\"authority\":\"EPSG\",\"code\":3031}}'","id":"3031-projjson","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"src: Unrecognized format","id":"3031-crs84","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":null,"fwd_err":"src: Unrecognized format","id":"3031-crs84","inv":null,"inv_err":""}
+{"engine":"terrio-crs 0.1.0","fwd":[892545.3215649184,-1374399.2692944375],"fwd_err":null,"id":"3031-crs84","inv":[147.0,-74.99999999999999],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Unrecognized format","id":"102020-esri","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":null,"fwd_err":"dst: Unrecognized format","id":"102020-esri","inv":null,"inv_err":""}
+{"engine":"terrio-crs 0.1.0","fwd":[909683.3556637228,-1400789.527551846],"fwd_err":null,"id":"102020-esri","inv":[147.0,-75.0],"inv_err":null}
+{"engine":"proj4rs 0.1.10","fwd":null,"fwd_err":"dst: Unrecognized format","id":"3031-wkt1","inv":null,"inv_err":""}
+{"engine":"proj4rs 0.3.0","fwd":null,"fwd_err":"dst: Unrecognized format","id":"3031-wkt1","inv":null,"inv_err":""}
+{"engine":"terrio-crs 0.1.0","fwd":[892545.3215649184,-1374399.2692944375],"fwd_err":null,"id":"3031-wkt1","inv":[147.0,-74.99999999999999],"inv_err":null}

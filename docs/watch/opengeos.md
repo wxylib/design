@@ -1,7 +1,10 @@
 # Watch: terrio and RustGIS (opengeos)
 
-Status: living tracking note, started 2026-10-24. Updated by a weekly check;
-newest entry first in section 4.
+Status: living tracking note, started 2026-10-24. Updated by a check twice
+a week (Wednesdays and Sundays, from 2026-10-29); newest entry first in
+section 4. terrio is tracked as observation, not a race: its design
+decisions and features are logged where they meet wxylib's stance and
+plans, and wxylib's own contributors now contribute to it.
 Context: [04 landscape](../04-landscape.md), sections 5.2 (terrio's CRS
 engine) and 11 (pure-Rust GDAL alternatives).
 
@@ -18,7 +21,7 @@ than the monthly landscape refresh does.
 | What | Pure-Rust geospatial data I/O and GDAL-style operations: rasters, vectors, point clouds | Desktop GIS (egui) with a web build, CLI, Python, an AI assistant and an MCP server |
 | License | MIT | Apache-2.0 |
 | Builds on | Whitebox Next Gen (`wbraster`, `wbvector`, `wbprojection`), `tiff`, `gribberish`, `geo`, arrow/parquet, netcdf-reader, hdf5-reader; GDAL as an optional backend | `geo`, `proj4rs` 0.2, egui; GeoLibre and Whitebox tools through `rustgis-geolibre`. **Does not depend on terrio** |
-| CRS | Its own engine, no PROJ (doc 04, 5.2) | `proj4rs` |
+| CRS | `terrio-crs`, its own engine as a separate crate, no PROJ (doc 04, 5.2; coverage of wxylib's cases in [crs-coverage.md](crs-coverage.md)) | `proj4rs` |
 | Surfaces | Rust crates, CLI, Python (rasterio-style `terrio.rio`, xarray), terrio-js (wasm, threads, memory64), MCP server | Desktop app, web app, CLI, Python, MCP server |
 
 ## 2. Signals to track
@@ -28,9 +31,9 @@ than the monthly landscape refresh does.
 2. **terrio's conformance table** (`docs/conformance.md`), especially the
    coordinate transformation and datum grid rows. These are the numbers
    behind the CRS-backend question.
-3. **Whether the CRS engine is split out** as its own crate. Michael has
-   asked its authors about their PROJ stance. If it is split out, add it
-   to the rust-proj-capability fixtures.
+3. **terrio-crs** (split out 2026-10-25): releases, the rust-proj-capability
+   columns, and [crs-coverage.md](crs-coverage.md)'s table of wxylib's own
+   cases, rerun at each check against terrio main.
 4. **Overlap with wxylib's plan.** Virtual rasters (VRT), mosaics and
    catalogues, multidimensional arrays, warp, Zarr and GeoZarr, wasm
    builds.
@@ -38,6 +41,10 @@ than the monthly landscape refresh does.
    (zarrs, async-tiff, object_store, proj-core)? So far neither does.
 6. **Downloads and reverse dependencies**, as a check on adoption beyond
    opengeos.
+7. **Design decisions that meet wxylib's stance**: virtual-first versus
+   materialising, GDAL as oracle versus GDAL as backend, CLI-reflects-API,
+   remote I/O (VSI) design, and the tensor and table views of data.
+8. **Contributors**, including wxylib's own, and which areas they work on.
 
 ## 3. What would change a wxylib decision
 
@@ -51,6 +58,42 @@ than the monthly landscape refresh does.
   partner rather than a parallel stack.
 
 ## 4. Log
+
+### 2026-10-28 (terrio fills most CRS gaps; contributors widen)
+
+terrio (about 60 commits since 2026-10-25, no new crates.io release; still
+`terrio` 0.5.0 and `terrio-crs` 0.1.0):
+- **CRS:** geocentric CRSs (#286), PROJJSON parsing (#287) and writing
+  (#311), IAU planetary codes (#293), native tpers and nsper (#294), the
+  general oblique transformation `ob_tran` (#349) and the interrupted
+  Goode homolosine (#343), both contributed by Michael Sumner, and a batch
+  of CRS correctness fixes against GDAL and PROJ (#296). Work on all four
+  gap areas tracked in #269 to #272 has landed on main.
+- **wxylib's own CRS cases:** [crs-coverage.md](crs-coverage.md) runs 35
+  cases. terrio-crs main is exact on 34, against 16 for proj4rs 0.1.10
+  (what core uses) and 24 for proj4rs 0.3.0. The miss is PROJJSON for
+  polar CRSs (the axis `meridian` member).
+- **Overlap with wxylib's plan:**
+  - remote I/O: `terrio vsi` list, copy, delete, move and sync (#302),
+    streamed signed S3 uploads (#345), and cheaper remote reads (#341).
+    This is the VSI ground of m09, built in-house rather than on
+    object_store;
+  - an optional `ndarray` view of rasters (#320), which meets the tensor
+    view in the tensors-and-tables framing;
+  - GeoZarr read and write (`spatial:`, `proj:`, `multiscales`, Zarr v2
+    and v3) is documented in `docs/formats.md`, alongside `wxy-geozarr`;
+  - raster management (overviews, create, edit, update; #304), blending
+    (#346), gdal_grid and ogrlineref (#305), and windowed reads of raw
+    rasters such as SRTM HGT (#342).
+- **Reuse:** still no zarrs, async-tiff, object_store or proj crate.
+- **Contributors:** 10 authors in the history now. Since 2026-10-25:
+  Ben Dyson (CRS correctness, PROJJSON writing, GeoTIFF fixes), William
+  Mark Katzenmeyer (NAVD88 geoids, point cloud heights, hexbin), Michael
+  Sumner (ob_tran, igh), Roozbeh Valavi (ndarray), Alejandra Duque Ropero
+  (warp nodata, shapefile rings), Mazdak Ghasemi (geoid warnings), with
+  Qiusheng Wu writing about two thirds.
+
+RustGIS: not rechecked this time.
 
 ### 2026-10-25 (trigger fired: standalone CRS crate)
 
