@@ -59,6 +59,39 @@ non-affine grid work.
   in source space; wxylib's polar fixtures meet the same case and should
   test for it.
 
+### 2.1 Against the existing browser mesh viewers
+
+The browser viewers that sit next to wxylib already work this way, so
+math.gl is converging on their design rather than introducing a new one:
+
+- **ortho-cog-viewer** (mdsumner): a mesh engine that lays a regular grid
+  in display space, finds each vertex's source texel by inverse
+  projection, checks it by a lon/lat round trip, and lets the GPU
+  interpolate linearly inside each triangle; proj4 or proj-wasm as the
+  executor; rwarp in a worker as the exact engine beside it. Same split
+  as math.gl: approximate on the GPU, exact elsewhere.
+- **wgis** (mdsumner, `refine.ts`): adaptive refinement where the texture
+  lands more than a set number of screen pixels out, with the map edge
+  found by bisection and handled differently for a limb, a cut and a
+  hole, including refinement round a pole in a periodic texture. That is
+  the case math.gl's Antarctic fixture currently gets wrong.
+- **rangefinder** (hypertidy): the other approach. A Leaflet CRS built
+  from a proj4 definition, a CPU composite onto a grid in the output CRS,
+  no live reprojection while panning. Less affected by math.gl.
+
+What math.gl has that these do not is packaging: one renderer-neutral
+npm package with a CRS resolver, provenance-keeping mesh clipping and
+tests, with deck.gl layers on top once deck.gl#10874 lands. Turning the
+viewers' shared core into a package is the plan those repos already set
+out for themselves.
+
+For wxylib/web: `cog.html` is the exact path (rwarp in wasm onto a
+canvas) and stays distinct, since neither math.gl nor the mesh viewers
+reproduce GDAL's resampling kernels. An approximate, pan-while-you-look
+path for the web demos would come either from the viewers' core package
+or from math.gl; the decision trigger below makes that choice once
+math.gl's raster recipe becomes an API.
+
 ## 3. Signals and decision triggers
 
 Signals at each check:
@@ -78,7 +111,9 @@ Decision triggers:
 
 - **A published raster warp API in math.gl or deck.gl.** Compare its
   mesh and provenance form with `wxy-warp`'s plan output, and decide
-  whether the web demo should produce or consume it.
+  whether the web demo should produce or consume it, and whether its
+  approximate path uses math.gl or the mesh viewers' core package
+  (section 2.1).
 - **The pole fix lands.** Run the same fixture through `wxy-warp` and
   record whether both agree with GDAL.
 - **proj-wasm is configurable in deck.gl.** The browser CRS path that
