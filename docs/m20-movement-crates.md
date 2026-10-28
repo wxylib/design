@@ -215,7 +215,7 @@ Three pieces turn rwarp's exact footprint into a regridder:
    change. Return them as a sparse table (destination cell, source cell,
    weight), so they can be stored, inspected and applied by anything (a
    sparse matrix in NumPy or R, a join in DuckDB, a GPU kernel), and
-   checked against ESMF's weight files. docs #14 already has an ESMF
+   checked against ESMF's weight files. wxylib/docs PR #14 ([wxylib/docs#14](https://github.com/wxylib/docs/pull/14), the nonaffine example's `esmf_oracle.py`) already has an ESMF
    conservative oracle on rotated, rectilinear and curvilinear grids.
    This is wxylib's "tables of what to do" idea (byte references,
    plans) applied to resampling.
@@ -223,8 +223,8 @@ Three pieces turn rwarp's exact footprint into a regridder:
    transformer is in rwarp; the exact footprint needs the destination
    cell's outline, which for a curvilinear target is the cell's corner
    polygon (ESMF's definition) or its geolocation-interpolated outline
-   (docs #14 measured the difference against ESMF: up to 0.75% of a cell). Make the
-   choice explicit, as docs #14 recommends: cell, edge model, measure.
+   (the same docs PR measured the difference against ESMF: up to 0.75% of a cell). Make the
+   choice explicit, as that PR recommends: cell, edge model, measure.
 3. **The integral path.** `RowPrefix` gives average and RMS in time
    proportional to the perimeter (m19 section 5.3). With weights stored,
    it matters for the first application only; without stored weights, it
@@ -473,15 +473,30 @@ Two oracles, split so nothing is checked twice:
   committed text fixtures and generated in a hypertidy image with ESMPy.
   The expected difference is part of the oracle and is not zero even for
   regular longitude-latitude grids, because ESMF treats every cell edge,
-  parallels included, as a great circle. docs #14 already ran ESMPy 8.9
-  from conda-forge in the cloud, so the generator can run in Actions.
+  parallels included, as a great circle. The zero-difference gate is a
+  Cartesian twin of each case: ESMF run with `CoordSys.CART` on the same
+  corners has exactly rwarp's equal-area curvilinear cells (straight
+  quadrilaterals, planar area), so those pairs must agree to rounding.
+  wxylib/docs PR #14 already ran ESMPy 8.9 in CART mode and found the
+  world-space clip within 1e-13.
 - **wxylib/fixtures owns the files and a real case**: an ESMF weight file
   written by `wxy weights` read by xESMF and applied, field equal to
   `wxy warp --weights` on the same file; a file from
   `ESMF_RegridWeightGen` imported and applied by wxy, field equal to
   xESMF's; and GHRSST MUR (0.01 degree) onto a 0.25 degree grid,
-  conservative, against xESMF, as the first real-data case. Run in the
-  `oracles` workflow with an ESMPy environment beside GDAL's.
+  conservative, against xESMF, as the first real-data case.
+
+Both run in one image, a leaf of hypertidy/gdal-r-ci:
+`gdal-r-python-esmf`, built FROM `gdal-r-python:latest` with ESMF 8.9.1
+from source (`ESMF_COMM=mpiuni`, against the image's libnetcdf),
+`ESMF_RegridWeightGen` on the path, and ESMPy and xESMF in the same venv
+as `osgeo.gdal`; TempestRemap as an optional second oracle. It is
+`:latest` only. The GDAL oracles stay on `gdal-r-python:dev`; the ESMF
+generators write their grids' corner coordinates into the fixtures, so
+the tests read the corners ESMF used and do not depend on the image's
+PROJ. A conda-forge environment (an `esmf` environment in gdal-r-ci's
+pixi image) is the fallback if the source build is troublesome. The
+choice and the rest of the options are in the image's own README.
 
 ### 8.4 Order
 
