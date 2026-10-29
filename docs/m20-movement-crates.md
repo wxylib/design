@@ -7,6 +7,16 @@ hypertidy/bigcurve-rs) or in a numbered wxylib stage. Based on rwarp at
 (0.2.2 on crates.io), bigcurve-rs at 5446a89 (stage 1 merged, stage 2
 planned) and wxylib/core at 2752c6b (core #22).
 
+**Implementation (2026-10-28):** Partly implemented. rwarp 0.2.0 and
+0.3.0 are on crates.io and wxylib depends on the version (core #24,
+#25). rwarp took the chunk planner and exact retry (`plan_chunks`,
+hypertidy/rwarp#15; wxy-warp's `chunked.rs` deleted in core #25), GDAL's
+backmap geolocation inverse (rwarp#20) and conservative weights as values
+(rwarp#22, stage 1 of rwarp's `design/conservative.md`). Zonal coverage
+burns holes whole on controlledburn 0.2.2 (core #25). Section 8 is the
+wxylib side of the weights. Open: `geoloc.rs`, `cover.rs` and
+`rasterize.rs` in wxy-warp, bigcurve stage 2, the controlledburn items.
+
 ## Summary
 
 The question: what is left in each of the three crates, what could each
@@ -365,10 +375,198 @@ wxylib repos.
    Recommended: rwarp, until a consumer wants transformers and coverage
    without kernels. Then split rwarp's transformers into their own crate
    along the module line that already exists.
-2. **Weights as a table: which schema?** Recommended: the three columns
-   ESMF and xESMF use (row, column, weight, 0-based indices into the
-   flattened grids) as Arrow or Parquet, so existing tools read them.
-   A spec in wxylib/design only if it gains columns.
+2. **Weights as a table: which schema?** Answered in section 8: rwarp's
+   own unnormalised columns as Parquet, with ESMF's netCDF weight file as
+   an export and an import.
 3. **Does rwarp keep "GDAL" in its description?** It describes the
    lineage accurately and is hypertidy's choice; wxylib's naming rule
    applies to things wxylib publishes, not to its dependencies.
+
+## 8. Conservative weights in wxylib
+
+rwarp now returns conservative weights as values (hypertidy/rwarp#22):
+`exact_weights` gives one entry per overlapping (target cell, source cell)
+pair, with full-grid row and column indices, the overlap as an unrounded
+`f64` fraction of the source cell (`frac`), and each target cell's outline
+area (`dst_area`). `Weights::normalised` gives ESMF's `S` under
+`FracArea` (xESMF `conserve_normed`, what `warp()` computes) or
+`DestArea` (xESMF `conserve`); `Weights::apply` applies them to bands;
+`esmf_row_col` gives ESMF's 1-based flattened indices; tiles concatenate
+to the whole. rwarp's `design/conservative.md` sets out the rest (an ESMF
+oracle suite, a spherical measure, curvilinear and periodic grids, meshes,
+second order) and leaves files, CLI and stored weights to wxylib. This
+section is that part.
+
+The weights are the same kind of thing as wxylib's other tables: a list
+of what to do, computed once, inspectable, and applied by anything that
+can read a table. For a time series on a fixed pair of grids (a year of
+BRAN2023 or GHRSST onto a model or polar grid) they are computed once and
+applied 365 times.
+
+### 8.1 One table, with ESMF's file as a view
+
+- **Canonical: Parquet.** One file of entries, `dst_row`, `dst_col`,
+  `src_row`, `src_col` (`u32`) and `frac` (`f64`), sorted by target row
+  then column, with row groups by target row band so a tile reads only
+  its band; and one of target cells, `dst_row`, `dst_col`, `dst_area`
+  (`NaN` where the outline failed). Key-value metadata carries what makes
+  the weights reusable and checkable: both grids (shape, GeoZarr
+  `spatial:` transform and `proj:` CRS, or a reference to geolocation
+  arrays), `densify`, the measure (planar in source pixel space until
+  rwarp's spherical stage), the cell definition, the rwarp version and the
+  options. Unnormalised `frac` keeps both normalisations available, so
+  the choice is made when the weights are applied, not when they are
+  stored. Get: the format wxylib already writes (wxy-cache) and reads
+  (wxy-refs), readable by DuckDB, Arrow, pandas and R's arrow, and
+  self-describing as m17 asks of stores. Cost: one more small schema,
+  written down in this repository's specs when it is first written.
+- **Export: ESMF's offline weight file (netCDF).** `n_a`, `n_b`, `n_s`,
+  `col`, `row` (1-based, flattened), `S`, `frac_b`, `area_b`,
+  `src_grid_dims`, `dst_grid_dims`: what xESMF reads back as `weights=`
+  and what `ESMF_RegridWeightGen` writes. Written with the pure-Rust
+  `netcdf3` crate (classic and 64-bit offset files, no libnetcdf, builds
+  for wasm); check its CDF-5 support before relying on it for weight sets
+  past 4 GiB per variable. CDO's and NCO's map files want SCRIP's full
+  grid variables as well (centres and corners in degrees, `area_a`,
+  `area_b` in steradians, masks). wxylib can compute centres and corners
+  through the transformers, but areas in steradians only come with rwarp's
+  spherical measure; until then the export says its areas are in source
+  pixel units and leaves the SCRIP grid variables out.
+- **Import: ESMF and SCRIP weight files.** Weights made by ESMF, xESMF,
+  CDO or TempestRemap, read into rwarp's `Weights` (flattened indices
+  split by the grid dimensions in the file) and applied by
+  `Weights::apply`. This is the commit criteria's rule that producers live
+  outside wxylib, applied to weights: wxylib applies anyone's weights,
+  and rwarp is one producer among several.
+
+What if we didn't: weights stay inside a warp call and are recomputed
+for every time step, and wxylib's conservative warps cannot be checked
+against, or replaced by, the tools climate users already trust.
+
+### 8.2 CLI: `wxy weights`, and `wxy warp --weights`
+
+- `wxy weights SRC --t_srs ... --te ... --tr ...` (the target arguments
+  of `wxy warp`) reads only the source's grid, no pixels, and writes the
+  Parquet pair (default) or `--format esmf`. `--normalize fracarea|destarea`
+  applies to the ESMF export only. `--dry-run` reports the plan as `warp`
+  does, with the entry count and bytes estimated from target cells times
+  source cells per target cell (rwarp's note, section 3.4).
+- `wxy warp SRC --weights FILE` applies stored weights (Parquet or ESMF
+  netCDF) to every slice of the source, checking the grids recorded in the
+  file against the source and target before reading a pixel.
+- No `regrid` verb: `wxy warp -r average --exact-footprint N` already
+  computes and applies in one pass, and conservative regridding is that
+  plus a stored table.
+
+Get: compute once, apply to a time series, and hand the same file to
+xESMF or CDO. Cost: one verb and one flag, and grid-matching rules for
+the check. If not: users wanting reuse would script rwarp themselves.
+
+The Python and R bindings follow when they grow past warp (m09): weights
+as an Arrow table, which xESMF can take as an xarray Dataset without a
+file.
+
+### 8.3 Fixtures
+
+Two oracles, split so nothing is checked twice:
+
+- **rwarp owns the numbers** (stage 2 of its note): weights per pair,
+  `frac_b`, `area_b` and regridded fields against ESMPy, reduced to
+  committed text fixtures and generated in a hypertidy image with ESMPy.
+  The expected difference is part of the oracle and is not zero even for
+  regular longitude-latitude grids, because ESMF treats every cell edge,
+  parallels included, as a great circle. The zero-difference gate is a
+  Cartesian twin of each case: ESMF run with `CoordSys.CART` on the same
+  corners has exactly rwarp's equal-area curvilinear cells (straight
+  quadrilaterals, planar area), so those pairs must agree to rounding.
+  wxylib/docs PR #14 already ran ESMPy 8.9 in CART mode and found the
+  world-space clip within 1e-13.
+- **wxylib/fixtures owns the files and a real case**: an ESMF weight file
+  written by `wxy weights` read by xESMF and applied, field equal to
+  `wxy warp --weights` on the same file; a file from
+  `ESMF_RegridWeightGen` imported and applied by wxy, field equal to
+  xESMF's; and GHRSST MUR (0.01 degree) onto a 0.25 degree grid,
+  conservative, against xESMF, as the first real-data case.
+
+Both run in one image, a leaf of hypertidy/gdal-r-ci:
+`gdal-r-python-esmf`, built FROM `gdal-r-python:latest` with ESMF 8.9.1
+from source (`ESMF_COMM=mpiuni`, against the image's libnetcdf),
+`ESMF_RegridWeightGen` on the path, and ESMPy and xESMF in the same venv
+as `osgeo.gdal`; TempestRemap as an optional second oracle. It is
+`:latest` only. The GDAL oracles stay on `gdal-r-python:dev`; the ESMF
+generators write their grids' corner coordinates into the fixtures, so
+the tests read the corners ESMF used and do not depend on the image's
+PROJ. A conda-forge environment (an `esmf` environment in gdal-r-ci's
+pixi image) is the fallback if the source build is troublesome. The
+choice and the rest of the options are in the image's own README.
+
+### 8.4 Order
+
+1. Parquet writer and `wxy weights` with `--dry-run`, in a `wxy-weights`
+   crate or a `weights` module of wxy-warp (the crate check of m09
+   section 5 decides: a geo-free Parquet layer would be its own crate).
+2. `wxy warp --weights` for Parquet, over every slice.
+3. ESMF netCDF export and import (`netcdf3`); the fixtures round trips.
+4. The GHRSST real-data case against xESMF.
+5. After rwarp's spherical measure: areas in steradians and the full
+   SCRIP grid variables, so CDO and NCO read the export too.
+
+## 9. The GPU path beside rwarp
+
+Browser maps in any CRS draw rasters by a mesh warp: a grid of
+triangles in display space, each vertex given texture coordinates by the
+inverse projection, the GPU interpolating linearly inside each triangle.
+It is approximate by construction (the error is the curvature inside a
+triangle) and fast enough to redraw while panning. rwarp is the exact
+engine; the two are complementary, and neither replaces the other.
+
+Two implementations now exist:
+
+- **The ortho-cog-viewer and wgis mesh engine**, with refinement by
+  screen-pixel texture error, the map edge found by bisection and
+  classified as a limb, a cut or a hole, and poles handled in periodic
+  textures; rwarp already serves it as the exact warp.
+- **math.gl 5.0.0-beta.1** (visgl/math.gl#367, #368): the same mesh plus
+  texture warp, packaged as a renderer-neutral npm module with a CRS
+  resolver over proj-wasm (batched in a worker) and mesh clipping that
+  keeps provenance. deck.gl layers will use it once per-view CRS
+  (visgl/deck.gl#10874) lands. Its Antarctic pole fixture is currently
+  wrong, which is the case the wgis pole handling covers.
+
+### 9.1 Decisions
+
+1. **Should the browser mesh core target math.gl's mesh and CRS types,
+   or stay separate and be compared?** Recommended: stay separate while
+   math.gl is in beta, and keep the core's output to plain typed arrays
+   (positions, texture coordinates, triangle indices, a parent index per
+   triangle) so an adapter to math.gl's types is a few lines when it
+   settles. Compare the two on one shared case set (the Antarctic pole,
+   an orthographic limb, an antimeridian cut, a hole in the source),
+   scored against rwarp (9.2). Revisit when math.gl 5.0 is released and
+   deck.gl#10874 is merged. Get: no tracking of a moving API, and a
+   measured answer when the choice is made. Cost: a second
+   implementation lives on for now. If not: either the core is rewritten
+   to a beta API, or the comparison is never made and the better
+   refinement stays unknown to the ecosystem.
+2. **Should the wgis edge and pole handling be offered upstream?**
+   Recommended: yes, first as an issue on math.gl with the pole fixture's
+   failure reproduced, the bisection and pole approach described, and a
+   pull request offered if the maintainers want one. This is the
+   upstream-first principle of doc 04: the packaged module is where
+   deck.gl users will get their warp, so a fix there reaches more people
+   than a separate engine does. Making that contact is for the wgis
+   maintainer.
+
+### 9.2 What rwarp offers the GPU path
+
+An oracle. A mesh warp's error is the difference between its frame and
+an exact warp of the same view, and rwarp computes the exact warp in the
+browser too (`rwarp-wasm`, nearest or bilinear, the same transformer).
+So one harness can score any mesh engine, wgis or math.gl, in screen
+pixels of texture error per case: the measurement behind 9.1's
+comparison, and a test either project could adopt. Nothing in rwarp
+changes for it. Where the mesh needs exactness (a measured overlay, a
+conservative regrid), the answer stays rwarp, not a finer mesh.
+
+Roadmap additions: wxylib/web gains the comparison page (the case set,
+both engines, the rwarp difference image); rwarp gains nothing new.
