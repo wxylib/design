@@ -1,0 +1,3 @@
+A ghrsst 0.01 -> 0.25 deg (0.08 s): dst 80x40 = 3200 cells, 2079000 entries (649.7 per cell, 49.9 MB as 4 u32 + f64), source cells touched 2000000, summing to 1 within 1e-9 2000000, max(sum frac) - 1 = 2.22e-15, entries below 1e-9 79000
+B bran 0.1 deg -> 3031 25 km, densify 1 (0.01 s): dst 72x72 = 5184 cells, 69775 entries (13.5 per cell, 1.7 MB as 4 u32 + f64), source cells touched 35828, summing to 1 within 1e-9 35719, max(sum frac) - 1 = 2.84e-14, entries below 1e-9 3428
+B bran 0.1 deg -> 3031 25 km, densify 4 (0.03 s): dst 72x72 = 5184 cells, 68991 entries (13.3 per cell, 1.7 MB as 4 u32 + f64), source cells touched 35828, summing to 1 within 1e-9 35719, max(sum frac) - 1 = 1.40e-14, entries below 1e-9 2645
