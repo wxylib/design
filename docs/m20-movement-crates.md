@@ -215,7 +215,9 @@ Three pieces turn rwarp's exact footprint into a regridder:
    change. Return them as a sparse table (destination cell, source cell,
    weight), so they can be stored, inspected and applied by anything (a
    sparse matrix in NumPy or R, a join in DuckDB, a GPU kernel), and
-   checked against ESMF's weight files. wxylib/docs PR #14 ([wxylib/docs#14](https://github.com/wxylib/docs/pull/14), the nonaffine example's `esmf_oracle.py`) already has an ESMF
+   checked against ESMF's weight files. The docs site's non-affine example
+   ([wxylib/docs#14](https://github.com/wxylib/docs/pull/14),
+   `examples/nonaffine`) already has an ESMF
    conservative oracle on rotated, rectilinear and curvilinear grids.
    This is wxylib's "tables of what to do" idea (byte references,
    plans) applied to resampling.
@@ -223,8 +225,8 @@ Three pieces turn rwarp's exact footprint into a regridder:
    transformer is in rwarp; the exact footprint needs the destination
    cell's outline, which for a curvilinear target is the cell's corner
    polygon (ESMF's definition) or its geolocation-interpolated outline
-   (the same docs PR measured the difference against ESMF: up to 0.75% of a cell). Make the
-   choice explicit, as that PR recommends: cell, edge model, measure.
+   (that example measured the difference against ESMF: up to 0.75% of a cell). Make the
+   choice explicit, as that example recommends: cell, edge model, measure.
 3. **The integral path.** `RowPrefix` gives average and RMS in time
    proportional to the perimeter (m19 section 5.3). With weights stored,
    it matters for the first application only; without stored weights, it
