@@ -10,6 +10,9 @@ document or [commit-criteria.md](commit-criteria.md). It is written to be
 compared against an independent list built from years of maintaining a
 local mirror of these collections.
 
+**Implementation (2026-10-28):** Open. A survey; none of the ranked datasets has been
+harvested yet.
+
 ## Summary
 
 - The obvious global datasets are mostly covered. ERA5 (ARCO-ERA5,

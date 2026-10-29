@@ -4,6 +4,10 @@ Status: musing, 2026-10-19. Direction, not a plan: nothing is built from
 it, and it becomes work only through a numbered document. It ends in five
 questions, each with a recommended answer.
 
+**Implementation (2026-10-28):** Open. No question in section 7 has been taken up: there is no
+operation registry, no byte views, and `object_store::registry` is not
+yet used in place of `url_store`.
+
 ## 1. Summary
 
 wxylib's aim is not parity with GDAL but to find the modules that do not

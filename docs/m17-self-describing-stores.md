@@ -7,6 +7,12 @@ readers already state or infer, measures two BRAN2023 stores and the
 fixtures against it, and answers the proposal's open questions. Nothing
 here is decided.
 
+**Implementation (2026-10-28):** Partly implemented. wxy fill handling and the `.zmetadata`
+error ([core #17](https://github.com/wxylib/core/pull/17)); the one-file check, with the `mdim.vrt`
+SourceSlab check ([design #35](https://github.com/wxylib/design/pull/35), [design #38](https://github.com/wxylib/design/pull/38)). Open: the
+producer packing fix and, with it, the BRAN fixture's `scale_factor`
+(still 0.0078), the fixture tidy, the check in CI, and the spec edits.
+
 ## Summary
 
 - A static browser page over the BRAN2023 kerchunk Parquet stores showed

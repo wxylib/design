@@ -10,6 +10,11 @@ the same of the chunk bytes themselves, held in the table rather than
 referenced. Scripts and logs:
 [measurements/m16-lance](../measurements/m16-lance/README.md).
 
+**Implementation (2026-10-28):** Assessment, measured. As recommended, Lance is not adopted for
+refs; nothing in wxylib changes. The Icechunk manifest split is a
+producer setting. Held bytes in Lance wait for the chunk cache work
+to need them.
+
 ## Summary
 
 The question in one line: if the mdim-refs table ever needs history
