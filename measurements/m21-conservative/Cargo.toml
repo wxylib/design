@@ -1,0 +1,10 @@
+[package]
+name = "m21-conservative"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+rwarp = { git = "https://github.com/hypertidy/rwarp", rev = "87f9b42", default-features = false, features = ["proj4rs"] }
+
+[workspace]
