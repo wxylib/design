@@ -1,0 +1,15 @@
+[package]
+name = "h5probe"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+async-hdf5 = { version = "0.1.0", default-features = false, features = ["object_store"] }
+object_store = { version = "0.13", features = ["http"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+futures = "0.3"
+bytes = "1"
+hdf5-pure = { version = "0.47.0", default-features = false, features = ["std"] }
+ureq = { version = "2", features = ["native-certs", "proxy-from-env"] }
+url = "2"
