@@ -1,6 +1,6 @@
 # m23: Byte-reference harvesting with few dependencies
 
-Status: musing, 2026-10-29. Asks what a general byte-reference harvester
+Status: musing, 2026-10-29; decisions in section 8 (2026-10-30). Asks what a general byte-reference harvester
 (HDF5 first, then TIFF, GRIB and others) should be, and how much of it
 needs writing. Based on crates.io as of 2026-10-29, wxylib/core
 (wxy-virtual `scan_tiff`, wxy-refs), the mdim-refs/0.2 spec, m02, m09
@@ -326,18 +326,22 @@ but leaves the browser and the wasm build with no harvester at all.
 5. **netCDF classic, then GRIB** (with the codec question first), then
    HDF4 only if m14's ranking asks for it.
 
-## 8. Open questions
+## 8. Decisions
 
-1. Is `refharvest` a wxylib repository, or does it belong with
-   raad.virtualize as its Rust half? The recommendation is wxylib, since
-   it is geo-free and the browser needs it too.
-2. async-hdf5 is young and says so (59% of the HDF5 test suite). Is that
-   enough to build on, with hdf5-pure as the second oracle, or should the
-   foundation take hdf5-pure's `Source` as the parser and wrap it in a
-   concurrent prefetcher? The measurement favours async-hdf5 for the
-   async seam; hdf5-pure is the better-tested library.
-3. Who opens the async-hdf5 issue: the request should come from a person
-   with the measurements, not from an agent account.
-4. Should harvest rows record the walk's own cost (requests, bytes,
-   seconds) as store metadata, so a store says how expensive it was to
-   make and to remake (m16's rerun question)?
+Settled 2026-10-30:
+
+1. **Home.** `refharvest` is a wxylib repository (geo-free, needed by
+   the browser as well as the producers), not the Rust half of
+   raad.virtualize.
+2. **Parser.** Try and measure: async-hdf5 first, with the level-parallel
+   walk carried locally until it lands upstream. Parity is checked
+   against libhdf5 through rhdf5 devel (`h5getAllChunkInfo`, which wraps
+   `H5Dchunk_iter`) as well as the GDAL and VirtualiZarr fixture tables;
+   hdf5-pure stays the independent second parser for the oracle harness.
+3. **Upstream.** The async-hdf5 issue is opened by a person, with a
+   Docker reproduction of section 2.2 (stock walk, level walk and rhdf5
+   on the same file).
+4. **Walk cost as metadata.** Yes: each harvest records its requests,
+   bytes and seconds per source file in the store's description (m17),
+   so a store says what it cost to make and what a rerun would cost
+   (m16).
