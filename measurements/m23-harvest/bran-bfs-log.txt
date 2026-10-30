@@ -1,0 +1,4 @@
+level 0: 1 nodes
+level 1: 30 nodes
+level 2: 1665 nodes
+chunks 94860 metadata 6.49179319s total 21.795055029s index GETs 1696 index bytes 13893632
