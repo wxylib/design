@@ -303,15 +303,16 @@ wxylib could fill as part of M4.
 | obspec, obspec-utils | 0.1.0; 0.9.0 | **align** at the Python boundary only |
 | zarrs codec plugins (`zarrs_codec`, for example `zarrs_jpeg` 0.2.0) | active | **contribute**. TIFF predictors or LERC go here as zarrs codecs, so virtual TIFF references decode through zarrs |
 | `gribberish` | 1.8.4, 2026-10-14 | **adopt** as the GRIB codec and scanner (VirtualiZarr already uses it) |
+| [lerc-reader, lerc-writer](https://github.com/roteiro-gis/lerc-rust) (roteiro-gis) | 0.5.2, 2026-10-31 | **adopt** as the LERC codec, wrapped as a zarrs codec. Pure Rust, checked against libLerc ([watch/roteiro.md](watch/roteiro.md)) |
 
 ### 6.2 TIFF and GeoTIFF
 
 | Item | State | Verdict |
 |------|-------|---------|
 | async-tiff | 0.4.0 | **adopt**. Its `geo` module stops at `GeoKeyDirectory`, `epsg_code()` and the raw model tags. It builds no affine transform and no CRS |
-| [geotiff-rust](https://github.com/roteiro-gis/geotiff-rust): `geotiff-core` (roteiro-gis) | 0.8.1, 2026-08-13 | **adopt or port**. It has no dependencies, and provides `GeoKeyDirectory::parse`, `GeoTransform` (from tiepoint plus scale, or a matrix) and `CrsInfo` (EPSG, horizontal and vertical). It cannot produce PROJJSON for user-defined CRSs |
+| [geotiff-rust](https://github.com/roteiro-gis/geotiff-rust): `geotiff-core` (roteiro-gis) | 0.10.0, 2026-10-31 | **adopt or port**. It has no dependencies, and provides `GeoKeyDirectory::parse`, `GeoTransform` (from tiepoint plus scale, or a matrix) and `CrsInfo` (EPSG, horizontal and vertical). It cannot produce PROJJSON for user-defined CRSs |
 | georust `geotiff` | 0.1.0, synchronous, low activity | **watch**. Issue #13 is where async and georeferencing design is discussed |
-| image-rs `tiff` | 0.11.3, synchronous | **watch** (it is the TIFF writer candidate for M12) |
+| image-rs `tiff` | 0.11.3, synchronous | **watch**. roteiro-gis `geotiff-writer` (COG layout, overviews, LERC, ZSTD, wasm) is now the stronger M12 writer candidate ([watch/roteiro.md](watch/roteiro.md)) |
 | MapLibre Martin's COG source | on async-tiff | **watch**. It has its own EPSG:3857-only check, which shows the georeferencing gap |
 
 **Answer to the planning thread's question 1.** No Rust GeoTIFF
@@ -362,16 +363,20 @@ Rust VirtualiZarr. The proposal for S3b (`wxy-virtual`):
 
 | Item | State | Verdict |
 |------|-------|---------|
-| [hdf5-reader, netcdf-reader](https://github.com/roteiro-gis/netcdf-rust) (roteiro-gis) | 0.9.1, 2026-07-29 | **adopt as scanner base, after checking**. Pure-Rust HDF5 and NetCDF (CDF-1/2/5, NetCDF-4), fuzzed against the C libraries. A public `chunk_index::ChunkEntry { address, size, filter_mask, offsets }` is a chunk-reference scanner in all but name. No szip, no HDF5 virtual datasets |
+| [hdf5-reader, netcdf-reader](https://github.com/roteiro-gis/netcdf-rust) (roteiro-gis) | 0.12.0, 2026-10-31 | **adopt as scanner base, after checking**. Pure-Rust HDF5 and NetCDF (CDF-1/2/5, NetCDF-4), fuzzed against the C libraries. A public `chunk_index::ChunkEntry { address, size, filter_mask, offsets }` is a chunk-reference scanner in all but name. No szip, no HDF5 virtual datasets |
 | hidefix | 0.12.0 (2024). Its S3 reader was merged in 2026 but not released | **watch**. Its chunk index needs native libhdf5 |
 | hdf5-metno, georust `netcdf` | bindings to the C libraries | fallback only |
 | gribberish; grib-rs | 1.8.4; 0.19.1 | **adopt** gribberish; **watch** grib-rs |
+| [grib-reader](https://github.com/roteiro-gis/grib-rust) (roteiro-gis) | 0.7.0, 2026-10-30 | **watch**. Pure-Rust GRIB1/GRIB2 read and write, checked against ecCodes; public `message_offset` and `message_length`, but whole-file reads only |
 | consus | 0.3.0, 2026-10-15, very new | **watch** |
 
-Who is behind the roteiro-gis crates (geotiff-rust, proj-rust,
-netcdf-rust) is unconfirmed beyond the main committer, Ian Norden. They
-are small, focused, tested and growing, and they are the strongest
-pure-Rust readers in this survey. Getting in touch is worth it.
+The roteiro-gis crates (geotiff-rust, proj-rust, netcdf-rust, grib-rust,
+lerc-rust, copc-rust) are written almost entirely by one author, Ian
+Norden, and appear to be the foundation layer under the Roteiro WebGIS
+platform. They are small, focused, tested against the C library of each
+format, and they are the strongest pure-Rust readers in this survey.
+Getting in touch is worth it. The full assessment, with what to leverage
+and what not, is in [watch/roteiro.md](watch/roteiro.md).
 
 ## 7. Layer 3: conventions and the data model
 
@@ -641,7 +646,7 @@ Ranked by how directly each item can change a wxylib decision.
 | 6 | rust-proj-capability, proj-core, proj4rs, Rust Geodesy, proj-wasm | releases; the PROJ mailing list | the CRS backend decision |
 | 7 | GDAL NEWS and gdal-dev | 3.14 Zarr, GeoZarr and CLI changes | the oracle; the warning about unsponsored cloud protocols |
 | 8 | deck.gl-raster and zarr-layer | releases; FOSS4G talks | mesh contract (G5); web app overlap |
-| 9 | roteiro-gis crates (geotiff, proj, netcdf) | crates.io versions | candidate dependencies for G1 and G2 |
+| 9 | roteiro-gis crates (geotiff, proj, netcdf, grib, lerc, copc) | crates.io versions; [watch/roteiro.md](watch/roteiro.md) | candidate dependencies for G1 and G2, the LERC codec, harvest oracles |
 | 10 | Apache SedonaDB raster | releases | the nearest Rust raster engine; a consumer of G3 |
 | 11 | ESA EOPF Zarr and DestinE HEALPix | sample services | real GeoZarr and DGGS corpora for fixtures |
 | 12 | terrio, gridr, OxiGeo | releases, issues; whether terrio publishes its CRS engine as its own crate | overlapping scope; test cases from their bugs; a possible pure-Rust CRS backend |
@@ -674,7 +679,8 @@ feeds above, written into this document's section 15 as a dated delta.
   available).
 - Earthmover Flux and Zax internals and licensing; people's current roles.
 - The status of zarr-specs #287 (chunk manifest).
-- Who is behind roteiro-gis beyond its main committer.
+- Who is behind roteiro-gis beyond its main committer (the org lists no
+  public members; see watch/roteiro.md).
 - Whether gribberish exposes GRIB message byte offsets as a public Rust API.
 - Whether MapLibre reprojects rasters natively.
 - The completeness of proj-wasm's PROJ build.
