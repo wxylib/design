@@ -12,8 +12,8 @@ controlledburn (C++, R, Python) at ed5281b (0.3.2.9000), bigcurve-rs at
 (hypertidy/bigcurve-rs#3). The controlledburn-rs audit fixes and its
 canonical tables are in hypertidy/controlledburn-rs#22. The C++ core's
 check against those tables is hypertidy/controlledburn#37 (all 6737
-records agree). rwarp's mesh module, stage 1 of its curvilinear front end,
-is section 7, step 3.
+records agree). rwarp's `mesh` module, stage 1 of its curvilinear front
+end (section 7, step 3), is hypertidy/rwarp#28.
 
 ## Summary
 
@@ -345,6 +345,7 @@ them. E3 in m21 (ACCESS-OM2 tripolar) is the first use that will ask.
 | hypertidy/bigcurve-rs#3 | stage 2: `Edge` (`GreatCircle`, `Planar`), `ForwardBatch`, level-order engine; R fixtures still bitwise; 7 new tests |
 | hypertidy/controlledburn-rs#22 | `crop` compiled and 0-based, property test; canonical tables for the C++ core; docs |
 | hypertidy/controlledburn#37 | the C++ core checks 240 cases (6737 records) against the Rust canon, all agree |
+| hypertidy/rwarp#28 | `mesh` stage 1: `QuadMesh`, `CellMap::{Bilinear, EqualArea}`, canonical ownership, hinted location; equal-area identity to 1e-9 on six meshes (non-convex and clockwise included), bilinear equal to `geo_to_pixel` |
 
 ## 9. Decisions for the maintainer
 
