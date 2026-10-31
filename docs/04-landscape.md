@@ -459,7 +459,7 @@ Destination Earth's HEALPix Zarr data is a ready test corpus.
 | GDAL VRT, GTI, `gdal mdim mosaic` (3.12), GDALG pipelines (3.11+) | current | **align**. They are the behaviour our virtual scheme (S7) must express |
 | rustac, stac-geoparquet | current | **adopt** |
 | GeoParquet 2.0 (rc.1) and native Parquet GEOMETRY/GEOGRAPHY types | adopted 2025; Apache blog 2026-02-13 | **adopt** for R6 storage |
-| [Apache SedonaDB](https://github.com/apache/sedona-db) | Rust on DataFusion, 0.5.0, 2026-10-13. Its raster type is effectively R1 and "not quite ready to make a splash"; crates `sedona-raster`, `sedona-raster-zarr`, `sedona-raster-gdal` | **watch, contribute**. Offer the R2+ model and the conventions crate rather than compete |
+| [Apache SedonaDB](https://github.com/apache/sedona-db) | Rust on DataFusion, 0.5.0, 2026-10-13. Its raster type is effectively R1 and "not quite ready to make a splash"; crates `sedona-raster`, `sedona-raster-zarr`, `sedona-raster-gdal` | **watch, contribute**. Offer the R2+ model and the conventions crate rather than compete. Update 2026-10-31: 0.5.0 adds `RS_Resample` and `RS_ReprojectMatch` (onto a reference raster's grid; both experimental), seven kernels, described in the post [Same ground, different pixels](https://sedona.apache.org/latest/blog/2026/10/23/same-ground-different-pixels/). The pixel work is GDAL loaded at run time: `GDALReprojectImage` with max error 0 (exact transformer, so output differs from gdalwarp's 0.125 default) and the target grid from `GDALSuggestedWarpOutput`. rwarp is the same pipeline in pure Rust, so it is a candidate GDAL-free backend for these two functions |
 | DuckDB `raster` (GDAL-backed), `raquet` | community extensions | **watch** |
 
 ### 10.2 Bindings
