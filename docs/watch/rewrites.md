@@ -6,7 +6,7 @@ section 7.
 Context: [04 landscape](../04-landscape.md) sections 9 (warp) and 11
 (pure-Rust alternatives); [m20](../m20-movement-crates.md) (movement
 layer); [m24](../m24-foundations-hardening.md); sibling notes
-[opengeos.md](opengeos.md) (terrio), [roteiro.md](roteiro.md) (formats),
+[opengeos.md](opengeos.md) (terrio), [pyinterp.md](pyinterp.md) (conservative regridding), [roteiro.md](roteiro.md) (formats),
 [crs-coverage.md](crs-coverage.md) (CRS), [visgl.md](visgl.md) (browser
 meshes).
 
@@ -91,6 +91,7 @@ module that holds wxylib's version.
 | [SedonaDB](https://github.com/apache/sedona-db) `RS_Resample` | Rust | 0.5.0 | W4 (via library) | experimental | Calls the reference warper at run time; rwarp is a candidate backend (doc 04 section 10.1) |
 | OpenLayers `ol/reproj`, [`@developmentseed/raster-reproject`](https://github.com/developmentseed/deck.gl-raster), math.gl #367 | JS, TS | current | W2 as a GPU mesh | active | Browser meshes; see [visgl.md](visgl.md) |
 | xESMF/ESMF, xarray-regrid | Python, Fortran | 0.9.2 | conservative weights | mature | Regridding, not warping; ESMF is the conservative oracle (m21) |
+| [pyinterp](https://github.com/CNES/pangeo-pyinterp) (CNES) | C++, Python | 2026.11.0, 2026-11 | conservative weights, rectilinear only; separable bilinear | active, institutional | Separable conservative regridding (two 1D overlap matrices) on the sphere or ellipsoid; equals rwarp's spherical box weights to 1.3e-15 and is about 20x faster on that case. A second oracle beside ESMF; see [pyinterp.md](pyinterp.md) |
 
 ## 5. Other areas (structure for later)
 
@@ -129,6 +130,9 @@ note point to it instead of repeating it.
 
 ## 7. Log
 
+- **2026-11-01 (pyinterp).** Added pyinterp 2026.11.0 (conservative
+  regridding between rectilinear grids) to section 4, with its own note
+  [pyinterp.md](pyinterp.md) and a measured comparison against rwarp.
 - **2026-11-01 (later).** Added rust-warp, ljstrnadiii's warp-rs and
   lazycogs from rwarp issue 1, which is closed in favour of this note.
   The shared-oracle run against terrio and rwarp (section 1 item 4) is
