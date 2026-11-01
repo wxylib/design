@@ -447,6 +447,7 @@ Destination Earth's HEALPix Zarr data is a ready test corpus.
 | odc-geo `xr_reproject`, odc-loader, odc-stac | Python | 0.5.3; 0.6.5; 0.5.3 | GDAL underneath | **align** |
 | pyresample, satpy | Python | 1.35.0; 0.60.0 | swath resampling (KD-tree, EWA, bucket) | **align**. Its 2.0 resampler registry could host a wxylib resampler |
 | xESMF, ESMF | Python, Fortran | 0.9.2; ESMF 8.9.1 | conservative weights for curvilinear and unstructured grids | **avoid duplicating**. Read ESMF and SCRIP weight files later |
+| [pyinterp](https://github.com/CNES/pangeo-pyinterp) (CNES) | C++, Python | 2026.11.0 | conservative regridding between rectilinear grids as two separable 1D overlap matrices, sphere or ellipsoid; fast bilinear on outer products; reduced Gaussian grids | **align, oracle**. Equals rwarp's spherical box weights to 1.3e-15; borrow the separable form ([watch/pyinterp.md](watch/pyinterp.md)) |
 | [gridr](https://crates.io/crates/gridr) (CNES) | Rust, pyo3 | 0.7.0, 2026-10-16 | resampling through a target-to-source coordinate grid, full or undersampled: the approximate transformer idea | **watch closely**: a possible collaborator |
 | warp-rs | Rust | 0.2.1, "nothing warps yet" | | **watch** |
 | fast_image_resize | Rust | 6.1.0 | SIMD separable resize, same CRS only | **adopt** for same-CRS overview paths |

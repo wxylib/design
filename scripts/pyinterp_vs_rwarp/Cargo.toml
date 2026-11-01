@@ -1,0 +1,13 @@
+[package]
+name = "pyinterp_vs_rwarp"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+# rwarp main at the commit the comparison was run on (spherical measure,
+# not yet on crates.io).
+rwarp = { git = "https://github.com/hypertidy/rwarp", rev = "56d2297", default-features = false }
+
+[profile.release]
+opt-level = 3

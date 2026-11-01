@@ -305,6 +305,9 @@ weights module lands.
    exists. Get: global coarsening tables in kilobytes. Cost: a second
    form and a schema flag. If not: E1 at full size is a 16 GB file, and
    the honest advice is not to store weights for that pair.
+   Update 2026-11-01: pyinterp 2026.11.0 implements this form (two 1D
+   CSR overlap matrices) and matches rwarp's spherical box weights to
+   1.3e-15; see [watch/pyinterp.md](watch/pyinterp.md).
 2. **Drop tolerance at write.** Recommended: 1e-9 of a source cell in
    `wxy weights`, recorded in the file; rwarp keeps 0 as its default.
    Get: 2 to 5% fewer entries, no change to conservation beyond 1e-9.
