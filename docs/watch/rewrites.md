@@ -80,6 +80,9 @@ module that holds wxylib's version.
 | [gridr](https://github.com/CNES/gridr) (CNES) | Rust, pyo3 | 0.7.0, 2026-10-16 | W2, W6 | active, institutional | Resampling through a target-to-source coordinate grid, full or undersampled, with masks: the approximate transformer as a data structure. Kernels nearest, linear, cubic, B-spline. Closest to bigcurve-rs; a candidate collaborator |
 | [Whitebox `wbraster`](https://github.com/jblindsay/whitebox_next_gen) | Rust | 0.2.1, 2026-07-30 | W1, W4, W6, W9 | active, one author | `reproject_with_options`: nearest, bilinear, cubic, lanczos, average, min and more; antimeridian policy; parity fixtures against reference output. Exact transforms, no approximate transformer found |
 | [warp-rs](https://github.com/jjcfrancisco/warp-rs) | Rust | 0.2.1, 2026-10-10 | W1 (affine only) | early: "nothing warps yet" | Arrays in, arrays out, no I/O: the same shape as rwarp. Human-written by policy |
+| [rust-warp](https://github.com/jakenotjay/rust-warp) | Rust, pyo3 | 0.1.0, last commit 2026-02-28 | W1, W2, W5, W6 | quiet since February; generated code by its author's account | Inverse-mapping warp with its own projection math (UTM, Web Mercator, LCC, Albers, stereographic, sinusoidal, equirectangular), scanline approximation, five kernels, dask HighLevelGraph chunking and an xarray `.warp` accessor. Speed claims against rasterio, no parity oracle found |
+| [warp-rs (ljstrnadiii)](https://github.com/ljstrnadiii/warp-rs) | Rust | 0.1.0, last commit 2026-03-01 | W1, W3, W6 | learning project, mostly generated | Not the crates.io `warp-rs`. Destination-driven reproject with chunky and planar layouts, five kernels (incl. sum), PROJ behind a feature, I/O planning in PLAN.md |
+| [lazycogs](https://github.com/developmentseed/lazycogs) (Development Seed) | Python | 0.7.0, 2026-07-01 | W1, W3, W6 (nearest) | active, institutional | Lazy STAC-to-xarray over async-geotiff, obstore and rustac with no reference library; reprojection is pyproj plus numpy, nearest only. The stackstac/odc-stac pattern on wxylib's spine |
 | [vaster](https://github.com/hypertidy/vaster-rs), [bigcurve-rs](https://github.com/hypertidy/bigcurve-rs) | Rust | 0.2.0; stage 2 | grid logic; W2 | hypertidy | wxylib's own movement layer (m20), listed for completeness |
 | [controlledburn-rs](https://github.com/hypertidy/controlledburn-rs), [exactextract](https://github.com/isciences/exactextract) | Rust; C++ | 0.2.2; current | W8 | active | Exact coverage; rwarp's cutline footprint uses controlledburn-rs |
 | [xarray-spatial](https://github.com/xarray-contrib/xarray-spatial) `reproject` | Python, Numba, CUDA | current | W1, W2, W6 | active | No reference library; Numba kernels for a few projection families, pyproj fallback; `transform_precision=0` gives exact transforms. A GPU path rwarp lacks |
@@ -126,6 +129,10 @@ note point to it instead of repeating it.
 
 ## 7. Log
 
+- **2026-11-01 (later).** Added rust-warp, ljstrnadiii's warp-rs and
+  lazycogs from rwarp issue 1, which is closed in favour of this note.
+  The shared-oracle run against terrio and rwarp (section 1 item 4) is
+  planned, after rwarp's next upgrades.
 - **2026-11-01.** Note started. First pass of the warper area (sections
   3 and 4). terrio 0.6.0 checked at commit 48efb49 (W1-W10 present,
   `KernelVersion` 3.12 default, R-tree geolocation). gridr 0.7.0,
