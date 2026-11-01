@@ -665,6 +665,31 @@ and agent-driven GIS such as MIERUNE's Mapsuke (section 10.4).
 The cheapest way to keep this current is a monthly check of the release
 feeds above, written into this document's section 15 as a dated delta.
 
+### Delta 2026-11 (checked 2026-11-01, against the 2026-10-16 survey)
+
+Only changes that touch a wxylib decision. terrio, RustGIS and the
+visgl projection work have their own notes ([watch/opengeos.md](watch/opengeos.md),
+[watch/visgl.md](watch/visgl.md)); roteiro-gis is in [watch/roteiro.md](watch/roteiro.md).
+
+| # | Item | Change | What it touches |
+|---|------|--------|-----------------|
+| 1 | async-tiff, async-geotiff | No Rust release (still 0.4.0). Main exposes GeogTOWGS84GeoKey and ProjRectifiedGridAngleGeoKey (#368) and can fetch single planes of band-interleaved TIFFs (breaking, #251). async-geotiff main has a table-driven GeoKey-to-CRS builder (#182) and the geotiff-test-data CRS conformance suite (#181), unreleased | G1: the Python georeferencing that `wxy-tiff` planned to port is now a table, with a conformance suite to test against. Port the table, not the old `_crs.py` |
+| 2 | zarrs, zarrista | No release since zarrs 0.23.14 (2026-08-14), but 89 commits on main with breaking changes (inline chunk-grid subsets, packbits padding fix #496, random subchunk write order removed #495). zarr-python #4064 is being redirected to `ArrayEngine` protocols that rely on zarrista; no visible progress | Expect zarrs 0.24; bump and retest wxy-zarr and the refs store when it lands |
+| 3 | Icechunk | 2.3.1 (2026-10-27), a patch; no spec change. Earthmover posts this month are about AI-ready archives and an Earth-2 nowcast served as tiles and SQL, none on virtual references | No change to LS3 |
+| 4 | VirtualiZarr, virtual-tiff, kerchunk | Unchanged (2.8.0; 0.5.0; 0.2.10) | None |
+| 5 | zarr-conventions | No commits to `spatial` or `proj` since v0.1 (June) | G4 proposals (lookup, rpc) still open territory |
+| 6 | CRS engines | proj4rs 0.3.0 (2026-10-26): 24 of 35 wxylib cases against 16 for 0.1.10, but loses EPSG:9354 ([crs-coverage.md](watch/crs-coverage.md)). terrio-crs 0.2.0 (2026-10-31): 34 of 35. proj-core 0.13.0 (2026-11-01): polar stereographic with scale given at the pole, authority axis order, PROJ strings for every implemented projection, declared towgs84 Helmert shifts, opt-in chaining through WGS 84. Rust Geodesy unchanged (0.15.0); proj-wasm unchanged (npm 0.1.0, 2026-10-01) | LS4 and the CRS backend question. The pending proj-core column in crs-coverage.md should use 0.13.0 |
+| 7 | GDAL | No release since 3.13.3 (2026-08-18); 3.14 not out | Oracles keep tracking 3.14dev |
+| 8 | deck.gl-raster, zarr-layer | deck.gl-raster 0.9.0 (2026-10-23) measures mesh error in output pixels (#711, #721) and draws across the antimeridian in output mode (#716); 0.10.0 betas add COGSource and MultiCOGSource, a coalescing range reader (breaking) and GeoZarr through ZarrSource (#812). zarr-layer unchanged (0.11.0) | G5 mesh contract: deck.gl-raster, math.gl and the existing browser viewers now all refine on error in output pixels, so that is the criterion a shared contract should state |
+| 9 | roteiro-gis, gribberish | geotiff-core 0.10.0 (2026-10-31, in roteiro.md); gribberish 1.9.0 (2026-10-22) | Candidate dependencies unchanged in role |
+| 10 | Apache SedonaDB | `RS_Resample` and `RS_ReprojectMatch` call GDAL (row in section 10); main is at 0.6.0-dev | rwarp as a GDAL-free backend for them |
+| 12, 13 | terrio, gridr, rewrites | terrio 0.6.0 matches GDAL warp exactly on its #253 cases and adds lazy multidimensional mosaics (opengeos.md). gridr unchanged (0.7.0) | Shared-oracle comparisons for rwarp |
+
+Also: xpublish-tiles moved from 0.11.2 to 0.12.2 (2026-10-29; notes not
+read), rustac 0.2.18, obstore 0.12.1, zarr 3.4.2. No new outside work on
+the flat tabular reference store was found; wxylib's own measurements are
+in m16. ESA EOPF and DestinE samples were not rechecked.
+
 ## 16. Questions for gate 4
 
 1. **Upstream first (LS1).** Should we open the async-tiff georeferencing
