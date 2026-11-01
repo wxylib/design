@@ -122,6 +122,12 @@ Decision triggers:
 
 ## 4. Log
 
+- **2026-11-01.** No change on the tracked items. math.gl#367 and #368
+  are still open with no human review, and the pole finding has no reply;
+  deck.gl#10874 is still open. No math.gl release after 5.0.0-beta.1.
+  deck.gl shipped 9.4.1 (2026-10-28: flat common-space helpers for
+  non-flat projections, #10657) and 9.3.12, neither with CRS or raster
+  reprojection.
 - **2026-10-28, evening.** math.gl 5.0.0-beta.1 released the same day.
   Its release notes list an opt-in CRS definition resolver, descriptor
   builders, target-plane domains, an external-engine path with proj-wasm

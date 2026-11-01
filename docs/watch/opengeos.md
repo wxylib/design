@@ -59,6 +59,47 @@ than the monthly landscape refresh does.
 
 ## 4. Log
 
+### 2026-11-01 (terrio 0.6.0 and terrio-crs 0.2.0; multidimensional mosaics)
+
+terrio released 0.6.0 on 2026-10-31 (`terrio`, `terrio-cli`), with
+`terrio-crs` 0.2.0 the same day; 75 commits since the 2026-10-28 evening
+entry.
+- **wxylib's own CRS cases:** rerun on terrio-crs main (709e42b), with and
+  without the fallback. Same verdicts, still 34 of 35; values moved only
+  in the last digit. The PROJJSON `meridian` miss remains.
+- **Overlap with wxylib's plan (section 3, second trigger):** lazy
+  multidimensional mosaics (#373) align arrays on dimension coordinates
+  without reading payloads, with gaps, last-input priority and CF grid
+  mapping, across Rust, CLI, Python and JS. That is the mosaic half of
+  doc 03's S7 virtual scheme; its coordinate-tolerance cases are worth
+  borrowing.
+- **CLI reflects API:** a versioned JSON command catalog (#461) and
+  `terrio ui`, browser forms generated for every command (#474), are the
+  operation-registry pattern of m09. A pipeline layer composes operations
+  and reads saved GDALG definitions (#428).
+- **Warp and reads:** warp now matches GDAL exactly on the cases in #253
+  (#472); dataset masks survive conversion and warp (#437); windows read
+  as f32/f64 with nodata as NaN (#425), a tensor-friendly view; retile
+  layouts (#440); seek-optimised ZIP archives under `vsi` (#404).
+- **Stance:** licensing hygiene. GEOS-derived geometry was replaced by JTS
+  ports (#402), a GPL-derived sort was removed (#414), and the licence is
+  declared MIT AND MPL-2.0 (#435); GEOS, JTS and GeoRust are credited
+  (#377). Default builds have no C dependencies (#444).
+- **Reach:** docs moved to terrio.dev; Homebrew, conda-forge, a Pyodide
+  wheel with JupyterLite notebooks, and a GHCR Docker image.
+- **Reuse:** still no zarrs, async-tiff, object_store or proj crate.
+- **Contributors:** Qiusheng Wu wrote 59 of the 75; also Mavrick
+  Fitzgerald (licensing), Roozbeh Valavi (masks, float reads), Guillermo
+  Morales Sanchez (read-path hardening, fuzzing; new), Nixon MAGESE (KML
+  and KMZ; new) and William Mark Katzenmeyer (HEC-RAS geometry). No
+  Michael Sumner PRs in this window.
+
+RustGIS: v0.5.0 released 2026-10-31; 117 commits since the last check
+(Dominik Strebel and Mavrick Fitzgerald lead). Still `proj4rs` 0.2 and no
+terrio dependency. Relevant: one view in any projection with an EPSG code
+for WMS (#1183), lon/lat grids stored as 0 to 360 drawn all the way round
+(#1112), raster-DEM hillshade and colour relief (#1215).
+
 ### 2026-10-28, evening (DGGS projections in terrio-crs; RustGIS rechecked)
 
 terrio (12 commits since the morning entry, no new crates.io release):
