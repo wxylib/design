@@ -455,6 +455,8 @@ Destination Earth's HEALPix Zarr data is a ready test corpus.
 | wgpu or WebGPU geo-warp crate | Rust | none found *(unverified absence)* | | **gap**: rwarp's mesh feeding a wgpu path |
 | controlledburn-rs (hypertidy) | Rust | 0.2.1, 2026-10-15 | exact-coverage sparse rasterisation | **adopt** for cutlines and masks |
 
+Rewrites of the warper's parts, by part (transformers, approximate transformer, source windows, chunk planning, kernels, geolocation, cutlines), are tracked in [watch/rewrites.md](watch/rewrites.md). Update 2026-11-01: terrio 0.6.0 carries a second full warper rewrite in Rust.
+
 ## 10. Layers 5 and 6: composition, catalogues, surfaces
 
 ### 10.1 Composition and catalogues
@@ -650,6 +652,7 @@ Ranked by how directly each item can change a wxylib decision.
 | 10 | Apache SedonaDB raster | releases | the nearest Rust raster engine; a consumer of G3 |
 | 11 | ESA EOPF Zarr and DestinE HEALPix | sample services | real GeoZarr and DGGS corpora for fixtures |
 | 12 | terrio, gridr, OxiGeo | releases, issues; whether terrio publishes its CRS engine as its own crate | overlapping scope; test cases from their bugs; a possible pure-Rust CRS backend |
+| 13 | Rewrites of reference-library parts, starting with the warper (terrio `ops/warp.rs`, gridr, wbraster, warp-rs, xarray-spatial) | crates.io searches and versions listed in [watch/rewrites.md](watch/rewrites.md) section 6 | who else rebuilds what rwarp rebuilds; shared-oracle comparisons |
 
 Also on the radar: the Zarr Spec Committee and zarr-extensions, OGC DGGS
 and TMS work, CF-1.14, GeoParquet 2.0 final, Earthmover Zax and Flux,
