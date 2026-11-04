@@ -122,6 +122,9 @@ Decision triggers:
 
 ## 4. Log
 
+- **2026-11-04.** No change. math.gl#367, #368 and deck.gl#10874 are
+  open with no human review; the pole finding has no reply. No math.gl
+  release after 5.0.0-beta.1, no deck.gl release after 9.3.12.
 - **2026-11-01.** No change on the tracked items. math.gl#367 and #368
   are still open with no human review, and the pole finding has no reply;
   deck.gl#10874 is still open. No math.gl release after 5.0.0-beta.1.

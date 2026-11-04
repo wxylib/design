@@ -59,6 +59,43 @@ than the monthly landscape refresh does.
 
 ## 4. Log
 
+### 2026-11-04 (fractional zonal coverage in terrio; RustGIS on proj4rs 0.3)
+
+terrio released 0.6.1 (2026-11-01) and 0.7.0 (2026-11-03), with
+`terrio-crs` 0.2.2; 64 commits since the 2026-11-01 entry.
+- **Zonal statistics with coverage fractions (#516).** The gap noted on
+  2026-10-28 (`all_touched` only) is closed: fractional coverage and
+  weighting rasters, with exactextract's coverage-weighted median adapted,
+  checked against GDAL 3.13.3 and exactextract 0.3.0 within documented
+  tolerances. The coverage is exact polygon-cell intersection in affine
+  pixel space, computed by clipping each boundary cell with `geo`'s
+  boolean operations (an R-tree of edges), not by an edge traversal as in
+  exactextract and controlledburn-rs. `sum` resampling is now area
+  weighted (#551).
+- **GDAL as oracle:** `TERRIO_GDAL_COMPAT` (`3.12` or `3.13`, default
+  3.12) selects which GDAL version's behaviour to reproduce (#541). That
+  is the same question wxylib met when 3.13 changed the warp kernel scale
+  rule; wxylib's oracles track 3.14dev.
+- **Reads:** windows read into other sizes from overviews, as GDAL's
+  RasterIO does (#523). New vector sources: OGC API Features (native and
+  wasm, #522), WFS (#498), ArcGIS feature services (#476, #487), XLSX.
+- **Other:** a render op with `terrio preview` and `terrio view` (#515),
+  cumulative viewshed (#514), grouped SQL aggregates (#507), and the
+  two-point oblique Mercator in terrio-crs.
+- **wxylib's own CRS cases:** rerun on terrio-crs main (655a532), with and
+  without the fallback: same verdicts, still 34 of 35.
+- **Reuse:** still no zarrs, async-tiff, object_store or proj crate.
+- **Contributors:** Qiusheng Wu wrote 51 of the 64; also William Mark
+  Katzenmeyer, Nicolas Karasiak and Jose Gregorio Rincon Albarracin (new
+  to terrio), Roozbeh Valavi, Guillermo Morales Sanchez and Alejandra
+  Duque. No Michael Sumner PRs in this window.
+
+RustGIS: no release since v0.5.0; 104 commits. It moved to `proj4rs` 0.3
+(#1199), its first CRS engine change in this note. Also a COG window
+opened by URL as a raster layer (#1210), Project Raster and the
+georeferencer's warp on several cores (#1382), and rasters too large for
+memory reported as errors (#1370). Still no terrio dependency.
+
 ### 2026-11-01 (terrio 0.6.0 and terrio-crs 0.2.0; multidimensional mosaics)
 
 terrio released 0.6.0 on 2026-10-31 (`terrio`, `terrio-cli`), with
