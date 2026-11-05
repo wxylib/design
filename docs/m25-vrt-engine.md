@@ -288,6 +288,41 @@ already has; the model should read GDALG's JSON too, since it is the
 same idea one level up. Byte-level chains (`/vsizip/`, `/vsicurl/`)
 stay m09's chain grammar and appear here only as source names.
 
+### 4.4 Source names: the grammar the schemas leave out
+
+Both schemas type a source name as a plain string. `SourceFilename`
+(raster) carries only `relativeToVRT` (and the deprecated
+`relativetoVRT`) and `shared`; `SrcDataSource` (vector) carries
+`relativeToVRT`, with `OpenOptions` beside it. Everything a GDAL dataset
+name can be is outside the schema, defined only by the drivers' open
+code and their documentation:
+
+| Form | Example |
+|---|---|
+| plain or relative path, URL | `tile_01.tif`, `https://host/a.tif` |
+| VSI chain | `/vsicurl/https://...`, `/vsizip/{/vsicurl/https://host/a.zip}/b.tif`, `/vsis3/bucket/key` |
+| driver prefix and subdataset | `NETCDF:"file.nc":sst`, `HDF5:"f.h5"://grp/var`, `ZARR:"s3://b/x.zarr":/sst` |
+| another VRT | `mosaic.vrt` (nesting), `vrt://file.nc?sd_name=sst` |
+| inline VRT | a string starting with `<VRTDataset>` |
+
+The browser readers in section 2 accept the first row and `/vsicurl/`
+only: maplibre-gl-raster rejects every other `/vsi*` prefix and steers
+users away from a `.vrt` source; deck.gl-raster throws on other prefixes,
+and a nested `.vrt` URL would pass its check and then fail when opened
+as a COG. So nesting and the variety of source names are where the model
+earns its place. It parses each source name into a typed value:
+
+```
+Dsn = Path(relative_to_vrt) | Vsi(m09 chain) | Driver(prefix, Dsn, subdataset)
+    | Vrt(Dsn)            | VrtString(Dsn, options)  | Inline(VRT model)
+```
+
+A nested VRT, a `vrt://` string or an inline document becomes a child
+model, so the planner recurses through it to the leaf sources; a VSI
+chain is handed to m09's chain grammar; a driver prefix names the reader
+the leaf needs. The corpus gets one case per row of the table above,
+nested at least two levels.
+
 ## 5. Contributing it
 
 Ordered by how directly each helps someone else, and by who acts.
@@ -356,7 +391,7 @@ them unchanged.
 3. **Planner.** Classic mosaics (with `SrcRect`/`DstRect` resampling
    reported as rows, per m11) and multidimensional slabs. Targets:
    3DEP (3,811 sources), COP30 (26,475), GHRSST `mdim.vrt` (38,360).
-4. **Strings.** A `vrt://` parser covering GDAL's 29 keys, lowered as
+4. **Strings and source names.** Typed source names (section 4.4) with nested VRTs planned through; a `vrt://` parser covering GDAL's 29 keys, lowered as
    GDAL lowers them, plus the multidimensional and vector keys of
    section 4.1; port the prototype; check the multidimensional lowering
    against GDAL.
