@@ -333,9 +333,14 @@ one. PROJ strings (Mollweide, the Hobart LAEA here) carry no area of use,
 so for them the singular ratio is the only limit.
 
 The CRS backend has to supply the area of use: PROJ's database does,
-proj4rs does not. Until wxylib's CRS backend has one (terrio-crs, or a
-small table of EPSG areas generated from PROJ's), the expanse limit is
-unavailable and the ratio stands alone, as in section 5.
+proj4rs does not. terrio-crs 0.2.2 (the optional backend on trial in
+wxylib/core) carries it already: each EPSG entry in its tables has an
+area (west, south, east, north), copied into its internal definition, but
+no public method returns it, and neither its WKT nor its PROJJSON output
+includes a BBOX for EPSG:4326, 3857, 3031, 32755 or 3413 (checked). One
+accessor on `SpatialRef` would expose it, which is a small upstream ask.
+Until a backend has one, the expanse limit is unavailable and the ratio
+stands alone, as in section 5.
 
 ## 7. Where the code lives
 
