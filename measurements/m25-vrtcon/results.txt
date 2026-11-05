@@ -1,0 +1,21 @@
+URI : vrt://ne_110m_admin_0_countries.geojson?layer=ne_110m_admin_0_countries&select=NAME,POP_EST&where=CONTINENT='Oceania'
+XML : <OGRVRTDataSource><OGRVRTLayer name="ne_110m_admin_0_countries"><SrcDataSource>ne_110m_admin_0_countries.geojson</SrcDataSource><SrcSQL>SELECT NAME,POP_EST FROM "ne_110m_admin_0_countries" WHERE CONTINENT='Oceania'</SrcSQL></OGRVRTLayer></OGRVRTDataSource>
+GDAL: 7 features via VRT, 7 direct, geometry and fields identical
+
+URI : vrt://ne_110m_admin_0_countries.geojson?layer=ne_110m_admin_0_countries&select=NAME&spat=100,-50,180,0
+XML : <OGRVRTDataSource><OGRVRTLayer name="ne_110m_admin_0_countries"><SrcDataSource>ne_110m_admin_0_countries.geojson</SrcDataSource><SrcSQL>SELECT NAME FROM "ne_110m_admin_0_countries"</SrcSQL><SrcRegion>POLYGON((100.0 -50.0,180.0 -50.0,180.0 0.0,100.0 0.0,100.0 -50.0))</SrcRegion></OGRVRTLayer></OGRVRTDataSource>
+GDAL: 9 features via VRT, 9 direct, geometry and fields identical
+
+URI : vrt://ne_110m_admin_0_countries.geojson?layer=ne_110m_admin_0_countries&sql=SELECT NAME FROM ne_110m_admin_0_countries WHERE POP_EST > 100000000
+XML : <OGRVRTDataSource><OGRVRTLayer name="ne_110m_admin_0_countries"><SrcDataSource>ne_110m_admin_0_countries.geojson</SrcDataSource><SrcSQL>SELECT NAME FROM ne_110m_admin_0_countries WHERE POP_EST &gt; 100000000</SrcSQL></OGRVRTLayer></OGRVRTDataSource>
+GDAL: 14 features via VRT, 14 direct, geometry and fields identical
+
+URI : vrt://stations.csv?layer=stations&x=lon&y=lat&a_srs=EPSG:4326&where=operator='Australia'
+XML : <OGRVRTDataSource><OGRVRTLayer name="stations"><SrcDataSource>stations.csv</SrcDataSource><SrcSQL>SELECT * FROM "stations" WHERE operator='Australia'</SrcSQL><LayerSRS>EPSG:4326</LayerSRS><GeometryField encoding="PointFromColumns" x="lon" y="lat"/></OGRVRTLayer></OGRVRTDataSource>
+GDAL: 4 features, crs EPSG:4326, first ['Casey', 'Australia', '110.527', '-66.282', '1969', 'SYMBOL(c:#d9480f)']
+
+URI : vrt://ne_110m_admin_0_countries.geojson?layer=ne_110m_admin_0_countries&select=NAME&where=CONTINENT='Antarctica'&t_srs=EPSG:3031
+XML : <OGRVRTDataSource><OGRVRTWarpedLayer><OGRVRTLayer name="ne_110m_admin_0_countries"><SrcDataSource>ne_110m_admin_0_countries.geojson</SrcDataSource><SrcSQL>SELECT NAME FROM "ne_110m_admin_0_countries" WHERE CONTINENT='Antarctica'</SrcSQL></OGRVRTLayer><TargetSRS>EPSG:3031</TargetSRS></OGRVRTWarpedLayer></OGRVRTDataSource>
+GDAL: 1 features, crs EPSG:3031, first ['Antarctica']
+
+5 of 5 cases pass (GDAL 3.12.4)

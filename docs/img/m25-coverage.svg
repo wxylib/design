@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="896" height="442" viewBox="0 0 896 442" font-family="Helvetica, Arial, sans-serif" font-size="12">
+<rect width="896" height="442" fill="#ffffff"/>
+<text x="20" y="24" font-weight="bold" font-size="14" fill="#2b3a4f">Who reads which VRT family, 2026-11-05</text>
+<text x="369" y="74" text-anchor="middle" fill="#2b3a4f">Mosaic</text>
+<text x="369" y="88" text-anchor="middle" fill="#2b3a4f">placement</text>
+<text x="447" y="60" text-anchor="middle" fill="#2b3a4f">Source ops</text>
+<text x="447" y="74" text-anchor="middle" fill="#2b3a4f">(window,</text>
+<text x="447" y="88" text-anchor="middle" fill="#2b3a4f">scale, LUT)</text>
+<text x="525" y="60" text-anchor="middle" fill="#2b3a4f">Derived,</text>
+<text x="525" y="74" text-anchor="middle" fill="#2b3a4f">pixel</text>
+<text x="525" y="88" text-anchor="middle" fill="#2b3a4f">functions</text>
+<text x="603" y="88" text-anchor="middle" fill="#2b3a4f">Warped</text>
+<text x="681" y="74" text-anchor="middle" fill="#2b3a4f">vrt://</text>
+<text x="681" y="88" text-anchor="middle" fill="#2b3a4f">strings</text>
+<text x="759" y="74" text-anchor="middle" fill="#2b3a4f">mdim</text>
+<text x="759" y="88" text-anchor="middle" fill="#2b3a4f">VRT</text>
+<text x="837" y="74" text-anchor="middle" fill="#2b3a4f">Vector</text>
+<text x="837" y="88" text-anchor="middle" fill="#2b3a4f">VRT</text>
+<text x="20" y="115" fill="#222">GDAL 3.13 (C++)</text>
+<rect x="333" y="99" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="369" y="115" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="411" y="99" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="447" y="115" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="489" y="99" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="525" y="115" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="567" y="99" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="603" y="115" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="645" y="99" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="681" y="115" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="723" y="99" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="759" y="115" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="801" y="99" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="837" y="115" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<text x="20" y="145" fill="#222">GDAL in wasm (gdal3.js, Pyodide, webR; all 3.8.x)</text>
+<rect x="333" y="129" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="369" y="145" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="411" y="129" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="447" y="145" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="489" y="129" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="525" y="145" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="567" y="129" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="603" y="145" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="645" y="129" width="72" height="24" rx="3" fill="#9cc3de" stroke="#7a8a9a"/>
+<text x="681" y="145" text-anchor="middle" font-size="11" fill="#2b3a4f">subset</text>
+<rect x="723" y="129" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="759" y="145" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="801" y="129" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="837" y="145" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<text x="20" y="175" fill="#222">terrio 0.7 (Rust, inside terrio)</text>
+<rect x="333" y="159" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="369" y="175" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="411" y="159" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="447" y="175" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="489" y="159" width="72" height="24" rx="3" fill="#9cc3de" stroke="#7a8a9a"/>
+<text x="525" y="175" text-anchor="middle" font-size="11" fill="#2b3a4f">subset</text>
+<rect x="567" y="159" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="603" y="175" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="645" y="159" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="681" y="175" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="723" y="159" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="759" y="175" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="801" y="159" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="837" y="175" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<text x="20" y="205" fill="#222">OxiGeo vrt (Rust)</text>
+<rect x="333" y="189" width="72" height="24" rx="3" fill="#2f6f9f" stroke="#7a8a9a"/>
+<text x="369" y="205" text-anchor="middle" font-size="11" fill="#ffffff">full</text>
+<rect x="411" y="189" width="72" height="24" rx="3" fill="#9cc3de" stroke="#7a8a9a"/>
+<text x="447" y="205" text-anchor="middle" font-size="11" fill="#2b3a4f">subset</text>
+<rect x="489" y="189" width="72" height="24" rx="3" fill="#9cc3de" stroke="#7a8a9a"/>
+<text x="525" y="205" text-anchor="middle" font-size="11" fill="#2b3a4f">subset</text>
+<rect x="567" y="189" width="72" height="24" rx="3" fill="#9cc3de" stroke="#7a8a9a"/>
+<text x="603" y="205" text-anchor="middle" font-size="11" fill="#2b3a4f">subset</text>
+<rect x="645" y="189" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="681" y="205" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="723" y="189" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="759" y="205" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="801" y="189" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="837" y="205" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<text x="20" y="235" fill="#222">deck.gl-raster parseVRT (TS, 2026-11)</text>
+<rect x="333" y="219" width="72" height="24" rx="3" fill="#9cc3de" stroke="#7a8a9a"/>
+<text x="369" y="235" text-anchor="middle" font-size="11" fill="#2b3a4f">subset</text>
+<rect x="411" y="219" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="447" y="235" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="489" y="219" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="525" y="235" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="567" y="219" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="603" y="235" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="645" y="219" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="681" y="235" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="723" y="219" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="759" y="235" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="801" y="219" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="837" y="235" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<text x="20" y="265" fill="#222">maplibre-gl-raster parseVrt (TS, 2026-07)</text>
+<rect x="333" y="249" width="72" height="24" rx="3" fill="#9cc3de" stroke="#7a8a9a"/>
+<text x="369" y="265" text-anchor="middle" font-size="11" fill="#2b3a4f">subset</text>
+<rect x="411" y="249" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="447" y="265" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="489" y="249" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="525" y="265" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="567" y="249" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="603" y="265" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="645" y="249" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="681" y="265" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="723" y="249" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="759" y="265" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="801" y="249" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="837" y="265" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<text x="20" y="295" fill="#222">wxylib web mdim-vrt.js (JS)</text>
+<rect x="333" y="279" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="369" y="295" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="411" y="279" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="447" y="295" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="489" y="279" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="525" y="295" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="567" y="279" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="603" y="295" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="645" y="279" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="681" y="295" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="723" y="279" width="72" height="24" rx="3" fill="#9cc3de" stroke="#7a8a9a"/>
+<text x="759" y="295" text-anchor="middle" font-size="11" fill="#2b3a4f">subset</text>
+<rect x="801" y="279" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="837" y="295" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<text x="20" y="325" fill="#222">wxylib web ogrvrt.js (JS)</text>
+<rect x="333" y="309" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="369" y="325" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="411" y="309" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="447" y="325" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="489" y="309" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="525" y="325" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="567" y="309" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="603" y="325" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="645" y="309" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="681" y="325" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="723" y="309" width="72" height="24" rx="3" fill="#f1f1f1" stroke="#7a8a9a"/>
+<text x="759" y="325" text-anchor="middle" font-size="11" fill="#2b3a4f"></text>
+<rect x="801" y="309" width="72" height="24" rx="3" fill="#9cc3de" stroke="#7a8a9a"/>
+<text x="837" y="325" text-anchor="middle" font-size="11" fill="#2b3a4f">subset</text>
+<text x="20" y="355" font-weight="bold" fill="#222">Proposed: VRT model + planner (Rust, wasm)</text>
+<rect x="333" y="339" width="72" height="24" rx="3" fill="#ffffff" stroke="#7a8a9a" stroke-dasharray="4,3"/>
+<text x="369" y="355" text-anchor="middle" font-size="11" fill="#2b3a4f">target</text>
+<rect x="411" y="339" width="72" height="24" rx="3" fill="#ffffff" stroke="#7a8a9a" stroke-dasharray="4,3"/>
+<text x="447" y="355" text-anchor="middle" font-size="11" fill="#2b3a4f">target</text>
+<rect x="489" y="339" width="72" height="24" rx="3" fill="#ffffff" stroke="#7a8a9a" stroke-dasharray="4,3"/>
+<text x="525" y="355" text-anchor="middle" font-size="11" fill="#2b3a4f">target</text>
+<rect x="567" y="339" width="72" height="24" rx="3" fill="#ffffff" stroke="#7a8a9a" stroke-dasharray="4,3"/>
+<text x="603" y="355" text-anchor="middle" font-size="11" fill="#2b3a4f">target</text>
+<rect x="645" y="339" width="72" height="24" rx="3" fill="#ffffff" stroke="#7a8a9a" stroke-dasharray="4,3"/>
+<text x="681" y="355" text-anchor="middle" font-size="11" fill="#2b3a4f">target</text>
+<rect x="723" y="339" width="72" height="24" rx="3" fill="#ffffff" stroke="#7a8a9a" stroke-dasharray="4,3"/>
+<text x="759" y="355" text-anchor="middle" font-size="11" fill="#2b3a4f">target</text>
+<rect x="801" y="339" width="72" height="24" rx="3" fill="#ffffff" stroke="#7a8a9a" stroke-dasharray="4,3"/>
+<text x="837" y="355" text-anchor="middle" font-size="11" fill="#2b3a4f">target</text>
+<text x="20" y="396" font-size="11" fill="#555">full: reads the family as GDAL does; subset: some elements or options; target: modelled and planned by the proposed crate.</text>
+<text x="20" y="412" font-size="11" fill="#555">Derived and warped bands are planned by the crate and evaluated by rwarp and wxy, not by it.</text>
+<text x="20" y="428" font-size="11" fill="#555">GDAL in wasm has vrt:// options up to 3.8 only (missing a_nodata, sd, sd_name from 3.9, transpose 3.12, block 3.13).</text>
+</svg>

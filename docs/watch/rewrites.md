@@ -105,7 +105,7 @@ note point to it instead of repeating it.
 | B. CRS and transforms | definitions, operation selection, datum grids, WKT/PROJJSON | [crs-coverage.md](crs-coverage.md) |
 | C. Formats and drivers | TIFF/COG, HDF5/netCDF, GRIB, Zarr, LERC, COPC | [roteiro.md](roteiro.md), doc 04 section 6 |
 | D. Rasterize and zonal | burn rules, all-touched, coverage weights, zonal statistics | doc 04 section 9 row controlledburn; to add |
-| E. Composition | VRT, mosaic, multidimensional VRT, pipelines | doc 04 section 10.1; to add |
+| E. Composition | VRT, mosaic, multidimensional VRT, vector VRT, `vrt://`, pipelines | doc 04 section 10.1; [m25](../m25-vrt-engine.md) section 2 (inventory, 2026-11-05) |
 | F. Virtual file systems | URL schemes, range reads, chained paths | m09 section 4 |
 | G. Algorithms and CLI | algorithm registry, `gdal`-style CLI, terrain, contour, polygonize | m09; [opengeos.md](opengeos.md) |
 | H. Overviews and tiling | overview kernels, tile matrix sets, COG layout | to add |
@@ -130,6 +130,12 @@ note point to it instead of repeating it.
 
 ## 7. Log
 
+- **2026-11-05 (VRT).** Area E has a first inventory in
+  [m25](../m25-vrt-engine.md) section 2: terrio 0.7.0 rewrites classic
+  VRT inside its crate (translated from GDAL 3.13.3), OxiGeo has a
+  classic VRT crate, deck.gl-raster (`parseVRT`, 2026-11-02) and
+  maplibre-gl-raster (`parseVrt`, 2026-07-16) read classic mosaics
+  only, and the GDAL wasm builds (gdal3.js, Pyodide, webR) are at 3.8.
 - **2026-11-01 (pyinterp).** Added pyinterp 2026.11.0 (conservative
   regridding between rectilinear grids) to section 4, with its own note
   [pyinterp.md](pyinterp.md) and a measured comparison against rwarp.
