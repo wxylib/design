@@ -1,12 +1,14 @@
 # CRS coverage: terrio-crs against proj4rs for wxylib's cases
 
-Status: measured 2026-10-28. A watch note, not a decision. Changing the
+Status: measured 2026-10-28; core trial added 2026-11-05 (section 7).
+A watch note, not a decision. Changing the
 CRS backend in core belongs to the planning track.
 
 ## 1. Question
 
 wxylib's warp, points and zonal commands reach CRSs through rwarp's
-`proj4rs` backend (core pins proj4rs 0.1.10 with `crs-definitions`). That
+`proj4rs` backend (core pinned proj4rs 0.1.10 with `crs-definitions` when
+this was measured; it is on 0.3.0 since rwarp 0.3). That
 accepts `EPSG:NNNN` codes and PROJ strings only. The question here is which
 of the CRS cases wxylib actually meets would be covered if
 [`terrio-crs`](https://crates.io/crates/terrio-crs) sat behind the same
@@ -129,3 +131,61 @@ answers; `harness/` is a Rust binary with a cargo feature per engine
 (`p01`, `p03`, `tc`, `tc-fb`; terrio-crs main via a path or git override,
 in a separate build because features unify); `judge.py` prints the grid
 above from the `r-*.jsonl` result files.
+
+## 7. Trial in core (2026-11-05)
+
+wxy-warp now has a `crs` module that builds rwarp's `CrsTransform` from
+either engine, and a `terrio-crs` cargo feature (off by default; also on
+wxy-cli) that switches warp, points and zonal to terrio-crs 0.2.2. The
+choice is made at build time, not by global state. `crs_pair_with` builds
+either engine in one build, so the two can be compared side by side.
+proj4rs stays the default, because it is small (39 crates in wxy-warp's
+tree, against 76 with terrio-crs and 84 with its wbprojection fallback)
+and because rwarp and the wasm builds use it.
+
+What the trial measured:
+
+- **This table, through wxy-warp.** `tests/crs_backends.rs` runs the 35
+  cases above (cases.json copied to `tests/data`) through each compiled
+  engine and gates each one on the cases it is known to pass. proj4rs
+  0.3.0 gets 24 exact; terrio-crs 0.2.2 gets 34 exact, and the one miss
+  is still the PROJJSON axis `meridian` member.
+- **GDAL's own oracles.** The warp, points and zonal suites (GDAL
+  3.14dev fixtures, wxylib/fixtures e203c85) pass on both engines, once
+  two terrio-crs behaviours are handled in wxy-warp:
+  1. **A point exactly at a pole is refused.** EPSG:4326 (lon, -90) to
+     EPSG:3031 fails for every longitude, where PROJ gives (0, 0). On its
+     own this failed 9 polar-to-4326 warp oracles (up to 36425 of 259200
+     cells) and the polar point reads. wxy-warp works around it by
+     approaching the pole from two opposite longitudes, 1e-10 degrees
+     short, and taking the midpoint, which keeps a pole that sits on a
+     cell edge on that edge. This is an upstream fix candidate; the
+     workaround should go when it lands.
+  2. **A WKT it cannot use parses.** `GEOGCRS["x"]` (no datum) is kept by
+     `SpatialRef::parse_literal` and refused only when a `Transformer` is
+     built. wxy-warp builds a transform to WGS 84 when it checks a CRS, so
+     a bad definition is still refused before any data is read.
+- **Speed.** One million EPSG:4326 to EPSG:3031 round trips take about
+  0.5 s with either engine in a release build (about 2 M a second each;
+  the ignored `speed` test in `tests/crs_backends.rs`). A datum step
+  costs more and is not measured yet.
+- **New inputs end to end.** With the feature, `wxy points` and
+  `wxy zonal` take WKT1, WKT2, PROJJSON, `ESRI:` and `OGC:CRS84`; `wxy
+  warp` takes those the GeoZarr writer can record (`AUTH:CODE`, WKT2,
+  PROJJSON).
+
+Open from the trial:
+
+- Report the pole refusal and the PROJJSON `meridian` member to terrio
+  (contact stays with Michael; frame it as conformance work).
+- A third small ask for the same report: a public area of use. terrio-crs
+  0.2.2 holds each CRS's area of use (west, south, east, north in degrees)
+  on its crate-private `Def`, but `SpatialRef` has no accessor for it, and
+  `to_wkt()` and `to_projjson()` write no `BBOX`. A public
+  `SpatialRef::area_of_use()` would let wxylib infer default warp output
+  extents as GDAL does, without a table of its own.
+- Let `wxy warp` record a PROJ-string target by writing terrio-crs's
+  `to_wkt()` as `proj:wkt2`, which proj4rs cannot do.
+- Decide whether terrio-crs becomes the native default, with proj4rs kept
+  for wasm. That waits on the pole fix and a timing with datum steps.
+
