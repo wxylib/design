@@ -306,7 +306,9 @@ off, rather than fixed behaviour:
 | size cap | off; `--suggest-max-size NX NY` | coarsens the suggested cell size until the grid fits NX by NY (a thumbnail, a preview) | the default |
 
 `--suggest-limit none` turns all of them off and gives the raw bounding
-box, which is what gdalwarp does. The cell budget (`--max-cells`) is not
+box, which is what gdalwarp does. (The polar-stereographic failure and
+the case for settable limits on GDAL's own suggestion are discussed in
+[OSGeo/gdal#8440](https://github.com/OSGeo/gdal/issues/8440).) The cell budget (`--max-cells`) is not
 one of them: it refuses, it does not shape.
 
 The CRS expanse is metadata, not a per-projection case, and on the EPSG
