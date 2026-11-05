@@ -351,7 +351,8 @@ them. E3 in m21 (ACCESS-OM2 tripolar) is the first use that will ask.
 
 1. **Bindings onto the Rust crate** (section 5.2): Python first, then R
    (recommended); or keep the C++ core as a checked port indefinitely; or
-   both bindings at once.
+   both bindings at once. Decided 2026-11-01: Python first, then R. Python moved
+   (controlledburn#38); the R route and its gates are in m26.
 2. **Publish bigcurve 0.2.0** to crates.io once PR #3 is merged. It is
    the gate for step 5.
 3. **The open choices in rwarp's curvilinear design** are taken at their
