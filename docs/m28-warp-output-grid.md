@@ -28,7 +28,7 @@ where should wxylib differ from gdalwarp?
   inferred). This is doc 05 W1 and doc 03 S4b carried through, not
   reopened.
 - **gdalwarp's suggestion fails on exactly the cases that matter.**
-  Measured on 28 source and target pairs: a whole-world grid into south
+  Measured on 28 source and target pairs, on GDAL 3.8.4 and HEAD alike: a whole-world grid into south
   polar stereographic gets cells 1.4e21 m across; a 150E to 150W box into
   Mollweide gets an extent that holds half the data; a 0 to 360 global
   grid into Web Mercator gets 133 x 1605 cells. odc-geo, the other common
@@ -135,10 +135,22 @@ falls on both sides of the map's seam; gdalwarp's extent (red) holds the
 eastern half; the m28 rule's (black) holds both, at the cost of the empty
 middle.](img/m28-extents.png)
 
-These are GDAL 3.8.4 results. GDAL's suggestion code has changed since
-(antimeridian handling especially), so each row needs rechecking on 3.14dev
-before anything is said upstream; the fixtures `oracles` workflow can run
-`gdal_matrix.py` in `gdal-r-python:dev`. The point for wxylib does not
+These rows were measured on GDAL 3.8.4 and rechecked on GDAL HEAD
+(3.14.0dev at `b4f950833f`) through the `warpgrid` oracle set in
+wxylib/fixtures (52 cases: the 28 suggestions and the option matrix). 49
+of 52 answers are identical, and every failure in the table above is
+unchanged on HEAD. Three differ:
+
+- `-te_srs EPSG:4326 -te 140 -70 160 -60` for world-0.5 into 3031 now
+  succeeds (34 x 35 cells of 41 km) instead of the negative-width error.
+- `-te_srs` for the UTM tile gives 149607 x 74804 instead of 185519 x
+  92759: the cell size for a reprojected box is now worked out
+  differently.
+- `-te` alone on the UTM tile re-derives a slightly finer cell size
+  (12953 x 9644 instead of 12939 x 9633).
+
+The `-tr` abort on the whole-world source is not in the set (it would
+kill the recorder) and is unchecked on HEAD. The point for wxylib does not
 depend on the version: a bounding box of moved points has no defence
 against a point that should not count.
 
@@ -369,9 +381,11 @@ vaster's in code and bindings), because each matches its users; the
    prototype's JSON (same thresholds; agreement to a cell).
 3. wxylib: `GridRequest` in wxy-warp, the CLI flags and `--dry-run`
    record, then py and r, then web.
-4. Recheck section 2 on GDAL 3.14dev in the fixtures workflow; anything
-   that still fails goes to the osgeo-upstream tracker as a note, not as
-   a GDAL contribution.
+4. Done for section 2 (fixtures `warpgrid`, GDAL 3.14.0dev): the
+   suggestion failures still stand on HEAD and can go to the
+   osgeo-upstream tracker as a note (OSGeo/gdal#8440 is the existing
+   discussion), not as a GDAL contribution. The `-tr` abort still needs a
+   check in a separate process.
 
 Steps 1 and 2 wait for rwarp's current sprints, like m20's moves.
 
