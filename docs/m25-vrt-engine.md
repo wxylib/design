@@ -73,6 +73,20 @@ contributed to an existing effort?
   Emscripten CI job) is Michael's to raise; GDAL RFC 111 bars agent
   submissions.
 
+### Where it sits in the module survey
+
+Doc 01 lists classic VRT as M21 (very high cost, no existing crate) and
+multidimensional VRT as M22, both in layer L5 (composition), and has no
+entry for vector VRT, `vrt://` or source names. The crate proposed here
+is the part of M21 and M22 that needs nothing below it: no reader, no
+CRS engine, no resampler. That makes it one of the tightest modules the
+survey can carve out of the reference library. Its inputs are text and
+a small source description, and its output is a plan. The cost that
+puts M21 at "very high" (pixel functions, warping, pansharpening) stays
+with evaluation, in rwarp and wxy. Doc 01 should gain two rows when
+this note is decided: vector VRT beside M21 and M22, and source names
+(the grammar of section 4.4, shared with m09's chain grammar).
+
 ## 1. VRT is four families, not one
 
 GDAL's word "VRT" covers four things that share a name and a file
