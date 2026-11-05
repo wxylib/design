@@ -1,4 +1,4 @@
-"""Source grids and target CRSs shared by the m26 scripts."""
+"""Source grids and target CRSs shared by the m28 scripts."""
 
 SOURCES = {
     "world-0.5": ("EPSG:4326", [-180, 180, -90, 90], [720, 360]),

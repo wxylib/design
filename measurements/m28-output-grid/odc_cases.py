@@ -1,6 +1,6 @@
-"""odc-geo's compute_output_geobox on the m26 source/target pairs.
+"""odc-geo's compute_output_geobox on the m28 source/target pairs.
 
-    python measurements/m26-output-grid/odc_cases.py > measurements/m26-output-grid/odc_cases.json
+    python measurements/m28-output-grid/odc_cases.py > measurements/m28-output-grid/odc_cases.json
 
 Needs odc-geo (pip install odc-geo); defaults throughout (resolution
 "auto", pixel edges snapped to 0, 0).

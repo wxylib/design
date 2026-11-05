@@ -1,4 +1,4 @@
-# m26: Warp output-grid defaults
+# m28: Warp output-grid defaults
 
 Status: musing, 2026-11-05. Settles which parts of a warp's target grid
 (CRS, extent, cell size, cell count) a caller gives and which are
@@ -10,9 +10,9 @@ main, wxylib/web at main (`render::bounds`, `cog.js`), GDAL 3.8.4
 doc 03 (S4b: "the target stays explicit; an extent suggestion, if wanted,
 is a separate helper"), m11 (quiet operations) and m20 (the movement
 layer). Measurements:
-[measurements/m26-output-grid](../measurements/m26-output-grid/README.md).
-Figures: [img/m26-rules.png](img/m26-rules.png),
-[img/m26-extents.png](img/m26-extents.png), from `scripts/m26_figures.py`.
+[measurements/m28-output-grid](../measurements/m28-output-grid/README.md).
+Figures: [img/m28-rules.png](img/m28-rules.png),
+[img/m28-extents.png](img/m28-extents.png), from `scripts/m28_figures.py`.
 
 ## Summary
 
@@ -114,7 +114,7 @@ the footprint fills its box.
 ![For each of 28 source and target pairs, the suggested grid's cell
 count over the source's (left, log scale) and the fraction of the
 source's footprint inside the suggested extent (right), for gdalwarp,
-odc-geo and the m26 rule.](img/m26-rules.png)
+odc-geo and the m28 rule.](img/m28-rules.png)
 
 The failures, all with only the target CRS given:
 
@@ -130,8 +130,8 @@ The failures, all with only the target CRS given:
 
 ![The 150E to 150W, 60S to 30S box in Mollweide: the footprint (green)
 falls on both sides of the map's seam; gdalwarp's extent (red) holds the
-eastern half; the m26 rule's (black) holds both, at the cost of the empty
-middle.](img/m26-extents.png)
+eastern half; the m28 rule's (black) holds both, at the cost of the empty
+middle.](img/m28-extents.png)
 
 These are GDAL 3.8.4 results. GDAL's suggestion code has changed since
 (antimeridian handling especially), so each row needs rechecking on 3.14dev
@@ -185,7 +185,7 @@ transformers are, not in a new crate.
 
 ## 5. The rule
 
-`measurements/m26-output-grid/suggest_rule.py` is the prototype. Given a
+`measurements/m28-output-grid/suggest_rule.py` is the prototype. Given a
 source grid and a forward map (any rwarp transformer):
 
 1. Lay a lattice of up to 128 x 128 blocks over the source and move every
@@ -212,7 +212,7 @@ as torn.
 
 Results (all 28 pairs in `suggest_rule.json`; selected):
 
-| pair | gdalwarp | odc-geo | m26 rule | dropped (singular, torn) |
+| pair | gdalwarp | odc-geo | m28 rule | dropped (singular, torn) |
 |---|---|---|---|---|
 | utm55s-10m to 4326 | 12584 x 9244 | 12765 x 9377 | 12914 x 9486 | 0, 0 |
 | utm55s-10m to moll | 33567 x 15714 at 6.97 m | 23398 x 10955 at 10 m | 23380 x 10945 at 10.006 m | 0, 0 |

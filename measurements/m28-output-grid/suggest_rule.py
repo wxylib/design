@@ -1,9 +1,9 @@
-"""A prototype of the m26 suggestion rule, with GDAL's exact transformer
-as the point mover, on the m26 source/target pairs.
+"""A prototype of the m28 suggestion rule, with GDAL's exact transformer
+as the point mover, on the m28 source/target pairs.
 
-    python measurements/m26-output-grid/suggest_rule.py > measurements/m26-output-grid/suggest_rule.json
+    python measurements/m28-output-grid/suggest_rule.py > measurements/m28-output-grid/suggest_rule.json
 
-The rule (m26 section 5):
+The rule (m28 section 5):
 
 1. Lay a lattice of up to N x N blocks over the source (N = 128, or the
    source size when smaller) and move every block corner to the target.

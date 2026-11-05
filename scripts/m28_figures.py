@@ -1,13 +1,13 @@
-"""Figures for m26 (warp output-grid defaults).
+"""Figures for m28 (warp output-grid defaults).
 
-    python scripts/m26_figures.py
+    python scripts/m28_figures.py
 
-Reads measurements/m26-output-grid/*.json (gdal_matrix.json from
-gdalwarp, odc_cases.json from odc-geo, suggest_rule.json from the m26
-rule) and writes docs/img/m26-rules.png: for each source and target pair,
+Reads measurements/m28-output-grid/*.json (gdal_matrix.json from
+gdalwarp, odc_cases.json from odc-geo, suggest_rule.json from the m28
+rule) and writes docs/img/m28-rules.png: for each source and target pair,
 the suggested grid's cell count over the source's, and the fraction of
 the source's footprint (its cell centres, moved with GDAL's exact
-transformer) that the suggested extent holds. Then docs/img/m26-extents.png:
+transformer) that the suggested extent holds. Then docs/img/m28-extents.png:
 the extents over the footprint for the 150E to 150W box in Mollweide.
 """
 
@@ -24,7 +24,7 @@ from matplotlib.patches import Rectangle
 from osgeo import gdal, osr
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-MEAS = os.path.join(HERE, "..", "measurements", "m26-output-grid")
+MEAS = os.path.join(HERE, "..", "measurements", "m28-output-grid")
 IMG = os.path.join(HERE, "..", "docs", "img")
 sys.path.insert(0, MEAS)
 from cases import SOURCES, TARGETS  # noqa: E402
@@ -35,7 +35,7 @@ o = json.load(open(os.path.join(MEAS, "odc_cases.json")))
 m = json.load(open(os.path.join(MEAS, "suggest_rule.json")))["cases"]
 RULES = [("gdalwarp (GDALSuggestedWarpOutput2)", lambda k: g[k]["gdal"], "#c0504d", "o"),
          ("odc-geo compute_output_geobox", lambda k: o[k], "#4f81bd", "s"),
-         ("m26 rule", lambda k: m[k], "#2e2e2e", "D")]
+         ("m28 rule", lambda k: m[k], "#2e2e2e", "D")]
 
 
 def footprint(sname, tcrs, n=200):
@@ -106,7 +106,7 @@ axes[0].legend(loc="upper left", bbox_to_anchor=(0, 1.07), ncol=3, fontsize=8, f
 fig.suptitle(f"Suggested target grids, with only the target CRS given (GDAL {g and json.load(open(os.path.join(MEAS, 'gdal_matrix.json')))['gdal']})",
              y=0.995, fontsize=11)
 fig.tight_layout()
-fig.savefig(os.path.join(IMG, "m26-rules.png"), dpi=110)
+fig.savefig(os.path.join(IMG, "m28-rules.png"), dpi=110)
 
 # Two pairs drawn: the footprint and each rule's extent.
 fig, axes = plt.subplots(1, 1, figsize=(10, 3.6))
@@ -130,6 +130,6 @@ for ax, k in zip([axes], ["pacific-150to210 -> moll"]):
     ax.legend(loc="upper center", fontsize=8, frameon=False)
     ax.ticklabel_format(style="sci", scilimits=(6, 6))
 fig.tight_layout()
-fig.savefig(os.path.join(IMG, "m26-extents.png"), dpi=110)
+fig.savefig(os.path.join(IMG, "m28-extents.png"), dpi=110)
 for k, r in zip(keys, rows):
     print(k, " ".join(f"{a:9.3g} {b:5.2f}" for a, b in r))

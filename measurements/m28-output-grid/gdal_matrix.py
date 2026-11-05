@@ -1,6 +1,6 @@
-"""What gdalwarp infers for the target grid, case by case (m26).
+"""What gdalwarp infers for the target grid, case by case (m28).
 
-    python measurements/m26-output-grid/gdal_matrix.py > measurements/m26-output-grid/gdal_matrix.json
+    python measurements/m28-output-grid/gdal_matrix.py > measurements/m28-output-grid/gdal_matrix.json
 
 Each source is an empty in-memory raster (only its grid and CRS matter).
 Each case runs gdal.Warp to a VRT, which computes the output grid without
@@ -63,7 +63,7 @@ def run(src, dst_crs, **kw):
 
 def local_scale(src, dst_crs):
     """Cell size at the source centre, mapped to the target: the length of
-    one source cell step in x and in y, as target units (the m26 rule)."""
+    one source cell step in x and in y, as target units (the m28 rule)."""
     t = gdal.Transformer(src, None, [f"DST_SRS={dst_crs}"])
     nx, ny = src.RasterXSize, src.RasterYSize
     cx, cy = nx / 2, ny / 2

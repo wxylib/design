@@ -1,7 +1,7 @@
-# m26 measurements: what each tool infers for a warp's target grid
+# m28 measurements: what each tool infers for a warp's target grid
 
 Three scripts over the same five source grids and six target CRSs
-(`cases.py`), for [m26](../../docs/m26-warp-output-grid.md):
+(`cases.py`), for [m28](../../docs/m28-warp-output-grid.md):
 
 - `gdal_matrix.py` (osgeo.gdal): gdalwarp's grid with only the target CRS
   given (GDALSuggestedWarpOutput2 plus gdalwarp's rounding), and the
@@ -11,12 +11,12 @@ Three scripts over the same five source grids and six target CRSs
 - `odc_cases.py` (odc-geo 0.5.4): `compute_output_geobox` with its
   defaults (resolution "auto", pixel edges snapped to 0, 0). Output:
   `odc_cases.json`.
-- `suggest_rule.py` (osgeo.gdal, numpy): a prototype of the rule m26
+- `suggest_rule.py` (osgeo.gdal, numpy): a prototype of the rule m28
   section 5 recommends, with GDAL's exact transformer moving the points.
   Output: `suggest_rule.json`.
 
-`scripts/m26_figures.py` draws `docs/img/m26-rules.png` and
-`docs/img/m26-extents.png` from the three JSON files.
+`scripts/m28_figures.py` draws `docs/img/m28-rules.png` and
+`docs/img/m28-extents.png` from the three JSON files.
 
 The sources are empty in-memory rasters: only the grid and CRS matter.
 
