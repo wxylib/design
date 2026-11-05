@@ -1,6 +1,7 @@
 # m26: R and Python bindings on the Rust crates
 
-Status: musing with decisions, 2026-11-05. It settles the open part of
+Status: musing with decisions, 2026-11-05. The R route (section 9,
+item 1) is decided: option A. It settles the open part of
 m24 section 9, item 1 (bindings onto the Rust crate) and places wxylib's
 own `wxy` packages beside the foundation packages. Based on
 hypertidy/controlledburn at main (R 0.3.2.9000, Python 0.4.0 on the
@@ -241,7 +242,8 @@ Decide once, apply to every Rust-built R and Python package:
 ## 9. Decisions for the maintainer
 
 1. **The R route** (section 3): option A, the gated sequence
-   (recommended); B, move inside 0.3.2; C, keep the C++ core for R.
+   (recommended); B, move inside 0.3.2; C, keep the C++ core for R. Decided 2026-11-05: option A, the gated
+   sequence.
 2. **When the C++ controlledburn core is retired** (section 4): after
    one release cycle with no C++ consumer (recommended), or kept
    indefinitely as a reference.
