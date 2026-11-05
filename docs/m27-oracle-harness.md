@@ -127,7 +127,7 @@ Measured (GDAL 3.8.4 from Ubuntu 24.04, Python 3.12):
 
 | Set | Answer sets | Result |
 |---|---|---|
-| `cog/` | 3.12.2 (rasterio, as made), 3.8.4 | 15 of 15 windows byte-identical; wxy-tiff identical to both |
+| `cog/` | 3.12.2 (rasterio, as made), 3.8.4, 3.14.0dev-b4f950833f (`answers` workflow) | 15 of 15 windows byte-identical across all three; info identical between 3.8.4 and HEAD; wxy-tiff identical to all |
 | fixtures PR #13 `vrt/`, adopted in a scratch copy | 3.12.2 (rasterio), 3.8.4 | 31 of 32 reads identical; `v05-nodata` refused by 3.8.4 ("Unknown option: a_nodata") |
 
 ## 5. Hosting the VRT corpus
@@ -186,7 +186,7 @@ history stays implicit in git.
 
 - The 3.8.4 answers come from Ubuntu's GDAL build, not the gdal3.js
   wasm build; the two share a version, not necessarily drivers.
-- Nothing here has been run on GDAL HEAD yet; the `answers` workflow
-  does that on the fixtures PR.
+- GDAL HEAD (3.14.0dev-b4f950833f, from the `answers` workflow on the
+  fixtures PR) has answered `cog/` only, not the VRT corpus.
 - The diff of PR #13's corpus was made on a scratch copy; nothing was
   pushed to that branch.
