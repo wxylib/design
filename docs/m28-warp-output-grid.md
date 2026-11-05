@@ -47,7 +47,9 @@ where should wxylib differ from gdalwarp?
   inferred extent to its own multiples (gdalwarp's `-tap`, on by
   default); over-determined requests that do not agree are errors, not
   silent edge moves; a cell budget refuses absurd grids before any
-  allocation.
+  allocation. The suggestion's limits (singular ratio, the target CRS's
+  area of use, an optional size cap) are on by default and each can be
+  set or turned off (section 6.1).
 - **Where it lives:** grid arithmetic (resolve, snap, check) in vaster,
   which already has `vcrop`; the suggestion in rwarp, which has the
   transformers; flags, reporting and bindings in wxylib. About 300 lines
@@ -291,6 +293,48 @@ And warnings, not errors: any dropped fraction above zero, and any torn
 fraction, are printed with the grid (and the torn case names the
 recentring fix).
 
+### 6.1 Limits on a suggestion: on by default, each settable
+
+The section 5 rule has one limit built in (the singular ratio). Two more
+belong beside it, and all three are heuristics a user can set or turn
+off, rather than fixed behaviour:
+
+| limit | default | what it does | off |
+|---|---|---|---|
+| singular ratio | 100 | drops blocks whose area per source cell is more than this times the median | `none`: every finite corner counts |
+| CRS expanse | on, when the target CRS has an area of use | drops blocks whose centre is outside the target CRS's area of use (a lon/lat box in its EPSG metadata) | `none`: the footprint is not clipped |
+| size cap | off; `--suggest-max-size NX NY` | coarsens the suggested cell size until the grid fits NX by NY (a thumbnail, a preview) | the default |
+
+`--suggest-limit none` turns all of them off and gives the raw bounding
+box, which is what gdalwarp does. The cell budget (`--max-cells`) is not
+one of them: it refuses, it does not shape.
+
+The CRS expanse is metadata, not a per-projection case, and on the EPSG
+targets here it does what the special cases try to (second pass in
+`suggest_rule.json`, `area_of_use`):
+
+| pair | section 5 rule | with the CRS expanse | dropped as outside |
+|---|---|---|---|
+| world-0.5 to 3857 | 610 x 854, to 85.9 degrees | 620 x 595, to 85.06 degrees (the area of use's own limit) | 6.2 % |
+| world-0.5 to 3031 | 1552 x 1552 at 91 km, to 7.1e7 m | 236 x 236 at 27.9 km, to 3.3e6 m (60S) | 83.6 % |
+| antarctic-25km to 32755 | 764 x 594 | 30 x 261, the 144E to 150E strip | 98.2 % |
+| utm55s-10m to 3031 | 15177 x 15177 | refused: Tasmania is outside "Antarctica" | 100 % |
+| antarctic-25km to 3031 (identity) | 480 x 480 | 270 x 270, cut at 60S | 75.8 % |
+
+The last two rows set two rules. An identity request (target CRS equal to
+the source's, nothing else given) returns the source grid and never runs
+the suggestion, so a store is never cropped to its own CRS's area of use.
+And a request the expanse refuses outright says which limit refused it
+and how to turn it off (`--suggest-limit none`, or give `--extent`): a
+UTM tile in polar stereographic is a legitimate request, only an unusual
+one. PROJ strings (Mollweide, the Hobart LAEA here) carry no area of use,
+so for them the singular ratio is the only limit.
+
+The CRS backend has to supply the area of use: PROJ's database does,
+proj4rs does not. Until wxylib's CRS backend has one (terrio-crs, or a
+small table of EPSG areas generated from PROJ's), the expanse limit is
+unavailable and the ratio stands alone, as in section 5.
+
 ## 7. Where the code lives
 
 | piece | home | why |
@@ -298,7 +342,7 @@ recentring fix).
 | resolve given and inferred parts, snap, check agreement | vaster (`resolve_grid`, beside `vcrop`) | pure grid arithmetic, no CRS; R vaster has the same vocabulary, so the C++ and R siblings can follow |
 | the suggestion (section 5) | rwarp (`suggest::suggest_grid(src, &transformer, opts) -> Suggestion`) | needs a forward map and nothing else; GDAL keeps its own next to the warper too |
 | densifying a box in another CRS | bigcurve, through rwarp's adapter | m20: bigcurve owns the forward-map seam |
-| flags, `--dry-run` record, `--max-cells`, bindings arguments | wxylib (wxy-warp `GridRequest`, wxy-cli, py, r, web) | I/O and presentation stay above the movement layer |
+| flags, `--dry-run` record, `--max-cells`, `--suggest-limit`, bindings arguments | wxylib (wxy-warp `GridRequest`, wxy-cli, py, r, web) | I/O and presentation stay above the movement layer |
 
 wxy-cli gains `--res` and makes `--extent` and `--size` optional;
 `--crs` defaults to the source's. The bindings gain optional `dst_res`
@@ -334,3 +378,7 @@ Steps 1 and 2 wait for rwarp's current sprints, like m20's moves.
   (`+lon_0` moved to the footprint's middle), or only name it.
 - Whether "cell size, size" (allowed here, an error in gdalwarp) earns
   its place.
+- Where the area of use comes from for wxylib's CRS backend (section
+  6.1), and whether the expanse limit should apply only to the side that
+  overflows (keeping a source that straddles the area's edge whole along
+  the other axis).

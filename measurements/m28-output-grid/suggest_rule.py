@@ -30,6 +30,10 @@ The rule (m28 section 5):
 
 Reported beside the grid: the fraction of blocks dropped as singular and
 as torn, so a caller sees what the suggestion left out.
+
+A second pass (`area_of_use` in the output) also leaves out the blocks
+whose centre lies outside the target CRS's area of use, where the CRS has
+one (the EPSG codes here; m28 section 6.1).
 """
 
 import json
@@ -44,6 +48,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from cases import SOURCES, TARGETS  # noqa: E402
 
 gdal.UseExceptions()
+osr.UseExceptions()
 N, K, T = 128, 100.0, 20.0
 
 
@@ -57,7 +62,7 @@ def source(name, crs, extent, size):
     return ds
 
 
-def suggest(ds, dst_crs, within=None):
+def suggest(ds, dst_crs, within=None, area_of_use=None):
     nx, ny = ds.RasterXSize, ds.RasterYSize
     bx, by = min(N, nx), min(N, ny)
     cx = np.linspace(0, nx, bx + 1)
@@ -124,7 +129,28 @@ def suggest(ds, dst_crs, within=None):
         sides.append((q0[jump], q1[jump]))
     torn = np.logical_or.reduce(tear)
     singular = ~finite | (~torn & ((a > K * med) | (a <= 0)))
-    good = ~singular & ~torn
+    outside = np.zeros(a.shape, dtype=bool)
+    if area_of_use is not None:
+        # The target CRS's area of use (lon/lat box from its metadata): a
+        # block whose centre falls outside it is left out, like a singular
+        # one, and counted separately.
+        w, so, e, n = area_of_use
+        g = gdal.Transformer(ds, None, ["DST_SRS=EPSG:4326"])
+        pcx0 = (gx[:-1, :-1] + gx[1:, 1:]) / 2
+        pcy0 = (gy[:-1, :-1] + gy[1:, 1:]) / 2
+        pts, ok = g.TransformPoints(0, list(zip(pcx0.ravel(), pcy0.ravel())))
+        ll = np.array([(r[0], r[1]) for r in pts], dtype=float).reshape(a.shape + (2,))
+        lon = (ll[..., 0] + 180.0) % 360.0 - 180.0
+        lat = ll[..., 1]
+        inlon = (lon >= w) & (lon <= e) if w <= e else (lon >= w) | (lon <= e)
+        outside = ~(inlon & (lat >= so) & (lat <= n))
+        singular = singular & ~outside
+        torn = torn & ~outside
+    good = ~singular & ~torn & ~outside
+    if not good.any():
+        return {"error": "no part of the source lands in the target"
+                         + (" CRS's area of use" if area_of_use is not None else ""),
+                "outside": float(outside.mean())}
     if within is not None:
         # A given extent: the cell size from the blocks that land in it.
         mxc, myc = sum(cxs) / 4, sum(cys) / 4
@@ -157,7 +183,8 @@ def suggest(ds, dst_crs, within=None):
     oy = (size[1] * res - (e[3] - e[1])) / 2
     s = [e[0] - ox, e[1] - oy, e[2] + ox, e[3] + oy]
     return {"extent": s, "res": [res, res], "size": size, "footprint": e,
-            "singular": float(singular.mean()), "torn": float(torn.mean())}
+            "singular": float(singular.mean()), "torn": float(torn.mean()),
+            "outside": float(outside.mean())}
 
 
 out = {"N": N, "K": K, "T": T, "gdal": gdal.__version__, "cases": {}}
@@ -170,6 +197,26 @@ for sname, (crs, ext, size) in SOURCES.items():
             out["cases"][f"{sname} -> {tname}"] = suggest(src, tcrs)
         except Exception as e:  # noqa: BLE001
             out["cases"][f"{sname} -> {tname}"] = {"error": str(e)[:200]}
+# The same, limited to the target CRS's area of use where it has one
+# (EPSG CRSs; the PROJ strings have none, so they are left out).
+out["area_of_use"] = {}
+for sname, (crs, ext, size) in SOURCES.items():
+    src = source(sname, crs, ext, size)
+    for tname, tcrs in TARGETS.items():
+        if sname.startswith("world") and tname == "32755":
+            continue
+        srs = osr.SpatialReference()
+        srs.SetFromUserInput(tcrs)
+        aou = srs.GetAreaOfUse()
+        if aou is None:
+            continue
+        box = (aou.west_lon_degree, aou.south_lat_degree, aou.east_lon_degree,
+               aou.north_lat_degree)
+        del aou, srs  # (otherwise SWIG reports a leak on stdout at exit)
+        r = suggest(src, tcrs, area_of_use=box)
+        r["area_of_use"] = list(box)
+        out["area_of_use"][f"{sname} -> {tname}"] = r
+
 # Given extents (gdalwarp -te, no -tr), as in gdal_matrix.py.
 out["within"] = {}
 for key, sname, tcrs, te in [

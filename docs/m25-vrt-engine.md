@@ -1,6 +1,8 @@
 # m25: A VRT engine outside GDAL
 
-Status: musing, 2026-11-05. Scopes a reader of GDAL's virtual formats
+Status: musing, 2026-11-05; decisions 1 to 4 taken the same day, work
+started (section 7: wxylib/fixtures#13 corpus, wxylib/core#29
+`vrt-model`, 32 of 32 requests identical to GDAL 3.12.2). Scopes a reader of GDAL's virtual formats
 that runs without GDAL, in Rust and in the browser, across all four VRT
 families, and asks where it could be contributed. Based on GDAL master at
 `fa1fc3c` (2026-11-03), terrio 0.7.0 at `3a2e373`, OxiGeo at `9e73da7`,
@@ -385,11 +387,11 @@ them unchanged.
 
 ## 6. Decisions
 
-1. **Which approach?** Recommended: D, the model and planner, with
+1. **Which approach?** Decided (2026-11-05): D, the model and planner, with
    wxylib's two JavaScript readers kept as prototypes until the wasm
    build replaces their parsing; A as the in-browser oracle only; B
    ruled out.
-2. **Where does the crate live?** Recommended: `vrt-model` (working
+2. **Where does the crate live?** Decided (2026-11-05): `vrt-model` (working
    name) in the core workspace with no wxy dependencies, extracted to
    its own repository when another project adopts it. Alternative: a
    standalone repository now (Michael creates it), if the outside offer
