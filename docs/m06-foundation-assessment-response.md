@@ -295,3 +295,16 @@ MUR live stores, and the mdim-refs reconciliation (m15).
 | C3 | Validity on THREDDS | Partly closed | The export's `sources` table is in the spec (m15) and in the BRAN store; `wxy-refs` does not read it yet |
 | C4 | Scale | Partly closed, new pressure | Fragments partitioned by source (core ba84338). The whole GHRSST MUR series (22.8M references) does not fit `RefsStore`, which holds the table in memory (about 14 GB): a table of that size needs row-group lookup by chunk, not a full load |
 | C5 | `copy` read order | Unchanged | `copy` is not in the spec yet |
+
+## 9. Second recheck (2026-11-05)
+
+The open rows of section 8 that had a concrete fix, against core caba7b2
+plus core #31, fixtures #16, py #6 and r #7.
+
+| # | Point | Now | Evidence and what is left |
+|---|---|---|---|
+| 3 | Only one chunk per file tested | Closed | `mdimrefs/bluelink-synthetic` (fixtures #16): `temp` and `salt` in two monthly netCDF4 files each, up to 192 chunks per file, a never-written chunk and a never-written depth, BRAN's float64 packing. `wxy-refs` reads it from the table and matches netCDF-C in five windows, one across the month boundary (core #31, `tests/bluelink.rs`, in CI). Byte ranges come from HDF5's chunk index, so the fixture needs no GDAL. Left: LZW on the refs path |
+| 5 | R binding far from R users | Pins current | wxylib/r and wxylib/py move from core 39b07bb to caba7b2 (r #7, py #6) with no source changes; R CMD check and pytest pass. The bindings still bind an in-memory warp only, and the CRAN feasibility check has not started. The r and py images follow once these merge |
+| 9a | `stored_bytes` for refs sources | Closed | `wxy_refs::RefsSource` answers `stored_ranges` from the table, so a plain `--dry-run` on a table reports `stored_bytes` (core #31) |
+| C4 | Scale | Mostly closed | `RefsStore` keeps 32 bytes a reference (grid index, source number, offset, length; sources held once) and frees the loaded references as it indexes them. A GHRSST-shaped table of 22.8M references peaks at 3.0 GB (2.4 GB of it the loaded references, 0.6 GB the store), against about 21 GB before; at 4M, 0.55 GB against 3.8 GB (core #31, `tests/scale.rs`). Left: row-group lookup by chunk, if a series outgrows that |
+| - | Fixtures unpinned in core CI | Closed | Core CI checks out fixtures by commit (6455dd5 with core #31) |
