@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="470" viewBox="0 0 780 470" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect width="780" height="470" fill="#ffffff"/>
+
+  <!-- inputs -->
+  <text x="20" y="26" font-weight="bold" fill="#2b3a4f">Written forms (all parse into one model, all lower back to XML)</text>
+  <rect x="20" y="38" width="180" height="62" rx="6" fill="#eef4fa" stroke="#7a9cbf"/>
+  <text x="110" y="60" text-anchor="middle">VRT XML</text>
+  <text x="110" y="78" text-anchor="middle" font-size="11" fill="#555">classic, mdim, vector</text>
+  <text x="110" y="92" text-anchor="middle" font-size="11" fill="#555">gdalvrt.xsd, ogrvrt.xsd</text>
+  <rect x="215" y="38" width="200" height="62" rx="6" fill="#eef4fa" stroke="#7a9cbf"/>
+  <text x="315" y="60" text-anchor="middle">vrt:// strings</text>
+  <text x="315" y="78" text-anchor="middle" font-size="11" fill="#555">keys = translate flags</text>
+  <text x="315" y="92" text-anchor="middle" font-size="11" fill="#555">raster today; mdim, vector new</text>
+  <rect x="430" y="38" width="160" height="62" rx="6" fill="#eef4fa" stroke="#7a9cbf"/>
+  <text x="510" y="60" text-anchor="middle">JSON</text>
+  <text x="510" y="78" text-anchor="middle" font-size="11" fill="#555">the same model, serde</text>
+  <text x="510" y="92" text-anchor="middle" font-size="11" fill="#555">schema generated</text>
+
+  <line x1="110" y1="100" x2="250" y2="140" stroke="#444" marker-end="url(#a)"/>
+  <line x1="315" y1="100" x2="315" y2="140" stroke="#444" marker-end="url(#a)"/>
+  <line x1="510" y1="100" x2="380" y2="140" stroke="#444" marker-end="url(#a)"/>
+
+  <!-- the crate -->
+  <rect x="20" y="142" width="570" height="128" rx="8" fill="#fdf3e6" stroke="#c9a46b"/>
+  <text x="32" y="162" font-weight="bold" fill="#7a5a22">The proposed crate: no I/O, no pixel arithmetic</text>
+  <rect x="36" y="172" width="250" height="84" rx="6" fill="#fff" stroke="#c9a46b"/>
+  <text x="161" y="192" text-anchor="middle" font-weight="bold">Model</text>
+  <text x="161" y="210" text-anchor="middle" font-size="11" fill="#555">typed: Dataset, Band, Source,</text>
+  <text x="161" y="224" text-anchor="middle" font-size="11" fill="#555">Group, Array, Slab, Layer, Field</text>
+  <text x="161" y="238" text-anchor="middle" font-size="11" fill="#555">round-trips XML; unknown kept, reported</text>
+  <line x1="286" y1="214" x2="318" y2="214" stroke="#444" marker-end="url(#a)"/>
+  <rect x="320" y="172" width="254" height="84" rx="6" fill="#fff" stroke="#c9a46b"/>
+  <text x="447" y="192" text-anchor="middle" font-weight="bold">Planner</text>
+  <text x="447" y="210" text-anchor="middle" font-size="11" fill="#555">request (window, slice, bbox)</text>
+  <text x="447" y="224" text-anchor="middle" font-size="11" fill="#555">-&gt; rows: source, source window,</text>
+  <text x="447" y="238" text-anchor="middle" font-size="11" fill="#555">destination window, ops to apply</text>
+
+  <!-- corpus -->
+  <rect x="610" y="142" width="150" height="128" rx="8" fill="#eef6ee" stroke="#7aa77a"/>
+  <text x="685" y="164" text-anchor="middle" font-weight="bold" fill="#2f5f2f">Conformance</text>
+  <text x="685" y="180" text-anchor="middle" font-weight="bold" fill="#2f5f2f">corpus</text>
+  <text x="685" y="202" text-anchor="middle" font-size="11" fill="#555">VRTs, small sources,</text>
+  <text x="685" y="216" text-anchor="middle" font-size="11" fill="#555">GDAL's reads per</text>
+  <text x="685" y="230" text-anchor="middle" font-size="11" fill="#555">version (fixtures)</text>
+  <text x="685" y="252" text-anchor="middle" font-size="11" fill="#2f5f2f">shared by everyone</text>
+  <line x1="610" y1="206" x2="592" y2="206" stroke="#7aa77a" marker-end="url(#a)"/>
+
+  <line x1="150" y1="270" x2="120" y2="318" stroke="#444" marker-end="url(#a)"/>
+  <line x1="305" y1="270" x2="365" y2="318" stroke="#444" marker-end="url(#a)"/>
+  <line x1="500" y1="270" x2="620" y2="318" stroke="#444" marker-end="url(#a)"/>
+
+  <!-- consumers -->
+  <text x="20" y="306" font-weight="bold" fill="#2b3a4f">Readers that do the I/O and the arithmetic</text>
+  <rect x="20" y="320" width="220" height="92" rx="6" fill="#f4f0fa" stroke="#9a86bf"/>
+  <text x="130" y="342" text-anchor="middle">wxy (Rust)</text>
+  <text x="130" y="360" text-anchor="middle" font-size="11" fill="#555">async-tiff, zarrs, object_store</text>
+  <text x="130" y="374" text-anchor="middle" font-size="11" fill="#555">rwarp for warped and resampled</text>
+  <text x="130" y="388" text-anchor="middle" font-size="11" fill="#555">sources; stage S7</text>
+  <rect x="255" y="320" width="250" height="92" rx="6" fill="#f4f0fa" stroke="#9a86bf"/>
+  <text x="380" y="342" text-anchor="middle">Browser, through wasm (npm)</text>
+  <text x="380" y="360" text-anchor="middle" font-size="11" fill="#555">deck.gl-raster MosaicLayer,</text>
+  <text x="380" y="374" text-anchor="middle" font-size="11" fill="#555">maplibre-gl-raster, wxylib web;</text>
+  <text x="380" y="388" text-anchor="middle" font-size="11" fill="#555">their own COG, Zarr, vector readers</text>
+  <rect x="520" y="320" width="240" height="92" rx="6" fill="#f4f0fa" stroke="#9a86bf"/>
+  <text x="640" y="342" text-anchor="middle">GDAL (C++)</text>
+  <text x="640" y="360" text-anchor="middle" font-size="11" fill="#555">opens the lowered XML:</text>
+  <text x="640" y="374" text-anchor="middle" font-size="11" fill="#555">the oracle for every form,</text>
+  <text x="640" y="388" text-anchor="middle" font-size="11" fill="#555">including the new vrt:// keys</text>
+
+  <text x="20" y="446" font-size="11" fill="#555">One model for four families (classic raster, vrt://, multidimensional, vector). The crate says what to read and from where;</text>
+  <text x="20" y="460" font-size="11" fill="#555">each reader keeps its own I/O. Every written form lowers to XML that GDAL already opens, so GDAL checks all of it.</text>
+</svg>
