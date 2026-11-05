@@ -194,3 +194,13 @@ Anything else (`PREDICTOR=3`, other filters) is not mapped and stops ingest.
    should be sorted by the dims and split into row groups along `dim_0`
    so readers can prune; `path` may be dictionary-encoded (required at
    tens of millions of rows).
+6. **Proposed: key `sources` by (source, etag)** (from wxylib design m16,
+   versioned byte-ref tables). 0.2 declares `source` UNIQUE, so a file
+   rewritten under the same name must update its row in place, and a reader
+   holding older chunk rows then takes their offsets for the new file
+   without error (m16 section 6a). The proposal: `UNIQUE(source, etag)`
+   (or another content identity where there is no etag), so a changed file
+   is a new source row, `sources` only gains rows, and the plan chooses
+   which source a placement uses, as it already does for preliminary and
+   final versions. A rescan of an unchanged file stays an in-place upsert.
+   To be agreed here; it is not a wxylib extension.

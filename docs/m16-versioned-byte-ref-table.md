@@ -1,6 +1,8 @@
 # m16: A versioned byte-ref table, Lance against the alternatives
 
-Status: musing, measured, 2026-10-23. Tests the "Bytes in place" claim
+Status: musing, measured, 2026-10-23; revised 2026-11-05 after review
+(design issue #36), with the thin layer rerun one fragment per day, a
+Delta Lake replay, and a source changed in place. Tests the "Bytes in place" claim
 that Icechunk's addressing and layout features are views over a byte-ref
 table and its versioning features are storage, and answers its open
 question: for a byte-ref table with history, Lance, or a thin layer of
@@ -10,8 +12,10 @@ the same of the chunk bytes themselves, held in the table rather than
 referenced. Scripts and logs:
 [measurements/m16-lance](../measurements/m16-lance/README.md).
 
-**Implementation (2026-10-28):** Assessment, measured. As recommended, Lance is not adopted for
-refs; nothing in wxylib changes. The Icechunk manifest split is a
+**Implementation (2026-10-28, revised 2026-11-05):** Assessment, measured. As recommended, Lance is not adopted for
+refs; nothing in wxylib changes. Two rules are proposed for producers now
+(section 1): key `sources` by (source, etag), and pin every table of a
+store at one cut. The Icechunk manifest split is a
 producer setting. Held bytes in Lance wait for the chunk cache work
 to need them.
 
@@ -32,12 +36,29 @@ it, and is it worth doing now?
   remap, in DuckDB and DataFusion, reproducing the flat export row for row.
   Five oracle windows (84 chunks) read through the Lance refs match the
   GDAL hashes and a fresh osgeo.gdal read.
-- **Lance beats the thin layer where the thin layer is thin.** Parquet
-  fragments plus a create-only manifest commit took about 100 lines and
-  handled append, time travel and a two-writer race. It has no deletion
-  files, so a one-day rescan rewrote half a year of rows; compaction,
-  version cleanup that respects tags, and a row-level delta would each be
-  more code. That is the list of things Lance already has.
+- **Lance beats the thin layer where the thin layer is thin, but less
+  than first measured.** Parquet fragments plus a create-only manifest
+  commit took about 100 lines and handled append, time travel and a
+  two-writer race. Laid out as one fragment per day (the append unit, the
+  same lesson as the Icechunk split), a one-day rescan replaces one file of
+  2,556 rows, not half a year (465,192 rows, the first measurement, which
+  wrote the bulk load as one fragment). What the thin layer still lacks is
+  compaction, version cleanup that respects tags, and a row-level delta.
+- **Delta Lake is that thin layer, built elsewhere, and R can reach it.**
+  delta-rs replayed the same history: time travel, change data feed, the
+  remap view equal to the flat export, a refused conflicting merge. It is
+  slower per commit (0.18 s against Lance's 0.011 s, both negligible for a
+  daily product), has no tags (cleanup is by age), and rewrites files
+  rather than writing deletion vectors, so it needs the per-day layout too
+  (section 3b).
+- **Versioned refs reproduce rows, not bytes.** A tag on a refs table
+  brings back the rows. If the provider rewrites a file, those rows now
+  point at different bytes. A refs table can only notice that, through
+  `etag`, `size` and `mtime`, and refuse. Measured on a changed source
+  (section 6a), a reader pinned to the chunk table but reading `sources` at
+  latest accepted the old offsets as the new file. So citing a version
+  needs either held bytes or refs that fail hard on a mismatch. Held bytes
+  are the main reason to version, not an extra.
 - **The striking result is about Icechunk, not Lance.** The same daily
   history in Icechunk costs 22 MB with manifests split per day, 116 MB
   split per 30 days, and 1.84 GB split per 365 days, because each commit
@@ -61,7 +82,8 @@ it, and is it worth doing now?
   keyed by file, prelim and final as distinct sources); and R and GDAL,
   the first readers, cannot read Lance. Keep SQLite as the working store
   and the flat Parquet as the published middle stage. Name the triggers
-  that would change this (section 6). Act now on the Icechunk split. For
+  that would change this (section 6). Act now on the Icechunk split, and key `sources` by (source, etag)
+so that a later version can tell a changed file from an unchanged one. For
   held bytes (the chunk cache, a hardened zaro store), Lance is the first
   table format to try when that work starts.
 
@@ -83,7 +105,32 @@ version (or a tag on it). The small tables only gain rows, and the writer
 commits them first, so a reader pinned to chunk version N that reads
 `sources` and `placements` at latest still resolves every row it sees.
 This "commit point" convention is the price of no multi-table
-transaction. Icechunk has cross-array atomicity in one snapshot; a
+transaction.
+
+The convention as first written assumed `sources` and `placements` only
+gain rows. Neither holds once a source changes in place: an updated
+`sources` row (new `etag`, new `size`) under the same `source_id` makes a
+reader pinned at chunk version N take the old offsets for the new file
+without any error, and a placement switched to a reprocessed source makes
+day N disappear from the pinned read (section 6a measures both). Two rules
+replace the assumption:
+
+1. **Pin every table at one cut.** The writer commits a day's rows to all
+   tables, then applies one date-named tag (Lance) or records one set of
+   versions (Delta, which has no tags) across them. A reader opens every
+   table at that cut, not the chunk table alone. If one pipeline writes
+   every variable for a day, this cut is also the cross-array snapshot, so
+   one chunk table per array stays (open question 1).
+2. **Key `sources` by (source, etag)**, or an equivalent content identity,
+   so a changed file is a new row and `sources` stays append-only. Old chunk
+   rows keep pointing at the old identity, and a reader that checks the
+   live `etag` refuses them rather than misreads. This is the existing
+   rule that preliminary and final files are distinct sources, applied to a
+   file rewritten under one name. mdim-refs/0.2 declares `source` UNIQUE,
+   so the rule needs `UNIQUE(source, etag)` there; it is offered as a spec
+   open question, not adopted. The GHRSST 2024 store has no etags yet
+   (`etag` is null in all 366 rows); the producer change that carries each
+   source's ETag into the store is pending. Icechunk has cross-array atomicity in one snapshot; a
 many-array store in Lance would need either this convention per array or
 one chunk table with an `array` column (a schema change, so not done).
 
@@ -99,7 +146,7 @@ The "Bytes in place" mapping, now with a result per row.
 | Append as commit | Lance append | storage | 0.011 s median per day (2,556 rows) |
 | Upsert of a rescan | `merge_insert` on (source_id, dim_*) | storage | 2,556 rows updated, 0 inserted, 0.10 s; deletion file, no rewrite |
 | Diff | Lance `delta`, or `EXCEPT` of two versions | view, given snapshots | 470,304 inserted rows both ways (EXCEPT 0.24 s); 2,556 updated for the rescan |
-| Time travel | open at a version or tag | storage | 465,192 / 935,496 / 935,496 rows at the three tags |
+| Time travel | open at a version or tag | storage | 465,192 / 935,496 / 935,496 rows at the three tags. These are rows: the bytes they point at are reproduced only while the sources are unchanged (section 6a) |
 | Conflict handling | Lance optimistic retry | storage | Two appends from one base both land (187, 188); two upserts of the same day both land with the row count unchanged |
 | Manifest splitting | fragments, compaction | layout | 186 fragments compact to 1 in 0.4 s |
 | Expiration, GC | `cleanup_old_versions` | storage ops | Keeps tagged versions, so with three tags the store grew from 10.1 to 14.2 MB after compaction: history you tag is history you keep |
@@ -119,11 +166,11 @@ reads a version as a pyarrow dataset over its fragment list.
 |---|---|---|
 | Code to own | none (a dependency) | about 100 lines for append-only |
 | Daily append | 0.011 s | 0.007 s |
-| Rescan of one day | deletion file + new fragment, 0.10 s | copy-on-write of the fragment holding the day: 465,192 rows rewritten, 0.44 s |
+| Rescan of one day | deletion file + new fragment, 0.10 s | copy-on-write of the fragment holding the day. Bulk load as one fragment: 465,192 rows rewritten, 0.44 s. One fragment per day: 2,556 rows rewritten, 0.37 s, almost all of it finding the fragment (reading `source_id` from 369 files, 0.56 s cold); a manifest that lists each fragment's sources makes that a lookup |
 | Race | retried inside Lance | one retry, by construction |
 | Diff | row-level `delta`; or EXCEPT | fragment-set difference (1 added, 1 removed); rows by EXCEPT |
 | Compaction, cleanup with tags | built in | to write |
-| Bytes, one year with history | 13.8 MB (all four tables) | 22.2 MB (Parquet footers on 366-row and 1-row files) |
+| Bytes, one year with history | 13.8 MB (all four tables) | 22.2 MB with one bulk fragment; 19.8 MB with one fragment per day (the rescan no longer copies half a year, but each manifest lists 366 fragments: 3.8 MB of manifests against 1.3 MB) |
 | Readers | pylance, Rust `lance`, DuckDB and SedonaDB via Arrow streams, DataFusion via an FFI table provider pinned to one DataFusion major (54 accepted, 55 refused) | anything that reads Parquet, including GDAL, R arrow and DuckDB; the manifest is JSON |
 | Format churn | Lance file format versions 2.0 to 2.3 and a fast-moving Python package (13.0.0) | Parquet and JSON |
 
@@ -140,11 +187,71 @@ pushdown into Lance); it did not accept the Lance DataFusion provider. For
 query pushdown today the path is DataFusion with matching majors, or
 DuckDB.
 
-Answer to the open question: if history is wanted, Lance, not the thin
-layer. The thin layer is attractive only while the table is append-only
-and nobody tags anything; the first rescan, the first compaction and the
-first "what changed" request each turn it into a small Lance, written
-again. That is the "do not grow one" reminder, confirmed by measurement.
+Answer to the open question: if history is wanted, Lance or Delta, not
+the thin layer. The first measurement overstated the rescan cost: it came
+from writing the bulk load as one fragment, not from the format. Laid out
+by the append unit, a rescan in the thin layer is as cheap as an append.
+What remains is the rest of the list: the first compaction, the first
+cleanup that must keep tagged versions, and the first "what changed"
+request each add code that Lance and Delta already have. That is still
+the "do not grow one" reminder, now for the right reason. Layout by the
+append unit is the rule in every format here: Icechunk manifests (section
+4), thin-layer fragments, and Delta files (section 3b).
+
+## 3b. Delta Lake
+
+Delta is the thin layer done elsewhere: a JSON log of Parquet files, a
+create-if-absent commit, and (in the protocol) deletion vectors. The same
+replay through delta-rs (`deltalake` 1.6.6, Python), each mdim-refs table
+a Delta table, change data feed on. Script `delta_replay.py`, logs
+`delta-single-log.json` and `delta-day-log.json`.
+
+| | Bulk as one file | Partitioned by `source_id` (one file per day) |
+|---|---|---|
+| Daily commit, three tables, median | 0.18 s | 0.18 s |
+| Rescan of one day (merge on the within-source key) | 0.61 s; 2,556 updated, 462,636 copied, 1 file replaced | 0.56 s; 2,556 updated, 0 copied, 1 file replaced |
+| Time travel (versions 0, 184, 185) | 465,192 / 935,496 / 935,496 rows | same |
+| Change data feed, year to rescan | 2,556 update pre-images, 2,556 post-images | same |
+| `EXCEPT` of year and first half | 470,304 rows, 0.51 s | 470,304 rows, 0.87 s |
+| Remap view in DuckDB over delta-rs datasets | 0.68 s, row hash equal to the flat export | 0.87 s, equal |
+| Two appends from one base | both land | both land |
+| Two merges of the same day from one base | second refused ("a concurrent transaction added new data") | same |
+| Bytes, one year with history (three tables) | 28.2 MB, including change-data files | 14.6 MB |
+| Compaction | 185 files to 1, 0.64 s | already one file per day |
+| `vacuum` with zero retention | first-half version unreadable afterwards | same |
+
+What this adds to sections 2 and 3:
+
+- **Deletion vectors are not written.** delta-rs merge rewrites the files
+  it touches (462,636 rows copied in the one-file layout). Its recent
+  release notes fix deletion-vector reads, not writes. So Delta from Rust behaves
+  like the thin layer, copy-on-write, and needs the same per-day layout.
+- **No tags.** History is kept by age (`vacuum` retention), not by name. A
+  cited version is a version number plus a retention promise, so "keep
+  tagged versions" has to live in the operator's policy. Lance keeps a
+  tagged version through cleanup by default.
+- **Same key behaviour.** The two racing appends re-added two of day
+  100's rows (2,558 rows for the day). Delta enforces no key either;
+  ingest must be a merge. Its conflict checker does refuse a second merge
+  planned on a stale version, which Lance re-planned and applied.
+- **Serverless commits on S3.** From delta-rs source (main, read
+  2026-11-05): rust-v1.0.0 removed the DynamoDB log store as no longer
+  needed. A commit is `rename_if_not_exists` of a temporary log file. On
+  AWS S3 delta-rs sets `copy_if_not_exists` to `multipart` by default,
+  which object_store implements as a multipart upload completed with a
+  conditional write. That is the same serverless put-if-absent family as
+  Icechunk and Lance, through a copy rather than a direct
+  `PutMode::Create`. Not exercised against S3 here.
+- **R reach.** The DuckDB `delta` extension could not be installed in
+  the test environment (extension host blocked), so a DuckDB `delta_scan`
+  read of these tables, from Python or R, is still to be checked. The view
+  above ran over delta-rs Arrow datasets handed to DuckDB.
+
+Answer: Delta holds mdim-refs history as well as Lance does for refs, and
+it is the better candidate where R must read the history (through DuckDB),
+once that read is checked. Lance stays ahead for held bytes (section 7)
+and for named versions. DuckLake was not tested; it needs a catalog
+database, which the serverless designs here avoid.
 
 ## 4. Icechunk with daily commits
 
@@ -192,8 +299,9 @@ bytes, not only on the rows.
 
 ## 6. What it buys, what it costs, what if not
 
-**What we get with Lance as the store of record:** reproducible reads "as
-of" a tag; upsert and diff without code of our own; concurrent writers
+**What we get with Lance as the store of record:** reads "as of" a tag
+that reproduce the rows, and the bytes only while sources are unchanged or
+the bytes are held (section 6a); upsert and diff without code of our own; concurrent writers
 without a server, by the same put-if-absent mechanism Icechunk uses; a
 history that costs about 2.6 times the flat export for a year of daily
 commits.
@@ -216,15 +324,48 @@ answer for these stores.
 1. A second writer to the same store (for example scans run where the
    data is, at more than one site, into one table).
 2. A consumer that cites a version (a paper, a derived product, a cache
-   validated against a snapshot).
+   validated against a snapshot). Versioned refs alone do not meet it. It
+   is met only by held bytes, or by refs that fail hard when the live
+   `etag`, `size` or `mtime` differs from the row (section 6a).
 3. A published table too large to rewrite whole on each update (the full
    GHRSST series is 22.8M refs for one variable; a daily rewrite of that
    export is where an append-only versioned table starts to pay).
+4. A source that changes in place: a near-real-time product, or files
+   reprocessed under the same name. Refs into it go stale, and only held
+   bytes keep what was read. This is likely the first trigger to arrive for
+   daily GHRSST and BRAN updates, and the one that makes held bytes
+   (section 7) the reason to version rather than an extra.
 
-When one of them arrives, the step is small: a Lance emitter beside the
-Parquet export in the producer, the commit-point convention above, tags
-named by date, cleanup that keeps tags. The measurements here are the
+When one of them arrives, the step is small: a Lance (or Delta) emitter
+beside the Parquet export in the producer, the two rules of section 1,
+tags named by date, cleanup that keeps tags. The measurements here are the
 first test of it.
+
+**What does not wait for a trigger:** keying `sources` by (source, etag),
+and carrying the ETag into the store at all. Both cost nothing now, and
+without them no later version can tell a changed file from an unchanged
+one.
+
+### 6a. A source that changes in place
+
+`delta_replay.py` ends with a small case on day 100: a store holding that
+day (etag `e1`), then the file rewritten under the same name (etag `e2`,
+new size, new offsets), recorded in two ways. A reader then reads day 100
+at the "year" versions, either with every table pinned or with only the
+chunk table pinned (the convention as first written), and checks the
+`etag` it gets against the live file's `e2`.
+
+| How the change is recorded | Every table pinned | Chunk table pinned, `sources` and `placements` latest |
+|---|---|---|
+| In place: `sources` row updated, same `source_id` | 2,556 rows, etag `e1`: refused as stale | 2,556 rows, etag `e2`, old offsets: **accepted as the new file** |
+| Keyed: new `sources` row for (source, `e2`), placement switched | 2,556 rows, etag `e1`: refused as stale | 0 rows: the placement points at a source the pinned chunks lack |
+
+Only the in-place update with a partly pinned reader goes wrong silently,
+and that is the combination the first convention allowed. Pinning every
+table makes a stale read detectable in both forms; keying by etag keeps
+the old row so the refusal is possible after the fact, and keeps
+`sources` append-only for any reader. Neither makes the old bytes
+readable again: that needs held bytes (section 7).
 
 **Act now:** split daily-appended Icechunk repos by the append unit along
 time (section 4). That is the one result that changes something already
@@ -384,16 +525,21 @@ Not proposed: a Lance-only column, a different key, or putting
 
 1. Is one chunk table per array the right Lance layout for a many-array
    store (BRAN has several variables), given that a Lance commit covers one
-   dataset? The alternative, one table with an `array` column and a list
-   of keys, changes the schema and is not proposed.
+   dataset? Answered for now: yes. When one pipeline writes every variable
+   for a day, a date-named tag applied to each table after that day's
+   commits is one consistent cut (section 1, rule 1). An `array` column (a
+   schema change) only pays when different writers own different
+   variables, which is trigger 1.
 2. Does the Lance R story change (a reader in R without Python) before
    any of the triggers arrive? If not, Lance stays a producer-side store
    with Parquet and VRT as the published forms.
-3. DuckLake and Delta Lake were not tested. DuckLake needs a catalog
-   database; Delta's log commit is put-if-absent as Lance's is, and Delta
-   tables are readable from R through DuckDB. Worth one replay each if the
-   triggers arrive.
-4. For held bytes: is the right unit the chunk (one row per chunk, as
+3. Delta Lake is now measured (section 3b). Still open: a DuckDB
+   `delta_scan` read of the tables from R, and a delta-rs commit race
+   against real S3. DuckLake was not tested; it needs a catalog database.
+4. Should mdim-refs declare `UNIQUE(source, etag)` instead of
+   `source` UNIQUE (section 1, rule 2)? Offered in the spec's open
+   questions.
+5. For held bytes: is the right unit the chunk (one row per chunk, as
    here) or a held copy of the whole source file with the refs pointing
    into it (`held = link`)? The first gives versioned chunks; the second
    keeps file-level validation against `sources` simple.

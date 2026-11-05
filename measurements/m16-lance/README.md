@@ -16,10 +16,17 @@ zarr, numcodecs, sedonadb 0.5.0.
 | `lance_query.py OUT FLAT` | time travel at tags; Lance delta vs EXCEPT; the remap view in DuckDB and DataFusion, row hash against the flat export; a box query; compaction and cleanup on a copy | `query-log.json` |
 | `lance_bytes.py OUT STORE` | each oracle window read through the Lance refs (remap target `s3direct`), decoded, hashed; compared with the manifest and with osgeo.gdal on the plan VRT remapped by `gdal-s3direct` | `bytes-rescan.json` |
 | `frag_store.py STORE.sqlite OUT LANCE` | the same history as Parquet fragments plus a manifest written with object_store `PutMode::Create` (obstore `mode="create"`); view in DataFusion; two-writer race | `frag-log.json` |
+| `frag_store.py ... --layout day` | the same, with the bulk load written as one fragment per day (design issue #36 item 3) | `frag-day-log.json` |
+| `delta_replay.py STORE.sqlite OUT [--layout single\|day]` | the same history as Delta Lake tables (delta-rs, change data feed on): rescan merge, time travel, CDF, EXCEPT, the remap view in DuckDB, two-writer races, compaction, vacuum; then day 100 changed in place, recorded in place or keyed by (source, etag), read pinned and partly pinned (m16 sec 6a) | `delta-single-log.json`, `delta-day-log.json` |
 | `icechunk_replay.py FLAT OUT --split N` | the same history as an Icechunk repo with manifests split every N days (write side only) | `icechunk-split{1,30,365}-log.json` |
 | `lance_held.py STORE OUT` | section 7: a 1,890-chunk box of held bytes in Lance and Parquet; size, lookup by key, daily commits, a reprocessed day, the oracle window decoded offline at the tag and at latest | `held-log.json` |
 | `lance_extblob.py STORE HELD OUT` | section 7: the year as Lance external blobs (s3:// ranges), days 0..4 of the box promoted to held bytes, the window read through one `read_blobs` call | `extblob-log.json` |
 | `m16_figure.py DIR OUT.png` | the history-size figure | `../../docs/img/m16-history-size.png` |
+
+Rerun 2026-11-05 (thin layer per day, Delta): Python 3.13 venv, pyarrow
+26.0.1, duckdb 2.0.0, deltalake 1.6.6, pylance 13.0.0, datafusion 54.1.0.
+The DuckDB `delta` extension could not be installed there (extension host
+blocked).
 
 Remote reads need `SSL_CERT_FILE` / `CURL_CA_BUNDLE` set in a proxied
 environment. `data.source.coop` was not reachable from the test machine;
