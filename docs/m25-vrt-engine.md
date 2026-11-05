@@ -317,6 +317,15 @@ Dsn = Path(relative_to_vrt) | Vsi(m09 chain) | Driver(prefix, Dsn, subdataset)
     | Vrt(Dsn)            | VrtString(Dsn, options)  | Inline(VRT model)
 ```
 
+Prior art for the writing direction is the R package dsn
+(hypertidy/dsn, on CRAN): string builders with no I/O, among them
+`vrtcon()` for `vrt://` strings, `sds()` for driver-prefixed
+subdatasets, `vsicurl()`, `vsizip()`, `vsitar()`, `vsigzip()` and
+`vsis3()` for VSI chains, and `unprefix()` and `unvsicurl()` to take
+them apart. The typed value above is the reading direction of the same
+vocabulary, so the two should round-trip: a string dsn writes parses
+into the model, and the model writes it back unchanged.
+
 A nested VRT, a `vrt://` string or an inline document becomes a child
 model, so the planner recurses through it to the leaf sources; a VSI
 chain is handed to m09's chain grammar; a driver prefix names the reader
@@ -376,8 +385,8 @@ them unchanged.
    always lowered to XML, so they never diverge from what GDAL can
    check; Michael decides if and when they go to GDAL.
 4. **Offer the corpus to deck.gl-raster, maplibre-gl-raster and
-   terrio?** Recommended: yes, once it holds classic mosaic cases with
-   GDAL reads; Michael makes the contact.
+   terrio?** Decided (2026-11-05): not until the model, planner and
+   corpus are fleshed out; Michael makes any contact.
 
 ## 7. First steps
 
