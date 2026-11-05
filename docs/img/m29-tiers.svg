@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="380" viewBox="0 0 840 380" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect width="840" height="380" fill="#ffffff"/>
+  <text x="20" y="28" font-size="14" text-anchor="start" fill="#2b3a4f" font-weight="bold">How far real VRT placements lower toward byte references</text>
+  <text x="20" y="48" font-size="12" text-anchor="start" fill="#555">share of placements per tier (measurements/m29-vrt-rework)</text>
+  <text x="280" y="87" font-size="12" text-anchor="end" fill="#2b3a4f">GHRSST MUR mdim.vrt (38,360)</text>
+  <rect x="290.0" y="70" width="520.0" height="26" fill="#3a7d44"/>
+  <text x="550.0" y="87" font-size="11" text-anchor="middle" fill="#ffffff">100%</text>
+  <text x="280" y="129" font-size="12" text-anchor="end" fill="#2b3a4f">COP30, OpenTopography (26,475)</text>
+  <rect x="290.0" y="112" width="1.0" height="26" fill="#9cc59a"/>
+  <rect x="291.0" y="112" width="232.4" height="26" fill="#e0a43a"/>
+  <text x="407.238149197356" y="129" font-size="11" text-anchor="middle" fill="#ffffff">45%</text>
+  <rect x="523.5" y="112" width="286.5" height="26" fill="#c0504d"/>
+  <text x="666.727478753541" y="129" font-size="11" text-anchor="middle" fill="#ffffff">55%</text>
+  <text x="280" y="171" font-size="12" text-anchor="end" fill="#2b3a4f">USGS 3DEP 1 arcsec, as written (3,817)</text>
+  <rect x="290.0" y="154" width="520.0" height="26" fill="#c0504d"/>
+  <text x="550.0" y="171" font-size="11" text-anchor="middle" fill="#ffffff">100%</text>
+  <text x="280" y="213" font-size="12" text-anchor="end" fill="#2b3a4f">USGS 3DEP, offsets snapped at 0.15 px</text>
+  <rect x="290.0" y="196" width="0.3" height="26" fill="#9cc59a"/>
+  <rect x="290.3" y="196" width="519.7" height="26" fill="#e0a43a"/>
+  <text x="550.1362326434373" y="213" font-size="11" text-anchor="middle" fill="#ffffff">100%</text>
+  <text x="280" y="255" font-size="12" text-anchor="end" fill="#2b3a4f">fixtures/vrt corpus c01-c09 (14)</text>
+  <rect x="290.0" y="238" width="222.9" height="26" fill="#3a7d44"/>
+  <text x="401.42857142857144" y="255" font-size="11" text-anchor="middle" fill="#ffffff">43%</text>
+  <rect x="512.9" y="238" width="37.1" height="26" fill="#9cc59a"/>
+  <rect x="550.0" y="238" width="74.3" height="26" fill="#e0a43a"/>
+  <text x="587.1428571428571" y="255" font-size="11" text-anchor="middle" fill="#ffffff">14%</text>
+  <rect x="624.3" y="238" width="185.7" height="26" fill="#c0504d"/>
+  <text x="717.1428571428571" y="255" font-size="11" text-anchor="middle" fill="#ffffff">36%</text>
+  <rect x="20" y="290" width="14" height="14" fill="#3a7d44"/>
+  <text x="40" y="302" font-size="12" text-anchor="start" fill="#2b3a4f">T0 regular refs</text>
+  <rect x="320" y="290" width="14" height="14" fill="#9cc59a"/>
+  <text x="340" y="302" font-size="12" text-anchor="start" fill="#2b3a4f">T1 refs with chunk edges</text>
+  <rect x="20" y="312" width="14" height="14" fill="#e0a43a"/>
+  <text x="40" y="324" font-size="12" text-anchor="start" fill="#2b3a4f">T2 needs a cut (overlap)</text>
+  <rect x="320" y="312" width="14" height="14" fill="#c0504d"/>
+  <text x="340" y="324" font-size="12" text-anchor="start" fill="#2b3a4f">T3 needs computing (resample, op)</text>
+  <text x="20" y="352" font-size="12" text-anchor="start" fill="#555">3DEP's offsets drift by up to 0.10 px across the mosaic because its pixel size is written as 2.777778e-4, not 1/3600 degree.</text>
+</svg>
