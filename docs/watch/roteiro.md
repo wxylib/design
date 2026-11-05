@@ -2,7 +2,7 @@
 
 Status: assessment and living tracking note, started 2026-10-31. Checked
 at the monthly landscape refresh (doc 04 section 15, row 9), not more
-often. Newest entry first in section 7.
+often. Newest entry first in section 8.
 Context: [04 landscape](../04-landscape.md) sections 5.2 (CRS), 6.1
 (codecs), 6.2 (TIFF), 6.5 (HDF5, NetCDF, GRIB);
 [m08](../m08-point-clouds.md) (point clouds);
@@ -166,11 +166,32 @@ when):
 - PROJJSON output for user-defined GeoTIFF CRSs in geotiff-core (doc 04
   G1).
 
-## 7. Log
+## 7. Adoption schedule
+
+Each adoption in section 6 has a tracking issue, a trigger or date, and an
+oracle. The order puts the cheapest measurement first, then the gap
+nobody else fills, then the oracles, then the work that waits on
+something wxylib has not started yet. Each one pins its roteiro crate
+exactly, because they release about monthly.
+
+| # | Adoption | Issue | When | Done when | Oracle |
+|---|---|---|---|---|---|
+| 1 | proj-core 0.12.1 column in crs-coverage.md | [design#56](https://github.com/wxylib/design/issues/56) | week of 2026-11-02 | column merged | PROJ 9.8.1 (pyproj) |
+| 2 | LERC zarrs codec from `lerc-reader`, next to wxy-predictor | [core#27](https://github.com/wxylib/core/issues/27) | November 2026, after 1 | virtual refs of a LERC COG read equal to GDAL | GDAL, plus lerc-rust's libLerc parity |
+| 3a | `hdf5-reader` as a third HDF5 oracle in refharvest | [refharvest#2](https://github.com/wxylib/refharvest/issues/2) | November 2026 | rows agree on OISST and BRAN | async-hdf5, hdf5-pure, libhdf5 |
+| 3b | `netcdf-reader` as the netCDF classic header parser | [refharvest#2](https://github.com/wxylib/refharvest/issues/2) | with m23 step 5 | chosen against `netcdf3` | netcdf-c |
+| 4 | COG writer from `geotiff-writer` | [core#28](https://github.com/wxylib/core/issues/28) | first command needing COG output (M12) | output validates as COG and reads equal | GDAL |
+| 5 | COPC reads from `copc-reader`'s range reader | [core#28](https://github.com/wxylib/core/issues/28) | m08 point-cloud rung gets code | autzen queries match | PDAL |
+
+The monthly landscape check (doc 04 section 15, row 9) re-reads these
+crates and moves any row whose trigger has fired.
+
+## 8. Log
 
 ### 2026-10-31
 
-First assessment. All 11 public repos read at their main branches:
+First assessment, then the adoption schedule in section 7 with its
+tracking issues. All 11 public repos read at their main branches:
 geotiff-rust 0.10.0 (released today; doc 04 had 0.8.1), netcdf-rust
 0.12.0 (doc 04 had 0.9.1, m23 had 0.10.1), proj-rust 0.12.1, grib-rust
 0.7.0, lerc-rust 0.5.2, copc-rust 0.9.0. New to wxylib's notes: lerc-rust,
