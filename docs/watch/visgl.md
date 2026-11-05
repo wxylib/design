@@ -23,6 +23,7 @@ non-affine grid work.
 | [deck.gl#10739](https://github.com/visgl/deck.gl/issues/10739) | Tracker: custom projection. Per-view target CRS (`toCrs`) and per-layer source CRS (`coordinateSystem`, deck.gl#10874), CPU pre-projection, fp64 GPU projection as a v10 goal, math.gl mesh and raster pieces | Open. Generic raster reprojection, GPU projection families and cache invalidation for view-dependent geometry are listed as still open |
 | [math.gl#367](https://github.com/visgl/math.gl/pull/367) | Qualified inverse-mesh recipe for polar and seam-crossing rasters: refines target triangles against source-texel interpolation error, rejects invalid samples or an exhausted budget, clips with math.gl mesh clipping while keeping target positions and source identity. 32 example tests (coverage, holes, conformity, provenance, budget failures), checked against pinned PROJ samples | Open, unreviewed. Example-owned (`examples/geospatial/projection-domains/warp/`), not a public API |
 | [math.gl#368](https://github.com/visgl/math.gl/pull/368) | Stacked on #367: drives the refinement with asynchronous proj-wasm batches (one reused WGS84-to-source operation, including ellipsoidal EPSG:3031), cooperative cancellation between batches, hands the finished raster to a task worker | Open. Published packages gain no dependencies |
+| [deck.gl-raster](https://github.com/developmentseed/deck.gl-raster) (Development Seed) | Client-side COG and Zarr layers with adaptive-mesh GPU reprojection (`raster-reproject`), added to this note 2026-11-05. Plans are tracked in GitHub milestones (0.10 open; no due dates) and issues; npm is the reliable release record, since GitHub releases lag | 0.9.0 (2026-10-23): mesh error in output pixels, antimeridian in output mode. 0.10.0-beta.2 (2026-10-30): COGSource, MultiCOGSource, coalescing range reader, GeoZarr via ZarrSource, classic `parseVRT` (see m25) |
 
 ## 2. How it relates to wxylib
 
@@ -106,6 +107,10 @@ Signals at each check:
    and which projection families math.gl ports.
 5. Any use of COG, Zarr or byte-reference sources in the examples (the
    point where wxylib stores could feed it directly).
+6. deck.gl-raster: npm versions of `@developmentseed/deck.gl-raster` and
+   `raster-reproject`, the open milestone, and changes to the mesh
+   refinement, VRT or GeoZarr support. Whether it adopts math.gl's CRS or
+   mesh pieces is the main thing to watch.
 
 Decision triggers:
 
@@ -122,6 +127,11 @@ Decision triggers:
 
 ## 4. Log
 
+- **2026-11-05.** deck.gl-raster added to this note and the twice-weekly
+  check (it was monthly only, doc 04 section 15 row 8). npm: 0.9.0
+  latest, 0.10.0-beta.2 (2026-10-30); milestone 0.10 open, 8 of 12
+  issues closed. No GitHub Projects board was found (the projects pages
+  could not be read).
 - **2026-11-04.** No change. math.gl#367, #368 and deck.gl#10874 are
   open with no human review; the pole finding has no reply. No math.gl
   release after 5.0.0-beta.1, no deck.gl release after 9.3.12.
