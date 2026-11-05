@@ -11,8 +11,13 @@ two-writer race. About as small as a versioned table can be:
                             owns version n, the loser reloads and retries
 
 Usage:
-  python frag_store.py STORE.sqlite OUT_DIR LANCE_DIR
+  python frag_store.py STORE.sqlite OUT_DIR LANCE_DIR [--layout single|day]
 (LANCE_DIR for the comparison numbers in load-log.json.)
+
+--layout single (the default, as first measured) writes the half-year bulk
+load as one fragment; --layout day writes it as one fragment per day, the
+append unit, so a rescan of a day replaces one small file (design issue #36
+item 3). The log is frag-log.json or frag-day-log.json.
 """
 import json
 import os
@@ -25,6 +30,7 @@ import uuid
 import datafusion
 import obstore
 import pyarrow as pa
+import pyarrow.compute  # noqa: F401
 import pyarrow.dataset as pds
 import pyarrow.parquet as pq
 from obstore.store import LocalStore
@@ -50,14 +56,18 @@ class FragTable:
         return json.loads(bytes(obstore.get(self.store, f"_commits/{v:020d}.json").bytes()))
 
     def commit(self, add=None, remove=(), message="", base=None, retries=10):
-        """Write fragment `add` (a table), drop fragments `remove`, commit."""
+        """Write fragment(s) `add` (a table or a list of tables), drop
+        fragments `remove`, commit."""
         added = []
-        if add is not None and add.num_rows:
+        parts = [] if add is None else (add if isinstance(add, list) else [add])
+        for part in parts:
+            if not part.num_rows:
+                continue
             path = f"data/{uuid.uuid4().hex}.parquet"
             buf = pa.BufferOutputStream()
-            pq.write_table(add, buf, row_group_size=128 * 1024)
+            pq.write_table(part, buf, row_group_size=128 * 1024)
             obstore.put(self.store, path, buf.getvalue().to_pybytes(), mode="create")
-            added = [{"path": path, "rows": add.num_rows}]
+            added.append({"path": path, "rows": part.num_rows})
         base = self.latest() if base is None else base
         for _ in range(retries):
             m = self.manifest(base)
@@ -83,6 +93,7 @@ class FragTable:
 
 def main():
     store, out, ldir = sys.argv[1:4]
+    layout = sys.argv[sys.argv.index("--layout") + 1] if "--layout" in sys.argv else "single"
     shutil.rmtree(out, ignore_errors=True)
     con = sqlite3.connect(store)
     arr = "analysed_sst"
@@ -104,6 +115,8 @@ def main():
     tags = {}
     for i, ids in enumerate([by_day[:182]] + [[s] for s in by_day[182:]]):
         s, pl, ch = rows(ids)
+        if layout == "day" and len(ids) > 1:
+            ch = [ch.filter(pa.compute.equal(ch["source_id"], i)) for i in ids]
         t1 = time.time()
         t["sources"].commit(s)
         t["placements"].commit(pl)
@@ -118,6 +131,7 @@ def main():
     sid = by_day[100]
     _, _, ch = rows([sid])
     t1 = time.time()
+    # (with --layout day the hit is one 2,556-row file)
     m = t[arr].manifest(v)
     hit = [f["path"] for f in m["fragments"]
            if pq.read_table(os.path.join(t[arr].root, f["path"]), columns=["source_id"],
@@ -128,6 +142,8 @@ def main():
     tags["rescan"] = v
     log["rescan_seconds"] = round(time.time() - t1, 3)
     log["rescan_rows_rewritten"] = rest.num_rows
+    log["rescan_fragments_replaced"] = len(hit)
+    log["layout"] = layout
     log["replay_seconds"] = round(time.time() - t0, 1)
     log["tags"] = tags
 
@@ -164,7 +180,8 @@ def main():
     log["bytes_data_dir"] = dirsize(os.path.join(t[arr].root, "data"))
     daily = sorted(log["commits"][1:])
     log["daily_median_seconds"] = daily[len(daily) // 2]
-    json.dump(log, open(os.path.join(out, "frag-log.json"), "w"), indent=1)
+    name = "frag-log.json" if layout == "single" else f"frag-{layout}-log.json"
+    json.dump(log, open(os.path.join(out, name), "w"), indent=1)
     print(json.dumps({k: v for k, v in log.items() if k != "commits"}, indent=1))
 
 
