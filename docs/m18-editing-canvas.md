@@ -11,7 +11,8 @@ Open: six questions with recommended answers (section 9).
 wxylib/web: snapping, locks and the operation log ([web #11](https://github.com/wxylib/web/pull/11)), the
 nudge brush ([web #12](https://github.com/wxylib/web/pull/12)), the CRS frame, ground measures and COG
 underlay ([web #13](https://github.com/wxylib/web/pull/13)), simple rings under the brush
-([web #14](https://github.com/wxylib/web/pull/14)). The next steps of section 8 are open.
+([web #14](https://github.com/wxylib/web/pull/14)), parametric shapes and loxodrome edges
+([web #22](https://github.com/wxylib/web/pull/22), section 5.6). The other next steps of section 8 are open.
 
 ![Dragging a corner two parcels share, its distance from the previous
 corner locked at 42 m: the circle is the lock, the shared boundary moves
@@ -63,7 +64,7 @@ with the corner](img/m18-drag.jpg)
 - **A quiet cockpit.** The canvas offers control and does not impose
   correctness: every snap, lock, ground rule and pattern is reached for
   when wanted, shows what it is doing, and lets go after. Parametric
-  shapes and curves follow the same rule (section 8).
+  shapes and curves follow the same rule (section 5.6).
 - **Recommended next.** Construction guides and typed relative input,
   then features from the GeoParquet page as a source. Port the engine to
   a Rust crate only when a second front end wants it.
@@ -341,7 +342,7 @@ constraint step (section 4) honours:
 |--------|------|--------|
 | distances | a locked d is frame units | a locked d is metres on the ellipsoid: d times k at the previous vertex, or the exact geodesic point when the angle is also locked |
 | north | a locked angle or bearing step is a grid direction | it is a true azimuth: the convergence at the previous vertex is applied |
-| edges | a segment is the straight grid line between its vertices | a segment is the geodesic between them: drawn as a curve, snapped to along the curve, and split at the geodesic middle |
+| edges | a segment is the straight grid line between its vertices | a segment is the geodesic, or the loxodrome (constant heading), between them: drawn as a curve, snapped to along the curve, and split at its middle; locked distances and azimuths, the readout and patterns follow the same edge model |
 
 k and the convergence are not taken from projection formulas: they are
 measured at the point, by stepping a metre along a direction and asking
@@ -353,8 +354,21 @@ the convergence at the pointer.
 
 Exported vertices are vertices: an edge drawn as a geodesic is still two
 vertices in the GeoJSON, and what the edge means (grid line, geodesic,
-or a loxodrome, not offered) belongs with the data's description, not
-in extra vertices.
+or loxodrome) belongs with the data's description, not in extra
+vertices.
+
+The loxodrome is the line a vessel steers: one heading all the way, a
+straight line on Mercator. On the ellipsoid it is straight in longitude
+against isometric latitude, and its length is the meridian arc it spans
+over the cosine of the heading (a series in the eccentricity, well under
+a millimetre). Hobart to Casey is 3431 km as a geodesic, leaving at
+208.1 degrees and arriving at 239.1; as a loxodrome it is 3471 km on a
+steady 221.4. Lines 2000 km long at heading 200 from Hobart end 122 km
+from where the geodesics at the same initial azimuth end.
+
+![Loxodrome edges in south polar stereographic: Hobart to Casey as a
+rhumb line, and transects from Hobart holding a heading of 200
+degrees](img/m18-loxodrome.jpg)
 
 ![Sample parcels over the Sentinel-2 Hobart scene, warped into the data's
 own UTM grid: a line locked at true azimuth 45 degrees, with its ground
@@ -386,10 +400,10 @@ pattern's parameters as properties (azimuth, spacing, units), which is
 the first step towards the parametric features of section 8: the
 parameters that made a shape kept beside the vertices it produced.
 
-Two things the ground model does not yet cover, both relevant at ocean
-scale: a vessel steers loxodromes (constant heading), not geodesics, so
-long lines want a loxodrome edge model; and parallel geodesics do not
-stay parallel, so "spacing" is exact at the starts and drifts along long
+At ocean scale a vessel steers loxodromes (constant heading), not
+geodesics: with loxodrome edges each transect holds its heading
+throughout (section 5.4). One thing the ground model does not yet
+cover: parallel lines on the ellipsoid do not stay parallel, so "spacing" is exact at the starts and drifts along long
 lines: lines 10 km apart running 2000 km south from Hobart end 6.7 km
 apart (meridians converge), and lines running east end 9.5 km apart. Whether spacing should
 hold at the start, the middle or along the whole line is a planning
@@ -399,7 +413,36 @@ choice to offer, not one to make.
 single lawnmower track, and a preview of centred transects clipped to the
 next parcel](img/m18-pattern.jpg)
 
-### 5.6 Where it sits in wxylib
+### 5.6 Parametric shapes
+
+A shape is a feature that keeps the parameters that made it beside the
+vertices they produce: a circle (centre, radius, vertex count), a
+regular polygon (centre, radius, sides, the azimuth of its first
+vertex), a rectangle (corner, width, height, axis azimuth) and an arc
+through three points (start, a point on it, end; segment count). They
+are drawn by press and drag, or three clicks for an arc, with snapping
+on every point. With a CRS and ground distances, lengths are metres on
+the ellipsoid and azimuths true, each vertex placed by the direct
+solution; otherwise they are frame units and grid bearings.
+
+The parameters live in the feature's properties (`wxy:shape`), points in
+the data's own coordinates, so a shape survives a change of frame and a
+GeoJSON round trip, and any reader can ignore it. Selecting a shape
+shows its parameters as fields; changing one regenerates the vertices
+as one operation (a reshape and a properties change in one batch).
+
+The quiet-cockpit rule decides what happens when the vertices are edited
+directly: the feature becomes plain geometry, the history records the
+properties change with the edit, and undo brings the shape back. Nothing
+is re-solved, and nothing is held that was not chosen. Holding shapes
+to each other (tangent, concentric, equal) is where a solver (2.4) would
+come in, and only on request.
+
+![A 12 m circle on the ground with its radius and vertex count in the
+panel, a hexagon, a rectangle on the block's 7 degree axis and an arc
+between two parcel corners](img/m18-shapes.jpg)
+
+### 5.7 Where it sits in wxylib
 
 In wxylib/web, as a page beside the others, sharing their style and
 landing card. It imports the same `wxy_web.js` the COG page uses, for
@@ -443,14 +486,15 @@ piece of it is usable from a browser page, a notebook or a script.
 
 `www/edit.html` in wxylib/web, with `www/edit-core.js` (the engine),
 `www/edit-geo.js` (geodesics, convergence, scale factor),
-`www/edit-pattern.js` (transects, cover, clip, repeat) and
-`www/edit.js` (the canvas). It opens on a synthetic sample (six parcels
+`www/edit-pattern.js` (transects, cover, clip, repeat),
+`www/edit-shape.js` (parametric shapes) and `www/edit.js` (the
+canvas). It opens on a synthetic sample (six parcels
 sharing boundaries on a block turned 7 degrees, a road, a creek and four
 trees, in UTM zone 55 south over Hobart) so it runs with no network, and takes any
 GeoJSON by file, drop or `?url=`.
 
 What it does is the "prototype" rows of section 3 and the switches of
-sections 5.4 and 5.5. The engine has nineteen tests under node, run in the web
+sections 5.4 to 5.6. The engine has twenty-three tests under node, run in the web
 repo's CI: exact round trips (z kept),
 local-frame edits that leave untouched longitude and latitude bit for
 bit, snap priority, each lock and their combinations, both angle
@@ -459,7 +503,11 @@ rim, smudge falloff), Vincenty against its published example, the
 convergence and a true-north, ground-distance lock on a turned plane,
 snapping along a geodesic edge, transects, cover, clip and a lawnmower
 track on the grid and on the ellipsoid (ground spacing within 1e-5 m),
-and undo and redo restoring geometry and
+crossings and simple rings under the brush, loxodromes (a meridian equal
+to the geodesic, a parallel arc, round trips, constant heading), shapes
+on the grid and the ground (a 500 m circle stays 500 m to the
+micrometre), a shape dropped by a vertex move and restored by undo, and
+undo and redo restoring geometry and
 source. The canvas was driven headless: a vertex dragged under a 45 m
 distance lock lands 45.000 m from its neighbour, shared corners move
 with it, a line drawn with the angle picked from the road meets it at
@@ -490,7 +538,8 @@ the stroke did not move are dropped when it ends:
 ## 8. Next steps, by value
 
 Done since the first draft: the underlay, a frame from a CRS, the
-grid-and-ground switches (section 5.4) and field patterns (section 5.5).
+grid-and-ground switches (section 5.4), field patterns (section 5.5),
+loxodrome edges and parametric shapes (5.4, 5.6).
 
 
 1. **Construction guides and typed relative input**: reference points
@@ -502,17 +551,16 @@ grid-and-ground switches (section 5.4) and field patterns (section 5.5).
 3. **A source from the GeoParquet page**: open a query result in the
    canvas, with feature ids from the source rows, so the log is keyed to
    them.
-4. **More ground**: loxodromes as a third edge model; geodesic areas
+4. **More ground**: geodesic areas
    and lengths in the feature panel; a traverse entered as true bearings
    and ground distances (survey style) closing with its misclose shown.
-5. **Parametric shapes and curves**: arcs, circles and circular
-   strings, offsets, and shapes held to a parameter (an area, a minimum
-   angle, a width). Each is a feature that keeps its parameters beside
-   the vertices it produces, so either can be edited: change the radius
-   and the vertices follow, drag a vertex and the shape becomes plain
-   geometry again unless asked to re-solve. Patterns (5.5) are the first
-   case. A solver (2.4) only runs when asked; nothing is held without
-   being chosen.
+5. **More parametric shapes and curves**: circular strings (arcs kept
+   as arcs in the output, where the format allows), offsets, fillets,
+   shapes held to a parameter (an area, a minimum angle, a width), and
+   patterns kept as parametric features so their spacing or count can
+   be changed after creation. Same rule as 5.6: parameters beside the
+   vertices, a direct edit makes plain geometry, a solver only when
+   asked.
 6. **The log as a table**: one row per operation, kept in browser
    storage between visits, downloadable as Parquet. Only then think about
    writing back to a source.
