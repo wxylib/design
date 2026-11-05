@@ -479,6 +479,7 @@ Rewrites of the warper's parts, by part (transformers, approximate transformer, 
 | extendr (extendr-api 0.8.2) vs savvy (0.11.0) | both active | **choose one at S6**. extendr is Michael's habit (robstore, rustycogs, trowel). savvy is used by r-polars and SedonaDB's R package |
 | nanoarrow, geoarrow (R) | 0.9.0; 0.4.4 | **adopt** for zero-copy Arrow into R |
 | wasm-bindgen 0.2.129 | current | **adopt** (already used in rwarp-wasm) |
+| [mizu](https://github.com/shikokuchuo/mizu) and [pymizu](https://github.com/shikokuchuo/pymizu) over [libmizu](https://github.com/shikokuchuo/libmizu) (Charlie Gao, Posit) | 0.1.0 per the release post of 2026-11-05 (on CRAN and PyPI by the [post](https://opensource.posit.co/blog/2026-11-05_mizu-0-1-0/), not checked)); MIT, experimental. A C11 library for lock-free shared-memory IPC between processes on one machine, with R and Python as equal bindings and one wire format. Vectors, matrices, data frames, numpy arrays and Arrow tables cross as zero-copy views; task round trips under 1 microsecond against about 100 for sockets (self-reported). No geospatial content; aimed at tidymodels resampling and Shiny | **watch, align**. It is the shape planned for wxylib's bindings (a C core with R and Python on top, Arrow as the interchange), and a candidate way to fan chunked warp, zonal or refs work across R or Python worker processes without copying tiles. Check that wxy's Arrow outputs cross a mizu channel zero-copy |
 
 ### 10.3 Browser and serving
 
@@ -660,7 +661,8 @@ and TMS work, CF-1.14, GeoParquet 2.0 final, Earthmover Zax and Flux,
 xpublish-tiles, the CNG Forum and Zarr Summit (for 2027 talks), pyresample
 2.0, DGGAL and rs4dggs, Pangeo Discourse, and the R spatial community
 (r-spatial, rOpenSci, the r-universe `geozarr` package *(unverified)*),
-and agent-driven GIS such as MIERUNE's Mapsuke (section 10.4).
+agent-driven GIS such as MIERUNE's Mapsuke (section 10.4), and Posit's
+mizu for zero-copy shared-memory parallelism in R and Python (section 10.2).
 
 The cheapest way to keep this current is a monthly check of the release
 feeds above, written into this document's section 15 as a dated delta.
