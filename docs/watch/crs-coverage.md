@@ -178,6 +178,12 @@ Open from the trial:
 
 - Report the pole refusal and the PROJJSON `meridian` member to terrio
   (contact stays with Michael; frame it as conformance work).
+- A third small ask for the same report: a public area of use. terrio-crs
+  0.2.2 holds each CRS's area of use (west, south, east, north in degrees)
+  on its crate-private `Def`, but `SpatialRef` has no accessor for it, and
+  `to_wkt()` and `to_projjson()` write no `BBOX`. A public
+  `SpatialRef::area_of_use()` would let wxylib infer default warp output
+  extents as GDAL does, without a table of its own.
 - Let `wxy warp` record a PROJ-string target by writing terrio-crs's
   `to_wkt()` as `proj:wkt2`, which proj4rs cannot do.
 - Decide whether terrio-crs becomes the native default, with proj4rs kept
