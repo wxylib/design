@@ -1,4 +1,4 @@
-# m26: An oracle harness
+# m27: An oracle harness
 
 Status: musing, 2026-11-05. Builds the GDAL oracle harness that m09
 section 6 recommends as the first GDAL infrastructure candidate, and
