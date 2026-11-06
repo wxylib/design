@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="982" height="558" viewBox="0 0 982 558" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect width="982" height="558" fill="#ffffff"/>
+  <text x="20" y="28" font-size="14" text-anchor="start" fill="#2b3a4f" font-weight="bold">Six of VRT's properties, and what has been built since, one ecosystem at a time</text>
+  <text x="330.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 330.0 138)">VRT XML</text>
+  <text x="382.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 382.0 138)">vrt://</text>
+  <text x="434.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 434.0 138)">GDALG pipeline</text>
+  <text x="486.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 486.0 138)">Zarr v3</text>
+  <text x="538.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 538.0 138)">kerchunk, VirtualiZarr</text>
+  <text x="590.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 590.0 138)">Icechunk</text>
+  <text x="642.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 642.0 138)">Iceberg, Delta, Lance</text>
+  <text x="694.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 694.0 138)">DuckDB, Polars, SedonaDB</text>
+  <text x="746.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 746.0 138)">JAX</text>
+  <text x="798.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 798.0 138)">Arrow</text>
+  <text x="850.0" y="138" font-size="12" text-anchor="start" fill="#2b3a4f" transform="rotate(-45 850.0 138)">mirai, mori, mizu</text>
+  <rect x="16" y="150" width="950" height="26" fill="#f4f7fb"/>
+  <text x="24" y="167" font-size="12" text-anchor="start" fill="#2b3a4f">Closure: the result opens like any input</text>
+  <circle cx="326.0" cy="163.0" r="7" fill="#2b3a4f"/>
+  <circle cx="378.0" cy="163.0" r="7" fill="#2b3a4f"/>
+  <circle cx="430.0" cy="163.0" r="7" fill="#2b3a4f"/>
+  <circle cx="482.0" cy="163.0" r="2" fill="#bbb"/>
+  <circle cx="534.0" cy="163.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M534.0,156.0 A7,7 0 0,0 534.0,170.0 z" fill="#2b3a4f"/>
+  <circle cx="586.0" cy="163.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M586.0,156.0 A7,7 0 0,0 586.0,170.0 z" fill="#2b3a4f"/>
+  <circle cx="638.0" cy="163.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M638.0,156.0 A7,7 0 0,0 638.0,170.0 z" fill="#2b3a4f"/>
+  <circle cx="690.0" cy="163.0" r="7" fill="#2b3a4f"/>
+  <circle cx="742.0" cy="163.0" r="7" fill="#2b3a4f"/>
+  <circle cx="794.0" cy="163.0" r="2" fill="#bbb"/>
+  <circle cx="846.0" cy="163.0" r="2" fill="#bbb"/>
+  <text x="24" y="193" font-size="12" text-anchor="start" fill="#2b3a4f">Names: sources from any format by name</text>
+  <circle cx="326.0" cy="189.0" r="7" fill="#2b3a4f"/>
+  <circle cx="378.0" cy="189.0" r="7" fill="#2b3a4f"/>
+  <circle cx="430.0" cy="189.0" r="7" fill="#2b3a4f"/>
+  <circle cx="482.0" cy="189.0" r="2" fill="#bbb"/>
+  <circle cx="534.0" cy="189.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M534.0,182.0 A7,7 0 0,0 534.0,196.0 z" fill="#2b3a4f"/>
+  <circle cx="586.0" cy="189.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M586.0,182.0 A7,7 0 0,0 586.0,196.0 z" fill="#2b3a4f"/>
+  <circle cx="638.0" cy="189.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M638.0,182.0 A7,7 0 0,0 638.0,196.0 z" fill="#2b3a4f"/>
+  <circle cx="690.0" cy="189.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M690.0,182.0 A7,7 0 0,0 690.0,196.0 z" fill="#2b3a4f"/>
+  <circle cx="742.0" cy="189.0" r="2" fill="#bbb"/>
+  <circle cx="794.0" cy="189.0" r="2" fill="#bbb"/>
+  <circle cx="846.0" cy="189.0" r="2" fill="#bbb"/>
+  <rect x="16" y="202" width="950" height="26" fill="#f4f7fb"/>
+  <text x="24" y="219" font-size="12" text-anchor="start" fill="#2b3a4f">Placement of misaligned windows</text>
+  <circle cx="326.0" cy="215.0" r="7" fill="#2b3a4f"/>
+  <circle cx="378.0" cy="215.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M378.0,208.0 A7,7 0 0,0 378.0,222.0 z" fill="#2b3a4f"/>
+  <circle cx="430.0" cy="215.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M430.0,208.0 A7,7 0 0,0 430.0,222.0 z" fill="#2b3a4f"/>
+  <circle cx="482.0" cy="215.0" r="2" fill="#bbb"/>
+  <circle cx="534.0" cy="215.0" r="2" fill="#bbb"/>
+  <circle cx="586.0" cy="215.0" r="2" fill="#bbb"/>
+  <circle cx="638.0" cy="215.0" r="2" fill="#bbb"/>
+  <circle cx="690.0" cy="215.0" r="2" fill="#bbb"/>
+  <circle cx="742.0" cy="215.0" r="2" fill="#bbb"/>
+  <circle cx="794.0" cy="215.0" r="2" fill="#bbb"/>
+  <circle cx="846.0" cy="215.0" r="2" fill="#bbb"/>
+  <text x="24" y="245" font-size="12" text-anchor="start" fill="#2b3a4f">Assertion: state what a source lacks</text>
+  <circle cx="326.0" cy="241.0" r="7" fill="#2b3a4f"/>
+  <circle cx="378.0" cy="241.0" r="7" fill="#2b3a4f"/>
+  <circle cx="430.0" cy="241.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M430.0,234.0 A7,7 0 0,0 430.0,248.0 z" fill="#2b3a4f"/>
+  <circle cx="482.0" cy="241.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M482.0,234.0 A7,7 0 0,0 482.0,248.0 z" fill="#2b3a4f"/>
+  <circle cx="534.0" cy="241.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M534.0,234.0 A7,7 0 0,0 534.0,248.0 z" fill="#2b3a4f"/>
+  <circle cx="586.0" cy="241.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M586.0,234.0 A7,7 0 0,0 586.0,248.0 z" fill="#2b3a4f"/>
+  <circle cx="638.0" cy="241.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M638.0,234.0 A7,7 0 0,0 638.0,248.0 z" fill="#2b3a4f"/>
+  <circle cx="690.0" cy="241.0" r="2" fill="#bbb"/>
+  <circle cx="742.0" cy="241.0" r="2" fill="#bbb"/>
+  <circle cx="794.0" cy="241.0" r="2" fill="#bbb"/>
+  <circle cx="846.0" cy="241.0" r="2" fill="#bbb"/>
+  <rect x="16" y="254" width="950" height="26" fill="#f4f7fb"/>
+  <text x="24" y="271" font-size="12" text-anchor="start" fill="#2b3a4f">Deferral: plan before any byte</text>
+  <circle cx="326.0" cy="267.0" r="7" fill="#2b3a4f"/>
+  <circle cx="378.0" cy="267.0" r="7" fill="#2b3a4f"/>
+  <circle cx="430.0" cy="267.0" r="7" fill="#2b3a4f"/>
+  <circle cx="482.0" cy="267.0" r="7" fill="#2b3a4f"/>
+  <circle cx="534.0" cy="267.0" r="7" fill="#2b3a4f"/>
+  <circle cx="586.0" cy="267.0" r="7" fill="#2b3a4f"/>
+  <circle cx="638.0" cy="267.0" r="7" fill="#2b3a4f"/>
+  <circle cx="690.0" cy="267.0" r="7" fill="#2b3a4f"/>
+  <circle cx="742.0" cy="267.0" r="7" fill="#2b3a4f"/>
+  <circle cx="794.0" cy="267.0" r="2" fill="#bbb"/>
+  <circle cx="846.0" cy="267.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M846.0,260.0 A7,7 0 0,0 846.0,274.0 z" fill="#2b3a4f"/>
+  <text x="24" y="297" font-size="12" text-anchor="start" fill="#2b3a4f">Emission: tools write it</text>
+  <circle cx="326.0" cy="293.0" r="7" fill="#2b3a4f"/>
+  <circle cx="378.0" cy="293.0" r="2" fill="#bbb"/>
+  <circle cx="430.0" cy="293.0" r="7" fill="#2b3a4f"/>
+  <circle cx="482.0" cy="293.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M482.0,286.0 A7,7 0 0,0 482.0,300.0 z" fill="#2b3a4f"/>
+  <circle cx="534.0" cy="293.0" r="7" fill="#2b3a4f"/>
+  <circle cx="586.0" cy="293.0" r="7" fill="#2b3a4f"/>
+  <circle cx="638.0" cy="293.0" r="7" fill="#2b3a4f"/>
+  <circle cx="690.0" cy="293.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M690.0,286.0 A7,7 0 0,0 690.0,300.0 z" fill="#2b3a4f"/>
+  <circle cx="742.0" cy="293.0" r="2" fill="#bbb"/>
+  <circle cx="794.0" cy="293.0" r="2" fill="#bbb"/>
+  <circle cx="846.0" cy="293.0" r="2" fill="#bbb"/>
+  <rect x="16" y="306" width="950" height="26" fill="#f4f7fb"/>
+  <line x1="16" y1="306" x2="966" y2="306" stroke="#7a9cbf" stroke-dasharray="4 3"/>
+  <text x="24" y="323" font-size="12" text-anchor="start" fill="#555">Byte-level references</text>
+  <circle cx="326.0" cy="319.0" r="2" fill="#bbb"/>
+  <circle cx="378.0" cy="319.0" r="2" fill="#bbb"/>
+  <circle cx="430.0" cy="319.0" r="2" fill="#bbb"/>
+  <circle cx="482.0" cy="319.0" r="2" fill="#bbb"/>
+  <circle cx="534.0" cy="319.0" r="7" fill="#2b3a4f"/>
+  <circle cx="586.0" cy="319.0" r="7" fill="#2b3a4f"/>
+  <circle cx="638.0" cy="319.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M638.0,312.0 A7,7 0 0,0 638.0,326.0 z" fill="#2b3a4f"/>
+  <circle cx="690.0" cy="319.0" r="2" fill="#bbb"/>
+  <circle cx="742.0" cy="319.0" r="2" fill="#bbb"/>
+  <circle cx="794.0" cy="319.0" r="2" fill="#bbb"/>
+  <circle cx="846.0" cy="319.0" r="2" fill="#bbb"/>
+  <text x="24" y="349" font-size="12" text-anchor="start" fill="#555">History: commits, snapshots, tags</text>
+  <circle cx="326.0" cy="345.0" r="2" fill="#bbb"/>
+  <circle cx="378.0" cy="345.0" r="2" fill="#bbb"/>
+  <circle cx="430.0" cy="345.0" r="2" fill="#bbb"/>
+  <circle cx="482.0" cy="345.0" r="2" fill="#bbb"/>
+  <circle cx="534.0" cy="345.0" r="2" fill="#bbb"/>
+  <circle cx="586.0" cy="345.0" r="7" fill="#2b3a4f"/>
+  <circle cx="638.0" cy="345.0" r="7" fill="#2b3a4f"/>
+  <circle cx="690.0" cy="345.0" r="2" fill="#bbb"/>
+  <circle cx="742.0" cy="345.0" r="2" fill="#bbb"/>
+  <circle cx="794.0" cy="345.0" r="2" fill="#bbb"/>
+  <circle cx="846.0" cy="345.0" r="2" fill="#bbb"/>
+  <rect x="16" y="358" width="950" height="26" fill="#f4f7fb"/>
+  <text x="24" y="375" font-size="12" text-anchor="start" fill="#555">Sources as rows with statistics</text>
+  <circle cx="326.0" cy="371.0" r="2" fill="#bbb"/>
+  <circle cx="378.0" cy="371.0" r="2" fill="#bbb"/>
+  <circle cx="430.0" cy="371.0" r="2" fill="#bbb"/>
+  <circle cx="482.0" cy="371.0" r="2" fill="#bbb"/>
+  <circle cx="534.0" cy="371.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M534.0,364.0 A7,7 0 0,0 534.0,378.0 z" fill="#2b3a4f"/>
+  <circle cx="586.0" cy="371.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M586.0,364.0 A7,7 0 0,0 586.0,378.0 z" fill="#2b3a4f"/>
+  <circle cx="638.0" cy="371.0" r="7" fill="#2b3a4f"/>
+  <circle cx="690.0" cy="371.0" r="7" fill="#2b3a4f"/>
+  <circle cx="742.0" cy="371.0" r="2" fill="#bbb"/>
+  <circle cx="794.0" cy="371.0" r="7" fill="#2b3a4f"/>
+  <circle cx="846.0" cy="371.0" r="2" fill="#bbb"/>
+  <text x="24" y="401" font-size="12" text-anchor="start" fill="#555">Plan as a value an engine optimises</text>
+  <circle cx="326.0" cy="397.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M326.0,390.0 A7,7 0 0,0 326.0,404.0 z" fill="#2b3a4f"/>
+  <circle cx="378.0" cy="397.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M378.0,390.0 A7,7 0 0,0 378.0,404.0 z" fill="#2b3a4f"/>
+  <circle cx="430.0" cy="397.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M430.0,390.0 A7,7 0 0,0 430.0,404.0 z" fill="#2b3a4f"/>
+  <circle cx="482.0" cy="397.0" r="2" fill="#bbb"/>
+  <circle cx="534.0" cy="397.0" r="2" fill="#bbb"/>
+  <circle cx="586.0" cy="397.0" r="2" fill="#bbb"/>
+  <circle cx="638.0" cy="397.0" r="2" fill="#bbb"/>
+  <circle cx="690.0" cy="397.0" r="2" fill="#bbb"/>
+  <circle cx="742.0" cy="397.0" r="7" fill="#2b3a4f"/>
+  <circle cx="794.0" cy="397.0" r="7" fill="#2b3a4f"/>
+  <circle cx="846.0" cy="397.0" r="2" fill="#bbb"/>
+  <rect x="16" y="410" width="950" height="26" fill="#f4f7fb"/>
+  <text x="24" y="427" font-size="12" text-anchor="start" fill="#555">Several independent implementations</text>
+  <circle cx="326.0" cy="423.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M326.0,416.0 A7,7 0 0,0 326.0,430.0 z" fill="#2b3a4f"/>
+  <circle cx="378.0" cy="423.0" r="2" fill="#bbb"/>
+  <circle cx="430.0" cy="423.0" r="2" fill="#bbb"/>
+  <circle cx="482.0" cy="423.0" r="7" fill="#2b3a4f"/>
+  <circle cx="534.0" cy="423.0" r="7" fill="#2b3a4f"/>
+  <circle cx="586.0" cy="423.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M586.0,416.0 A7,7 0 0,0 586.0,430.0 z" fill="#2b3a4f"/>
+  <circle cx="638.0" cy="423.0" r="7" fill="#2b3a4f"/>
+  <circle cx="690.0" cy="423.0" r="7" fill="#2b3a4f"/>
+  <circle cx="742.0" cy="423.0" r="2" fill="#bbb"/>
+  <circle cx="794.0" cy="423.0" r="7" fill="#2b3a4f"/>
+  <circle cx="846.0" cy="423.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M846.0,416.0 A7,7 0 0,0 846.0,430.0 z" fill="#2b3a4f"/>
+  <text x="24" y="453" font-size="12" text-anchor="start" fill="#555">Zero-copy memory across languages</text>
+  <circle cx="326.0" cy="449.0" r="2" fill="#bbb"/>
+  <circle cx="378.0" cy="449.0" r="2" fill="#bbb"/>
+  <circle cx="430.0" cy="449.0" r="2" fill="#bbb"/>
+  <circle cx="482.0" cy="449.0" r="2" fill="#bbb"/>
+  <circle cx="534.0" cy="449.0" r="2" fill="#bbb"/>
+  <circle cx="586.0" cy="449.0" r="2" fill="#bbb"/>
+  <circle cx="638.0" cy="449.0" r="2" fill="#bbb"/>
+  <circle cx="690.0" cy="449.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M690.0,442.0 A7,7 0 0,0 690.0,456.0 z" fill="#2b3a4f"/>
+  <circle cx="742.0" cy="449.0" r="2" fill="#bbb"/>
+  <circle cx="794.0" cy="449.0" r="7" fill="#2b3a4f"/>
+  <circle cx="846.0" cy="449.0" r="7" fill="#2b3a4f"/>
+  <rect x="16" y="462" width="950" height="26" fill="#f4f7fb"/>
+  <text x="24" y="479" font-size="12" text-anchor="start" fill="#555">Runs in a browser today</text>
+  <circle cx="326.0" cy="475.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M326.0,468.0 A7,7 0 0,0 326.0,482.0 z" fill="#2b3a4f"/>
+  <circle cx="378.0" cy="475.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M378.0,468.0 A7,7 0 0,0 378.0,482.0 z" fill="#2b3a4f"/>
+  <circle cx="430.0" cy="475.0" r="2" fill="#bbb"/>
+  <circle cx="482.0" cy="475.0" r="7" fill="#2b3a4f"/>
+  <circle cx="534.0" cy="475.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M534.0,468.0 A7,7 0 0,0 534.0,482.0 z" fill="#2b3a4f"/>
+  <circle cx="586.0" cy="475.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M586.0,468.0 A7,7 0 0,0 586.0,482.0 z" fill="#2b3a4f"/>
+  <circle cx="638.0" cy="475.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M638.0,468.0 A7,7 0 0,0 638.0,482.0 z" fill="#2b3a4f"/>
+  <circle cx="690.0" cy="475.0" r="7" fill="#ffffff" stroke="#2b3a4f" stroke-width="1.5"/>
+  <path d="M690.0,468.0 A7,7 0 0,0 690.0,482.0 z" fill="#2b3a4f"/>
+  <circle cx="742.0" cy="475.0" r="2" fill="#bbb"/>
+  <circle cx="794.0" cy="475.0" r="7" fill="#2b3a4f"/>
+  <circle cx="846.0" cy="475.0" r="2" fill="#bbb"/>
+  <rect x="296" y="150" width="60" height="338" fill="none" stroke="#c0504d" stroke-width="1.5" rx="4"/>
+  <text x="24" y="514" font-size="12" text-anchor="start" fill="#555">Above the dashed line: VRT's own properties. Below: what VRT lacks.</text>
+  <text x="24" y="532" font-size="12" text-anchor="start" fill="#555">Filled: yes. Half: partly or in one family. Dot: no. A reading of each project's documentation, 2026-11-05, not a test.</text>
+</svg>
