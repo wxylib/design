@@ -1,0 +1,194 @@
+{
+ "pyramid": [
+  {
+   "view": "ortho disk, 147E 42S",
+   "levels": 7,
+   "single": {
+    "chunks": 36,
+    "mb": 15.6,
+    "levels_used": [
+     3
+    ],
+    "under": 0.0,
+    "over": 0.052
+   },
+   "visible": 0.777,
+   "region": {
+    "chunks": 34,
+    "mb": 13.2,
+    "levels_used": [
+     3,
+     4,
+     5
+    ],
+    "under": 0.0,
+    "over": 0.001
+   }
+  },
+  {
+   "view": "ortho 600 km, Hobart",
+   "levels": 7,
+   "single": {
+    "chunks": 4,
+    "mb": 2.1,
+    "levels_used": [
+     0
+    ],
+    "under": 0.0,
+    "over": 0.0
+   },
+   "visible": 1.0,
+   "region": {
+    "chunks": 4,
+    "mb": 2.1,
+    "levels_used": [
+     0
+    ],
+    "under": 0.0,
+    "over": 0.0
+   }
+  },
+  {
+   "view": "EPSG:3031, 4000 km",
+   "levels": 7,
+   "single": {
+    "chunks": 216,
+    "mb": 102.8,
+    "levels_used": [
+     1
+    ],
+    "under": 0.0,
+    "over": 0.902
+   },
+   "visible": 1.0,
+   "region": {
+    "chunks": 45,
+    "mb": 18.4,
+    "levels_used": [
+     2,
+     3,
+     4
+    ],
+    "under": 0.0,
+    "over": 0.0
+   }
+  },
+  {
+   "view": "lon/lat 160E..160W",
+   "levels": 7,
+   "single": {
+    "chunks": 180,
+    "mb": 92.2,
+    "levels_used": [
+     1
+    ],
+    "under": 0.0,
+    "over": 0.0
+   },
+   "visible": 1.0,
+   "region": {
+    "chunks": 25,
+    "mb": 10.9,
+    "levels_used": [
+     1
+    ],
+    "under": 0.0,
+    "over": 0.0
+   }
+  }
+ ],
+ "full_resolution_only": [
+  {
+   "view": "ortho disk, 147E 42S",
+   "levels": 1,
+   "single": {
+    "chunks": 1846,
+    "mb": 958.5,
+    "levels_used": [
+     0
+    ],
+    "under": 0.0,
+    "over": 0.0
+   },
+   "visible": 0.777,
+   "region": {
+    "chunks": 1315,
+    "mb": 649.0,
+    "levels_used": [
+     0
+    ],
+    "under": 0.0,
+    "over": 0.0
+   }
+  },
+  {
+   "view": "ortho 600 km, Hobart",
+   "levels": 1,
+   "single": {
+    "chunks": 4,
+    "mb": 2.1,
+    "levels_used": [
+     0
+    ],
+    "under": 0.0,
+    "over": 0.0
+   },
+   "visible": 1.0,
+   "region": {
+    "chunks": 4,
+    "mb": 2.1,
+    "levels_used": [
+     0
+    ],
+    "under": 0.0,
+    "over": 0.0
+   }
+  },
+  {
+   "view": "EPSG:3031, 4000 km",
+   "levels": 1,
+   "single": {
+    "chunks": 710,
+    "mb": 368.6,
+    "levels_used": [
+     0
+    ],
+    "under": 0.0,
+    "over": 0.0
+   },
+   "visible": 1.0,
+   "region": {
+    "chunks": 666,
+    "mb": 315.2,
+    "levels_used": [
+     0
+    ],
+    "under": 0.0,
+    "over": 0.0
+   }
+  },
+  {
+   "view": "lon/lat 160E..160W",
+   "levels": 1,
+   "single": {
+    "chunks": 639,
+    "mb": 331.8,
+    "levels_used": [
+     0
+    ],
+    "under": 0.0,
+    "over": 0.0
+   },
+   "visible": 1.0,
+   "region": {
+    "chunks": 81,
+    "mb": 39.2,
+    "levels_used": [
+     0
+    ],
+    "under": 0.0,
+    "over": 0.0
+   }
+  }
+ ]
+}
