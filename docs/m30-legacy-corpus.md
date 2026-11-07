@@ -203,6 +203,38 @@ xarray and (via the browser mdim parser, web PR #20) the pages. A classic
 VRT or a `vrt://` string serves the 2D cases where a one-line repair is
 the point.
 
+### 4.5 The corpus's own old assertions: the UCSD topography VRTs
+
+The ten hand-written VRTs in the UCSD mirror were the read path for this
+product in raadtools. They are an assertion of the earlier kind: written
+beside the data, naming it by relative path. They show the two costs a move
+to object storage exposes, and they are not the same cost.
+
+- **Names.** Every source is relative (`../topo_19.1.img`, or a sibling
+  `topo_19.1.vrt` for the halves-swapped variants). Under hash-named storage
+  none of them opens. Rewriting each name to the published url is
+  mechanical, and it works only where the source is published: the topo_19.1
+  pair opens once moved; the other eight name sources that are not.
+- **Geometry.** The grid was wrong before any move: pixels of 1855.325 x
+  1850.436 m, a top edge of 15987768 m, and a 6370997 m sphere (or EPSG:3857
+  for 20.1). Moved and read, topo_19.1.vrt is 646 m RMS from topo_19.1.nc
+  off Japan, against 4.2 m for the checked assertion. Latitude is out by
+  6.4 km at 60 N (11.1 km for the EPSG:3857 pair).
+
+| VRT | Source | Opens once moved (GDAL 3.8.4) | dlat at 60 N | RMS vs .nc |
+|---|---|---|---|---|
+| topo_18.1.vrt, topo_18.1_atlantic.vrt | topo_18.1.img (not published) | no | | |
+| topo_18.1_unpolished.vrt, ..._unpolishedatlantic.vrt | topo_18.1_unpolished.img (absent in the mirror) | no | | |
+| topo_18_unpolished.vrt, ..._unpolishedatlantic.vrt | topo_18_unpolished.img (not published) | no | | |
+| topo_19.1.vrt, topo_19.1atlantic.vrt | topo_19.1.img | yes | -6.37 km | 646 m |
+| topo_20.1.vrt, topo_20.1_atlantic.vrt | topo_20.1.img (not published) | no | -11.07 km (from the XML) | |
+
+An in-place run on the mirror (opens as-is, or only with
+`GDAL_VRT_RAWRASTERBAND_ALLOWED_SOURCE=ALL` on GDAL 3.10 and later; which
+sources exist; RMS against each local topo_N.nc) completes the table. The
+lesson for the move: a relocated description stays wrong, and moving it
+only makes that visible.
+
 ## 5. Assertion
 
 An assertion supplies what a source lacks or corrects what it gets wrong,
