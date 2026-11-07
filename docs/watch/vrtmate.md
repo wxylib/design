@@ -29,14 +29,19 @@ Scripts: [scripts/vrtmate](../../scripts/vrtmate).
    viewport and COGMate adds or removes one layer per tile. The VRT is
    used as a catalogue, not as a raster: each COG is drawn from its own
    header.
-3. **It is the earliest of the browser classic-mosaic readers wxylib
-   knows of** (2026-01-02, before maplibre-gl-raster's `parseVrt` and
-   deck.gl-raster's `parseVRT`), and it makes the same choice as
-   deck.gl-raster: keep the placement box, ignore what the VRT says to
-   do with the pixels.
+3. **It is one of several readers that take the same narrow cut of a
+   VRT: source boxes from `DstRect` and `GeoTransform`, and the paths.**
+   vaster's `extent_vrt()` (R, MIT) returns the boxes as a matrix,
+   VRTMate (2026-01-02) adds paths and a box query in the browser, and
+   deck.gl-raster's `parseVRT` (2026-11-02) does the same to draw each
+   COG with its own georeferencing. maplibre-gl-raster's `parseVrt`
+   accepts only VRTs where that cut is exact. None of them reads what
+   the VRT says to do with the pixels (resampling, scaling, NODATA,
+   `SrcRect`), so each is a catalogue reader rather than a VRT reader.
 4. **For wxylib it confirms a use rather than adding a technique.** The
-   most common browser job for a VRT is "which sources are in this box,
-   and what URL do I fetch". `vrt-model` can already answer the first in
+   most common job asked of a VRT outside GDAL is "which sources are in
+   this box, and what URL do I fetch", and it has been written at least
+   four times. `vrt-model` can already answer the first in
    pixel space, but not from a world box, and it does not map
    `/vsicurl/` or `/vsis3/` names to fetchable URLs. Those are the two
    pickups (section 4).
@@ -102,7 +107,7 @@ listed with the box of its `DstRect` but fetched whole.
 
 | # | Pickup | Where | Size | Why |
 |---|---|---|---|---|
-| P1 | World-box source query: invert the `GeoTransform`, take the pixel window, run `plan_band`, return each source with its world box and the window it supplies | `vrt-model` (and its wasm export in web) | small | the job VRTMate, deck.gl-raster and maplibre-gl-raster each rewrote; `vrt-model` has the pixel-space planner but no world-box entry point. Interval overlap, `SrcRect` and nested VRTs come for free from the planner |
+| P1 | World-box source query: invert the `GeoTransform`, take the pixel window, run `plan_band`, return each source with its world box and the window it supplies | `vrt-model` (and its wasm export in web) | small | the job vaster, VRTMate, deck.gl-raster and maplibre-gl-raster each wrote; `vrt-model` has the pixel-space planner but no world-box entry point. Interval overlap, `SrcRect` and nested VRTs come for free from the planner |
 | P2 | `Dsn` to fetchable URL: `/vsicurl/https://...` to `https://...`, `/vsis3/b/k` to an endpoint URL from configuration, `relativeToVRT` resolved against the VRT's own URL | `vrt-model` `dsn.rs` | small | replaces VRTMate's hand-set `prefix` and `basenameSlice`; it is the browser row of m29's name mapping (GDAL VSI, fsspec, object_store, Icechunk, dsn) |
 | P3 | Corpus cases: a 4-source excerpt of the 1/3 arc-second VRT (fractional `DstRect`, bilinear) with tier and box-query answers, including a crossing query | `fixtures/vrt` | small | gives the tier classifier and P1 a real 3DEP case with known answers |
 | P4 | A footprint view in `vrt.html`: draw each placement's box, colour by tier, list the URLs a box needs | web | medium | the demo VRTMate's page makes, with the tier reason that none of the browser readers show; waits on P1 and P2 |
