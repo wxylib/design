@@ -130,6 +130,10 @@ note point to it instead of repeating it.
 
 ## 7. Log
 
+- **2026-11-07 (VRTMate).** Added Postholer's VRTMate (JavaScript,
+  2026-01-02) to area E: a browser footprint index over a classic VRT,
+  the earliest of the browser classic-mosaic readers. Note
+  [vrtmate.md](vrtmate.md), row in [m25](../m25-vrt-engine.md) section 2.
 - **2026-11-05 (VRT).** Area E has a first inventory in
   [m25](../m25-vrt-engine.md) section 2: terrio 0.7.0 rewrites classic
   VRT inside its crate (translated from GDAL 3.13.3), OxiGeo has a
