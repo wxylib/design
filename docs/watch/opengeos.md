@@ -59,6 +59,35 @@ than the monthly landscape refresh does.
 
 ## 4. Log
 
+### 2026-11-08 (no release; a fast-growing contributor base)
+
+No terrio release after 0.7.0 (crates.io: terrio 0.7.0, terrio-crs
+0.2.2); 82 commits since the 2026-11-04 entry.
+- **Contributors:** Qiusheng Wu wrote 45 of the 82; 8 others wrote the
+  rest, among them Nicolas Karasiak (11; batched remote Zarr band reads,
+  shard index cache, 1 MiB requests, #682), Guillermo Morales Sanchez (7;
+  `sum` warp fixes and in-place WarpedVRT source windows, #671-#673),
+  William Mark Katzenmeyer, Roozbeh Valavi (external `.ovr` overview
+  choice as RasterIO does, #617; CRS picker list, #619), Ben Dyson,
+  Eduardo Lacerda (faster floating-point predictor, #651) and Andrew Gene
+  Brown (repeatability and conflicts in the JSON usage schema, #633).
+- **Meets wxylib:** overview handling (`-ovr AUTO-n` keeps output size,
+  #657; translate reads by window from the `-ovr` overview, #644),
+  netCDF-4 compound attributes in multidim (#609), VRT and windowed reads
+  streamed to COG by strips (#562), and a run of input hardening (bounded
+  header sizes, hostile SQLite and MIF inputs, credentialed STAC assets).
+- **terrio-crs:** grid parsing hardened, a registry listing and GML axis
+  order (#616, #619, #627, #681). wxylib's CRS cases rerun on main
+  (`1072b45`), with and without the fallback: same verdicts, still 34 of
+  35. `docs/conformance.md` unchanged.
+- **Reuse:** still no zarrs, async-tiff, object_store or proj crate.
+- **RustGIS:** no release after v0.5.0 (2026-10-31); 119 commits from 12
+  authors (Qiusheng Wu 28, then Jose Gregorio Rincon Albarracin, Dominik
+  Strebel, Mavrick Fitzgerald). Reads sinusoidal, Robinson, orthographic
+  and Mercator variant A (#1463), still on proj4rs 0.3; GeoTIFF export of
+  tile layers and map views (#1561, #1566); antimeridian seams told apart
+  from full turns in ring area (#1632).
+
 ### 2026-11-04 (fractional zonal coverage in terrio; RustGIS on proj4rs 0.3)
 
 terrio released 0.6.1 (2026-11-01) and 0.7.0 (2026-11-03), with
