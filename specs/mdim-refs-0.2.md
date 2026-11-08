@@ -8,6 +8,12 @@ Reference implementation (R store and writers, a Python block-info scanner)
 is not yet public; the zaro reader is in
 [hypertidy/zaro PR #5](https://github.com/hypertidy/zaro/pull/5).
 
+**Superseded by [byterefs/0.1](https://github.com/byterefs/spec/blob/main/spec/byterefs-0.1.md)**
+(byterefs/spec decisions 0002 and 0003): the same layout under the
+identifier `byterefs/0.1`, with remap rules that travel with the table.
+This text is frozen; changes to the format are made there, by decision
+record. wxylib's position is in [m32](../docs/m32-byterefs-position.md).
+
 Kept in wxylib/design as a reference for the flat reference table question
 (doc 03, "Open topic"; doc 04, section 18.2) and the pilot in
 [m02](../docs/m02-pilot-mdimrefs.md). It is not a wxylib format.
