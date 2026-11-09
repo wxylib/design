@@ -23,7 +23,7 @@ non-affine grid work.
 | [deck.gl#10739](https://github.com/visgl/deck.gl/issues/10739) | Tracker: custom projection. Per-view target CRS (`toCrs`) and per-layer source CRS (`coordinateSystem`, deck.gl#10874), CPU pre-projection, fp64 GPU projection as a v10 goal, math.gl mesh and raster pieces | Open. Generic raster reprojection, GPU projection families and cache invalidation for view-dependent geometry are listed as still open |
 | [math.gl#367](https://github.com/visgl/math.gl/pull/367) | Qualified inverse-mesh recipe for polar and seam-crossing rasters: refines target triangles against source-texel interpolation error, rejects invalid samples or an exhausted budget, clips with math.gl mesh clipping while keeping target positions and source identity. 32 example tests (coverage, holes, conformity, provenance, budget failures), checked against pinned PROJ samples | PR page still shows open with no human review, but its content landed on math.gl master on 2026-10-28 (`4bc2d44e`, "(#367)") and ships in the 5.0 betas; now under `examples/geospatial/projection-domains/src/warp/`. Example-owned, not a public API (correction made 2026-11-08) |
 | [math.gl#368](https://github.com/visgl/math.gl/pull/368) | Stacked on #367: drives the refinement with asynchronous proj-wasm batches (one reused WGS84-to-source operation, including ellipsoidal EPSG:3031), cooperative cancellation between batches, hands the finished raster to a task worker | Same as #367: PR page open, content on master since 2026-10-28 (`3e9baa32`, "(#368)"). Published packages gain no dependencies |
-| [deck.gl-raster](https://github.com/developmentseed/deck.gl-raster) (Development Seed) | Client-side COG and Zarr layers with adaptive-mesh GPU reprojection (`raster-reproject`), added to this note 2026-11-05. Plans are tracked in GitHub milestones (0.10 open; no due dates) and issues; npm is the reliable release record, since GitHub releases lag | 0.9.0 (2026-10-23): mesh error in output pixels, antimeridian in output mode. 0.10.0-beta.2 (2026-10-30): COGSource, MultiCOGSource, coalescing range reader, GeoZarr via ZarrSource, classic `parseVRT` (see m25) |
+| [deck.gl-raster](https://github.com/developmentseed/deck.gl-raster) (Development Seed) | Client-side COG and Zarr layers with adaptive-mesh GPU reprojection (`raster-reproject`), added to this note 2026-11-05. Plans are tracked in GitHub milestones (0.10 open; no due dates) and issues; npm is the reliable release record, since GitHub releases lag | 0.9.0 (2026-10-23): mesh error in output pixels, antimeridian in output mode. 0.10.0-beta.2 (2026-10-30): COGSource, MultiCOGSource, coalescing range reader, GeoZarr via ZarrSource, classic `parseVRT` (see m25). 0.10.0 released 2026-11-09 (section 2.2) |
 
 ## 2. How it relates to wxylib
 
@@ -93,6 +93,83 @@ path for the web demos would come either from the viewers' core package
 or from math.gl; the decision trigger below makes that choice once
 math.gl's raster recipe becomes an API.
 
+### 2.2 deck.gl-raster 0.10 and its range reader
+
+deck.gl-raster 0.10.0 (npm, 2026-11-09; release post at
+`docs/blog/v0.10-release.md`, commit `6da743d`) adds no new reprojection
+or VRT capability over the betas already logged here. `parseVRT` has not
+changed since #835 (2026-11-02), so m25's coverage table stands: it reads
+classic mosaics only, one COG per item. What is new for wxylib is that
+the coalescing reader is now its own zero-dependency package,
+`@developmentseed/range-reader` 0.10.0, with a written design
+(`dev-docs/specs/2026-10-26-range-reader-design.md`).
+
+What the reader does:
+
+- Reads issued in the same task are merged into one range request when
+  the gap between them is at most `maxGap` (default: the median read
+  length) and the bytes merged across stay under `maxOverfetchBytes`.
+- Each response body is read as a stream, and each tile resolves as soon
+  as its last byte arrives, so merging never delays the first tile.
+  A stream is cancelled once nothing ahead of it is still wanted.
+- Every received byte, including the gaps merged across, goes into one
+  byte cache keyed by file offset, with separate budgets for header and
+  tile bytes. A later read inside an earlier request is served from it.
+- A per-origin limiter holds six requests at a time, because browsers
+  open six HTTP/1.1 connections per host and S3 does not offer HTTP/2 to
+  browsers. Waiting happens in the limiter, where priority and
+  cancellation apply, not in the browser's queue.
+- It never needs the file size (`Content-Range` is not CORS-safelisted),
+  and a 200 answer to a ranged request is used only when the whole
+  object is under a size limit; otherwise the read fails rather than
+  downloading the file.
+
+Measured on one GHRSST MUR COG on source.coop (2024-01-01,
+36000 x 17999, 512-pixel tiles, ZSTD), counting the tiles a view needs
+and merging them as the reader does:
+
+| View | Level | Tiles | Requests, median gap | Requests, 1 MiB gap | Over-fetch, 1 MiB gap |
+|---|---|---|---|---|---|
+| Tasmania, 10 x 10 degrees | 0 | 9 (1.0 MB) | 3 | 3 | 0 |
+| Southern Ocean, 60 x 30 degrees | 0 | 91 (8.5 MB) | 7 | 6 | 0.37 MB |
+| Whole globe, about 2250 px wide | 4 | 15 (2.1 MB) | 1 | 1 | 0 |
+
+A GDAL-written COG keeps each level's tiles in row-major order, so a view
+costs about one request per row of tiles. The median-gap default gets
+that without over-fetch; a 1 MiB gap (the `object_store` default) saves
+a request at the cost of some unwanted bytes.
+
+Where wxylib stands:
+
+| Path | Today | Gap |
+|---|---|---|
+| Native COG reads (`wxy-tiff`) | async-tiff's `ObjectReader`, whose `get_byte_ranges` calls `object_store::get_ranges`, which merges nearby ranges | None for merging. No streaming: a merged range decodes only when complete |
+| Browser COG reads (web `src/fetch.rs`) | `FetchReader` implements only `get_bytes`, so async-tiff's default `get_byte_ranges` fetches tiles one at a time, in sequence | The 91-tile view above is 91 serial requests; merged it would be 7, six at a time |
+| Byte-ref stores (`wxy-refs` `RefsStore::fetch`) | One `get_range` per ref | Refs that share a file (BRAN, many chunks per netCDF file) are not merged. m29 section 8 already plans "ref rows grouped into coalesced ranges"; the reader's policy is a measured starting point |
+| Browser ref reads (`bran.js`, `mdim.js`) | One `fetch` per chunk | Same as above, in JS |
+| Chunk cache (m05) | Rows are the requested ranges, keyed by `(path, offset, size)`; the cache sits above `get_ranges` so lookups are exact matches | deck.gl-raster made the other choice: cache everything received, keyed by offset, lookups by interval containment. Both are reasonable; m05 should state why it keeps exact keys (ref-table joins) and what it gives up (gap bytes are dropped) |
+
+Pickups, in order of value for effort:
+
+- **R1.** Merge reads in the browser COG reader: implement
+  `get_byte_ranges` in web `src/fetch.rs` with median-gap merging and up
+  to six concurrent requests. Small, and it changes the request count of
+  every COG page (`cog.html`, `mdim.html`). Streaming can come later.
+- **R2.** Merge ref reads per source in `wxy-refs`, grouping a batch by
+  source and calling `get_ranges`. This is the fetch stage of m29 and
+  helps the many-chunks-per-file case most.
+- **R3.** Use `@developmentseed/range-reader` as is in the plain-JS
+  pages (`bran.js`, `mdim.js`) rather than writing a JS coalescer. It is
+  ESM with no dependencies, so it loads from a CDN without a build step.
+- **R4.** Record the m05 cache-key choice against the offset-keyed
+  design above.
+
+Also in 0.10 and in line with `wxy-geozarr`: an array inherits its
+group's `proj:` and `spatial:` attributes, and `spatial:dimensions` is
+read by position (Y then X). The new `ZarrSource` and the planned
+coalescing for sharded Zarr (their next release) are the points where a
+wxylib byte-ref store could feed deck.gl-raster directly (signal 5).
+
 ## 3. Signals and decision triggers
 
 Signals at each check:
@@ -126,6 +203,13 @@ Decision triggers:
   web demo docs.
 
 ## 4. Log
+
+- **2026-11-09.** deck.gl-raster 0.10.0 released (npm 2026-11-09, release
+  post the same day); see section 2.2. Since beta.4: #861 serves reads
+  that arrive as their stream finishes, #862 declares the ECMWF grid
+  node-registered in the zarr-globe example, #860 and #859 fixes.
+  `parseVRT` unchanged since #835. `@developmentseed/range-reader` is
+  published as its own package. No use of math.gl's CRS or mesh pieces.
 
 - **2026-11-08.** Correction: math.gl#367 and #368 landed on master on
   2026-10-28 (`4bc2d44e` and `3e9baa32`, both committed by GitHub with the
