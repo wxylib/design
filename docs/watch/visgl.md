@@ -126,35 +126,40 @@ What the reader does:
 
 Measured on one GHRSST MUR COG on source.coop (2024-01-01,
 36000 x 17999, 512-pixel tiles, ZSTD), counting the tiles a view needs
-and merging them as the reader does:
+and merging them with the reader's defaults (gap up to the median tile
+length, at most 1 MiB per request and 1 MiB merged across), then warping
+the same views in Chromium with wxylib/web before and after it adopted
+that policy (web PR #27). Request counts in the browser include the
+header read:
 
-| View | Level | Tiles | Requests, median gap | Requests, 1 MiB gap | Over-fetch, 1 MiB gap |
+| View | Level | Tiles | Merged requests | Browser, before | Browser, after |
 |---|---|---|---|---|---|
-| Tasmania, 10 x 10 degrees | 0 | 9 (1.0 MB) | 3 | 3 | 0 |
-| Southern Ocean, 60 x 30 degrees | 0 | 91 (8.5 MB) | 7 | 6 | 0.37 MB |
-| Whole globe, about 2250 px wide | 4 | 15 (2.1 MB) | 1 | 1 | 0 |
+| Tasmania, 10 x 10 degrees | 0 | 9 (1.0 MB) | 3 | 10 requests, 4.2 s | 4 requests, 1.7 s |
+| Southern Ocean, 60 x 30 degrees | 0 | 91 (8.5 MB) | 12 | 92 requests, 30.4 s | 13 requests, 7.0 s |
+| Whole globe, about 2250 px wide | 4 | 15 (2.1 MB) | 3 | 16 requests, 4.2 s | 4 requests, 2.0 s |
 
-A GDAL-written COG keeps each level's tiles in row-major order, so a view
-costs about one request per row of tiles. The median-gap default gets
-that without over-fetch; a 1 MiB gap (the `object_store` default) saves
-a request at the cost of some unwanted bytes.
+A GDAL-written COG keeps each level's tiles in row-major order, so
+without a size cap a view costs about one request per row of tiles (7
+for the Southern Ocean view). The 1 MiB request cap splits long runs,
+which keeps each request short against the link's latency (their #815).
+The values were identical before and after; 632 bytes were fetched
+across gaps on the largest view.
 
 Where wxylib stands:
 
 | Path | Today | Gap |
 |---|---|---|
 | Native COG reads (`wxy-tiff`) | async-tiff's `ObjectReader`, whose `get_byte_ranges` calls `object_store::get_ranges`, which merges nearby ranges | None for merging. No streaming: a merged range decodes only when complete |
-| Browser COG reads (web `src/fetch.rs`) | `FetchReader` implements only `get_bytes`, so async-tiff's default `get_byte_ranges` fetches tiles one at a time, in sequence | The 91-tile view above is 91 serial requests; merged it would be 7, six at a time |
+| Browser COG reads (web `src/fetch.rs`) | `FetchReader` implemented only `get_bytes`, so async-tiff's default `get_byte_ranges` fetched tiles one at a time, in sequence | Closed by web PR #27 (R1): merged reads, six at a time, measured above |
 | Byte-ref stores (`wxy-refs` `RefsStore::fetch`) | One `get_range` per ref | Refs that share a file (BRAN, many chunks per netCDF file) are not merged. m29 section 8 already plans "ref rows grouped into coalesced ranges"; the reader's policy is a measured starting point |
 | Browser ref reads (`bran.js`, `mdim.js`) | One `fetch` per chunk | Same as above, in JS |
 | Chunk cache (m05) | Rows are the requested ranges, keyed by `(path, offset, size)`; the cache sits above `get_ranges` so lookups are exact matches | deck.gl-raster made the other choice: cache everything received, keyed by offset, lookups by interval containment. Both are reasonable; m05 should state why it keeps exact keys (ref-table joins) and what it gives up (gap bytes are dropped) |
 
 Pickups, in order of value for effort:
 
-- **R1.** Merge reads in the browser COG reader: implement
-  `get_byte_ranges` in web `src/fetch.rs` with median-gap merging and up
-  to six concurrent requests. Small, and it changes the request count of
-  every COG page (`cog.html`, `mdim.html`). Streaming can come later.
+- **R1.** Merge reads in the browser COG reader. Done in web PR #27:
+  `get_byte_ranges` in `src/fetch.rs` with the policy in `src/ranges.rs`
+  and up to six requests at once. Streaming can come later.
 - **R2.** Merge ref reads per source in `wxy-refs`, grouping a batch by
   source and calling `get_ranges`. This is the fetch stage of m29 and
   helps the many-chunks-per-file case most.
