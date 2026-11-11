@@ -59,6 +59,40 @@ than the monthly landscape refresh does.
 
 ## 4. Log
 
+### 2026-11-11 (terrio 0.8.0; a polar stereographic pole fix wxylib can use)
+
+terrio 0.8.0 released 2026-11-08 with `terrio-crs` 0.2.3; 86 commits
+since the 2026-11-08 entry.
+- **0.8.0 (meets wxylib):** remote Zarr opens through v2 consolidated
+  metadata, keeps shard indexes and coalesces nearby inner chunks;
+  JavaScript `openUrl` reads remote Zarr v2 and v3 by window (#683), a
+  browser Zarr reader next to the m31 planner's viewer; `translate
+  --overview AUTO-n` keeps the full-resolution size; the JSON usage
+  catalog (schema 0.1.1) records argument repeatability (CLI reflects
+  API); external overviews beside read-only GeoTIFFs.
+- **Since 0.8.0, terrio-crs:** an ellipsoidal polar stereographic CRS now
+  projects its own pole to the false origin and refuses the opposite one
+  (#734; EPSG:3413, 3031, 32661 and the rest, variants A and B). This is
+  the case wxy-warp's `crs.rs` works around ("terrio-crs 0.2.2 refuses a
+  point exactly at a pole"). Pickup: once a release carries #734, retry
+  without the workaround. Also polar Lambert azimuthal disk limits
+  (#822), polar stereographic variant C (#803), non-finite inverse inputs
+  refused (#845), grid reads confined to set search paths (#781).
+- **Warp and VRT:** a VRT's reduced resolution read from its sources'
+  overviews (#796), fractional source windows within SrcRect and DstRect
+  (#750), area methods take the source inside edge pixels on any grid
+  (#756); Guillermo Morales Sanchez wrote 34 of the 86, mostly warp.
+- **wxylib's own CRS cases:** rerun on terrio-crs main (`29fd6e7`), with
+  and without the fallback: same verdicts, still 34 of 35.
+- **Reuse:** still no zarrs, async-tiff, object_store or proj crate.
+- **Contributors:** Guillermo Morales Sanchez 34, Qiusheng Wu 25, Nicolas
+  Karasiak 16 (Zarr: 32 requests in flight, 8 x 8 Blosc bit unshuffle),
+  Bowen C, Ben Dyson, Timo Millenaar; no PR from Michael.
+- **RustGIS:** v0.6.0 (2026-11-08); 115 commits from 12 authors; WKT1
+  angles read in the geographic unit (#1705), interpolation output in a
+  projected CRS (#1747), raster reprojection on several threads (#1794);
+  still proj4rs 0.3.
+
 ### 2026-11-08 (no release; a fast-growing contributor base)
 
 No terrio release after 0.7.0 (crates.io: terrio 0.7.0, terrio-crs
