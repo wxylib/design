@@ -6,7 +6,7 @@ section 7.
 Context: [04 landscape](../04-landscape.md) sections 9 (warp) and 11
 (pure-Rust alternatives); [m20](../m20-movement-crates.md) (movement
 layer); [m24](../m24-foundations-hardening.md); sibling notes
-[opengeos.md](opengeos.md) (terrio), [pyinterp.md](pyinterp.md) (conservative regridding), [roteiro.md](roteiro.md) (formats),
+[opengeos.md](opengeos.md) (terrio), [pyinterp.md](pyinterp.md) (conservative regridding), [roteiro.md](roteiro.md) (formats), [gpu-decode.md](gpu-decode.md) (TIFF decode to GPU),
 [crs-coverage.md](crs-coverage.md) (CRS), [visgl.md](visgl.md) (browser
 meshes).
 

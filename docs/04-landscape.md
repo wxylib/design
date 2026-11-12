@@ -314,6 +314,8 @@ wxylib could fill as part of M4.
 | georust `geotiff` | 0.1.0, synchronous, low activity | **watch**. Issue #13 is where async and georeferencing design is discussed |
 | image-rs `tiff` | 0.11.3, synchronous | **watch**. roteiro-gis `geotiff-writer` (COG layout, overviews, LERC, ZSTD, wasm) is now the stronger M12 writer candidate ([watch/roteiro.md](watch/roteiro.md)) |
 | MapLibre Martin's COG source | on async-tiff | **watch**. It has its own EPSG:3857-only check, which shows the georeferencing gap |
+| [cog3pio](https://github.com/weiji14/cog3pio) (Wei Ji Leong) | Rust, Python; nvTIFF GPU decode on the 2025-2026 roadmap | **watch**. image-tiff on CPU, nvTIFF + nvCOMP to device memory, DLPack out, xarray engine via cupy-xarray. Its 3x over GDAL is mostly the baseline ([watch/gpu-decode.md](watch/gpu-decode.md)) |
+| [rumi](https://github.com/asterisk-labs/rumi) (asterisk-labs) | rumi-eo 0.24.0 | **watch**. OpenZL frames in a TIFF-shaped container, CPU decode, GPU path planned. About 1.4x over the best GDAL-readable GeoTIFF on one thread ([watch/gpu-decode.md](watch/gpu-decode.md)) |
 
 **Answer to the planning thread's question 1.** No Rust GeoTIFF
 georeferencing layer exists on async-tiff, and none is planned. The
