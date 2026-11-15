@@ -20,7 +20,7 @@ non-affine grid work.
 
 | Item | What | State at 2026-10-28 |
 |---|---|---|
-| [deck.gl#10739](https://github.com/visgl/deck.gl/issues/10739) | Tracker: custom projection. Per-view target CRS (`toCrs`) and per-layer source CRS (`coordinateSystem`, deck.gl#10874), CPU pre-projection, fp64 GPU projection as a v10 goal, math.gl mesh and raster pieces | Open. Generic raster reprojection, GPU projection families and cache invalidation for view-dependent geometry are listed as still open. #10874 (arbitrary CRS in `coordinateSystem`) and #10894 (PROJJSON) are on deck.gl master since 2026-10-21 and 2026-10-23, listed under Unreleased as "Layer source CRS (Experimental)"; not in 9.4.1 (correction made 2026-11-11) |
+| [deck.gl#10739](https://github.com/visgl/deck.gl/issues/10739) | Tracker: custom projection. Per-view target CRS (`toCrs`) and per-layer source CRS (`coordinateSystem`, deck.gl#10874), CPU pre-projection, fp64 GPU projection as a v10 goal, math.gl mesh and raster pieces | Open. Generic raster reprojection, GPU projection families and cache invalidation for view-dependent geometry are listed as still open. #10874 (arbitrary CRS in `coordinateSystem`) and #10894 (PROJJSON) are on deck.gl master since 2026-10-21 and 2026-10-23, listed under Unreleased as "Layer source CRS (Experimental)"; not in 9.4.1 (correction made 2026-11-11). First released in deck.gl 10.0.0-alpha.1 (2026-11-12) |
 | [math.gl#367](https://github.com/visgl/math.gl/pull/367) | Qualified inverse-mesh recipe for polar and seam-crossing rasters: refines target triangles against source-texel interpolation error, rejects invalid samples or an exhausted budget, clips with math.gl mesh clipping while keeping target positions and source identity. 32 example tests (coverage, holes, conformity, provenance, budget failures), checked against pinned PROJ samples | PR page still shows open with no human review, but its content landed on math.gl master on 2026-10-28 (`4bc2d44e`, "(#367)") and ships in the 5.0 betas; now under `examples/geospatial/projection-domains/src/warp/`. Example-owned, not a public API (correction made 2026-11-08) |
 | [math.gl#368](https://github.com/visgl/math.gl/pull/368) | Stacked on #367: drives the refinement with asynchronous proj-wasm batches (one reused WGS84-to-source operation, including ellipsoidal EPSG:3031), cooperative cancellation between batches, hands the finished raster to a task worker | Same as #367: PR page open, content on master since 2026-10-28 (`3e9baa32`, "(#368)"). Published packages gain no dependencies |
 | [deck.gl-raster](https://github.com/developmentseed/deck.gl-raster) (Development Seed) | Client-side COG and Zarr layers with adaptive-mesh GPU reprojection (`raster-reproject`), added to this note 2026-11-05. Plans are tracked in GitHub milestones (0.10 open; no due dates) and issues; npm is the reliable release record, since GitHub releases lag | 0.9.0 (2026-10-23): mesh error in output pixels, antimeridian in output mode. 0.10.0-beta.2 (2026-10-30): COGSource, MultiCOGSource, coalescing range reader, GeoZarr via ZarrSource, classic `parseVRT` (see m25). 0.10.0 released 2026-11-09 (section 2.2) |
@@ -209,6 +209,19 @@ Decision triggers:
 
 ## 4. Log
 
+- **2026-11-15.** deck.gl 10.0.0-alpha.1 (npm 2026-11-12) is the first
+  release with arbitrary layer source CRS: `@deck.gl/core` resolves
+  `coordinateSystem` strings, PROJ strings and PROJJSON through math.gl's
+  `projectionEngine` (`@math.gl/geospatial` 5.0.0-beta.8), with a
+  resolver and parsers passed as options. Its bundle names no proj-wasm
+  and no proj4, so whether proj-wasm can be plugged in as the engine is
+  not confirmed, and the proj-wasm trigger is left unfired.
+  deck.gl-raster has already moved its custom projection example to the
+  v10 CRS API (#882), its first use of deck.gl's CRS pieces; no
+  deck.gl-raster release after 0.10.0. math.gl 5.0.0-beta.8 to beta.10
+  (2026-11-12 to 2026-11-14): mostly terrain (LOD screen-space error,
+  seams across pole sectors, mixed-level seam stitching) and Arrow
+  queries; the pole finding on #367 still has no reply.
 - **2026-11-11.** Correction, as for math.gl on 2026-11-08: deck.gl#10874
   (arbitrary CRS in `Layer.coordinateSystem`) landed on master on
   2026-10-21 (`ce528a4`) and PROJJSON support (#10894) on 2026-10-23,
