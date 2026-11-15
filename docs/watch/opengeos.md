@@ -20,7 +20,7 @@ than the monthly landscape refresh does.
 | Repo | [opengeos/terrio](https://github.com/opengeos/terrio), docs at [terrio.opengeos.org](https://terrio.opengeos.org) | [opengeos/RustGIS](https://github.com/opengeos/RustGIS), [rustgis.app](https://rustgis.app) |
 | What | Pure-Rust geospatial data I/O and GDAL-style operations: rasters, vectors, point clouds | Desktop GIS (egui) with a web build, CLI, Python, an AI assistant and an MCP server |
 | License | MIT | Apache-2.0 |
-| Builds on | Whitebox Next Gen (`wbraster`, `wbvector`, `wbprojection`), `tiff`, `gribberish`, `geo`, arrow/parquet, netcdf-reader, hdf5-reader; GDAL as an optional backend | `geo`, `proj4rs` 0.2, egui; GeoLibre and Whitebox tools through `rustgis-geolibre`. **Does not depend on terrio** |
+| Builds on | Whitebox Next Gen (`wbraster`, `wbvector`, `wbprojection`), `tiff`, `gribberish`, `geo`, arrow/parquet, netcdf-reader, hdf5-reader; GDAL as an optional backend | `geo`, `terrio-crs` 0.2.4 for CRS since 2026-11-14 (proj4rs dropped, #2041, #2066), egui; GeoLibre and Whitebox tools through `rustgis-geolibre`. Depends on terrio-crs, not on terrio itself |
 | CRS | `terrio-crs`, its own engine as a separate crate, no PROJ (doc 04, 5.2; coverage of wxylib's cases in [crs-coverage.md](crs-coverage.md)) | `proj4rs` |
 | Surfaces | Rust crates, CLI, Python (rasterio-style `terrio.rio`, xarray), terrio-js (wasm, threads, memory64), MCP server | Desktop app, web app, CLI, Python, MCP server |
 
@@ -58,6 +58,43 @@ than the monthly landscape refresh does.
   partner rather than a parallel stack.
 
 ## 4. Log
+
+### 2026-11-15 (terrio 0.9.0; RustGIS moves onto terrio-crs)
+
+terrio 0.9.0 and `terrio-crs` 0.2.4 released 2026-11-14 (crates.io
+2026-11-15); 124 commits since the 2026-11-11 entry.
+- **RustGIS adopts terrio-crs.** RustGIS transforms coordinates with
+  terrio-crs (#2041), reads ellipsoids through it and drops proj4rs
+  (#2066), and pins terrio-crs 0.2.4 from crates.io (#2151). This is the
+  first outside user of the standalone CRS crate that grew out of
+  opengeos/terrio#266.
+- **terrio-crs 0.2.4 (meets wxylib):** reads and writes GeoTIFF GeoKeys
+  without the terrio crate (`SpatialRef::from_geokeys`, `to_geokeys`,
+  #981). That is the GeoKeys-to-CRS piece doc 04 (G1) lists as missing for
+  GeoTIFF georeferencing on async-tiff, now in a standalone pure-Rust
+  crate. Also `to_proj4` written as PROJ 9.8.1 writes it (#958), strict
+  WKT 1 (#974), a `Transformer::inverse()`, Eckert IV and Natural Earth in
+  the default build (#988), and a run of WKT and PROJ-string readings
+  checked against PROJ (#1022-#1029). The polar stereographic pole fix
+  (#734) is in this release, so wxy-warp's `crs.rs` pole workaround can
+  now be retried against 0.2.4.
+- **0.9.0 (meets wxylib):** an npm module `terrio-js/zarr` that reads Zarr
+  arrays over HTTP and nothing else; stalled Zarr requests cancelled after
+  a chunk fails (#1013); MBTiles read in place; remote reads that request
+  a window's separate byte runs together.
+- **wxylib's own CRS cases:** rerun on terrio-crs main (0.2.4 plus
+  #1022-#1036), with and without the fallback: same verdicts, still 34 of
+  35 (the PROJJSON `meridian` member for EPSG:3031 is still refused).
+- **Reuse:** still no zarrs, async-tiff, object_store or proj crate.
+- **Contributors:** Qiusheng Wu 82, Dominik Strebel 19, Nicolas Karasiak
+  16, Guillermo Morales Sanchez 4, Andrew Gene Brown 3; no PR from
+  Michael.
+- **RustGIS:** no release after v0.6.0; 302 commits from more than 12
+  authors (Mavrick Fitzgerald 79, Qiusheng Wu 64). Zarr grids placed by
+  `spatial:transform` and `proj:code` (#2117), Zarr windows that read only
+  their chunks inside shards (#1951), LERC GeoTIFF and COG reads (#1984),
+  Copernicus Data Space COGs with sign-in (#2134), and a polygon looping
+  round a pole reported instead of dropped (#2088).
 
 ### 2026-11-11 (terrio 0.8.0; a polar stereographic pole fix wxylib can use)
 
