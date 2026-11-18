@@ -209,6 +209,13 @@ Decision triggers:
 
 ## 4. Log
 
+- **2026-11-18.** No deck.gl release after 10.0.0-alpha.1 and no
+  deck.gl-raster release after 0.10.0 (three commits: a late-tile unload
+  fix, #878, and docs). math.gl 5.0.0-beta.11 (2026-11-16), beta.12 and
+  4.1.1 (2026-11-17); fewer transform calls in `subdivideTriangleMesh`
+  (#568) and rendering scales measured on the CRS body for other bodies
+  (#612). No trigger fired; PR pages not refetched, since they have
+  proved stale (2026-11-08 and 2026-11-11 entries).
 - **2026-11-15.** deck.gl 10.0.0-alpha.1 (npm 2026-11-12) is the first
   release with arbitrary layer source CRS: `@deck.gl/core` resolves
   `coordinateSystem` strings, PROJ strings and PROJJSON through math.gl's

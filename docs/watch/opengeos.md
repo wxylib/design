@@ -59,6 +59,32 @@ than the monthly landscape refresh does.
 
 ## 4. Log
 
+### 2026-11-18 (terrio-crs moves its references to PROJ 9.9.0; RustGIS v0.7.0)
+
+No terrio release after 0.9.0 (crates.io: terrio 0.9.0, terrio-crs
+0.2.4); 56 commits since the 2026-11-15 entry, from Dominik Strebel (29),
+Nicolas Karasiak (21), Roozbeh Valavi and dependabot; none from Qiusheng
+Wu or Michael.
+- **terrio-crs:** EPSG v13.102 tables and test references on PROJ 9.9.0
+  (#1077, #1078); `SpatialRef::to_proj4_gdal`, the PROJ string GDAL
+  exports with its `+towgs84` (#1098, also in Python, JS and the CLI,
+  #1111); a list of the grids a point's transformation needs and where to
+  get them (#1075); isea computed as PROJ 9.9.0 does (#1097); the
+  Transverse Mercator Zoned Grid System (#1096); a WKT keyword table from
+  the OGC 18-010r11 BNF (#1109). wxylib's CRS cases rerun on main, with
+  and without the fallback: same verdicts, still 34 of 35.
+- **Meets wxylib:** zonal statistics written as a cube to Zarr with CF
+  geometries (#1071), the shape wxylib's zonal output and the m21
+  conservative work both point at; a `periodic_longitude` warp option for
+  sources not continuous across 180 (#1099); `terrio-js/cog` at 0.30 MB
+  Brotli without JPEG XL (#1054). `docs/conformance.md` unchanged.
+- **Reuse:** still no zarrs, async-tiff, object_store or proj crate.
+- **RustGIS:** v0.7.0 (2026-11-15); 119 commits since. WKT and GeoTIFF
+  keys now read and written through terrio-crs (#2322), coordinate
+  systems listed from terrio-crs's PROJ 9.9.0 catalog (#2409), Zarr
+  windows that follow the time slider (#2298) and point series that read
+  one chunk per shard (#2268).
+
 ### 2026-11-15 (terrio 0.9.0; RustGIS moves onto terrio-crs)
 
 terrio 0.9.0 and `terrio-crs` 0.2.4 released 2026-11-14 (crates.io
