@@ -334,7 +334,31 @@ criterion 2 for COG stores.
    Recommended: leave them in hypertidy and treat "wxylib keeps up with
    the movement layer" as a standing task instead.
 
-## 9. What we get, what it costs, what if we didn't
+## 9. Follow-up (2026-11-21)
+
+Steps 1 and 2 were started the same day.
+
+- **Step 1.** Core builds and passes its suite on rwarp 0.5.0,
+  controlledburn 0.3.3, proj4rs 0.3.1 and terrio-crs 0.2.4 with no source
+  change ([core #38](https://github.com/wxylib/core/pull/38)); the port
+  expected in section 7 was not needed, because core uses none of the
+  types rwarp 0.4 changed. `cover.rs` and `rasterize.rs` stay:
+  `rasterize.rs` is GDAL's centre and all-touched rule behind the default
+  zonal mode, and controlledburn's exact all-touched is a different rule,
+  so dropping it changes default values; `cover.rs` is the comparison
+  the non-affine example is built on. Section 5's "shrink" for `wxy-warp`
+  is a choice about defaults, not a clean-up.
+- **Criterion 2.** The live Bluelink `temp` table from raad.virtualize
+  equals the BRAN fixture on all 97,920 rows
+  ([fixtures #20](https://github.com/wxylib/fixtures/pull/20)). Left: a
+  never-written chunk from an outside producer.
+- **Criterion 3.** A wxylib R package that reads tables vendors 356
+  crates, 36.6 MB compressed, against CRAN's 5 MB. CRAN is out for it
+  whatever happens to rwarp's own submission, so choice 1 in section 8
+  narrows to: bind the table read and ship binaries through r-universe,
+  or declare the R surface not the goal.
+
+## 10. What we get, what it costs, what if we didn't
 
 - Get: the suite brought back to one state (code, pins and pages
   agreeing), the commitment question answered on evidence, and the next
