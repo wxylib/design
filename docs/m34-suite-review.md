@@ -354,9 +354,11 @@ Steps 1 and 2 were started the same day.
   never-written chunk from an outside producer.
 - **Criterion 3.** A wxylib R package that reads tables vendors 356
   crates, 36.6 MB compressed, against CRAN's 5 MB. CRAN is out for it
-  whatever happens to rwarp's own submission, so choice 1 in section 8
-  narrows to: bind the table read and ship binaries through r-universe,
-  or declare the R surface not the goal.
+  whatever happens to rwarp's own submission. Choice 1 in section 8 is
+  decided on that evidence: the R surface is declared not the goal. R
+  users read the tables through GDAL and zaro and warp through the rwarp
+  R package, and wxylib/r stays a parked spike. Criterion 3 closes by
+  declaration, which the test allows.
 
 ## 10. What we get, what it costs, what if we didn't
 
