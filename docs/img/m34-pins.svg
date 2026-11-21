@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="500" viewBox="0 0 820 500" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#444"/>
+    </marker>
+  </defs>
+  <rect width="820" height="500" fill="#ffffff"/>
+
+  <!-- movement layer -->
+  <rect x="20" y="16" width="780" height="96" rx="8" fill="#eef5ee" stroke="#8fb08f"/>
+  <text x="34" y="38" font-weight="bold" fill="#2f4a2f">Movement layer (hypertidy, on crates.io): no I/O</text>
+  <g>
+    <rect x="34" y="50" width="176" height="48" rx="6" fill="#ffffff" stroke="#8fb08f"/>
+    <text x="46" y="70" font-weight="bold">rwarp 0.5.0</text>
+    <text x="46" y="88" fill="#555" font-size="12">18 Nov: mesh sets, threads</text>
+    <rect x="224" y="50" width="196" height="48" rx="6" fill="#ffffff" stroke="#8fb08f"/>
+    <text x="236" y="70" font-weight="bold">controlledburn 0.3.3</text>
+    <text x="236" y="88" fill="#555" font-size="12">19 Nov: first moments</text>
+    <rect x="434" y="50" width="176" height="48" rx="6" fill="#ffffff" stroke="#8fb08f"/>
+    <text x="446" y="70" font-weight="bold">bigcurve 0.3.0</text>
+    <text x="446" y="88" fill="#555" font-size="12">4 Nov: geodesic densify</text>
+    <rect x="624" y="50" width="162" height="48" rx="6" fill="#ffffff" stroke="#8fb08f"/>
+    <text x="636" y="70" font-weight="bold">vaster 0.2.0</text>
+    <text x="636" y="88" fill="#555" font-size="12">grid arithmetic</text>
+  </g>
+
+  <!-- arrow movement -> core -->
+  <line x1="410" y1="112" x2="410" y2="176" stroke="#444" stroke-width="1.5" marker-end="url(#a)"/>
+  <rect x="424" y="124" width="300" height="40" rx="5" fill="#fde8e4" stroke="#c9584a"/>
+  <text x="434" y="141" fill="#8a2a1e" font-weight="bold" font-size="12">core builds on rwarp 0.3.1: two minor releases back</text>
+  <text x="434" y="157" fill="#8a2a1e" font-size="12">controlledburn 0.3.1, and 0.2.4 again through rwarp</text>
+
+  <!-- core -->
+  <rect x="250" y="180" width="320" height="92" rx="8" fill="#eef2f7" stroke="#9aa9bd"/>
+  <text x="264" y="202" font-weight="bold" fill="#2b3a4f">wxylib/core main 61de824 (13 Nov)</text>
+  <text x="264" y="222" fill="#333" font-size="12">13 crates, about 19,700 lines with tests</text>
+  <text x="264" y="240" fill="#333" font-size="12">proj4rs 0.3.0 (0.3.1 is out); terrio-crs 0.2.2 (0.2.4)</text>
+  <text x="264" y="258" fill="#333" font-size="12">CI green; no commit since 13 Nov</text>
+
+  <!-- fixtures -->
+  <rect x="20" y="180" width="190" height="92" rx="8" fill="#f7f3ea" stroke="#bfae84"/>
+  <text x="32" y="202" font-weight="bold" fill="#4f4326">wxylib/fixtures</text>
+  <text x="32" y="222" fill="#333" font-size="12">main 3000119 (8 Nov)</text>
+  <text x="32" y="240" fill="#333" font-size="12">core CI pins aed9d1e</text>
+  <rect x="32" y="248" width="120" height="18" rx="4" fill="#fff4d6" stroke="#c9a23a"/>
+  <text x="38" y="261" fill="#7a5b00" font-size="12">4 commits behind</text>
+  <line x1="210" y1="226" x2="246" y2="226" stroke="#444" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- refharvest -->
+  <rect x="610" y="180" width="190" height="92" rx="8" fill="#f7f3ea" stroke="#bfae84"/>
+  <text x="622" y="202" font-weight="bold" fill="#4f4326">wxylib/refharvest 0.1.0</text>
+  <text x="622" y="222" fill="#333" font-size="12">pins async-hdf5 fork 0c2ad80</text>
+  <text x="622" y="240" fill="#333" font-size="12">fork main 5754c09</text>
+  <rect x="622" y="248" width="150" height="18" rx="4" fill="#eef5ee" stroke="#8fb08f"/>
+  <text x="628" y="261" fill="#2f4a2f" font-size="12">3 behind, lints only</text>
+  <line x1="606" y1="226" x2="574" y2="226" stroke="#444" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#a)"/>
+  <text x="577" y="296" fill="#555" font-size="11" text-anchor="middle">tables as data,</text>
+  <text x="577" y="309" fill="#555" font-size="11" text-anchor="middle">not a Cargo dependency</text>
+
+  <!-- consumers -->
+  <line x1="410" y1="272" x2="410" y2="336" stroke="#444" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="422" y="322" fill="#555" font-size="12">pinned to a core commit</text>
+  <rect x="20" y="340" width="780" height="140" rx="8" fill="#f4f1f8" stroke="#a79bc0"/>
+  <text x="34" y="362" font-weight="bold" fill="#3c2f57">What users touch</text>
+
+  <g>
+    <rect x="34" y="374" width="180" height="92" rx="6" fill="#ffffff" stroke="#a79bc0"/>
+    <text x="46" y="394" font-weight="bold">web (8 pages)</text>
+    <text x="46" y="412" fill="#333" font-size="12">core 14aa692 (5 Nov)</text>
+    <rect x="46" y="422" width="126" height="18" rx="4" fill="#fff4d6" stroke="#c9a23a"/>
+    <text x="52" y="435" fill="#7a5b00" font-size="12">10 commits behind</text>
+    <text x="46" y="456" fill="#555" font-size="11">rwarp 0.3 directly as well</text>
+
+    <rect x="226" y="374" width="180" height="92" rx="6" fill="#ffffff" stroke="#a79bc0"/>
+    <text x="238" y="394" font-weight="bold">images: wxy CLI</text>
+    <text x="238" y="412" fill="#333" font-size="12">core caba7b2 (29 Oct)</text>
+    <rect x="238" y="422" width="126" height="18" rx="4" fill="#fde8e4" stroke="#c9584a"/>
+    <text x="244" y="435" fill="#8a2a1e" font-size="12">25 commits behind</text>
+    <text x="238" y="456" fill="#555" font-size="11">no byterefs/0.1, no 3 GB store</text>
+
+    <rect x="418" y="374" width="180" height="92" rx="6" fill="#ffffff" stroke="#a79bc0"/>
+    <text x="430" y="394" font-weight="bold">py (pyo3)</text>
+    <text x="430" y="412" fill="#333" font-size="12">core caba7b2 (29 Oct)</text>
+    <rect x="430" y="422" width="126" height="18" rx="4" fill="#fde8e4" stroke="#c9584a"/>
+    <text x="436" y="435" fill="#8a2a1e" font-size="12">25 commits behind</text>
+    <text x="430" y="456" fill="#555" font-size="11">binds an in-memory warp only</text>
+
+    <rect x="610" y="374" width="176" height="92" rx="6" fill="#ffffff" stroke="#a79bc0"/>
+    <text x="622" y="394" font-weight="bold">r (extendr)</text>
+    <text x="622" y="412" fill="#333" font-size="12">core caba7b2 (29 Oct)</text>
+    <rect x="622" y="422" width="126" height="18" rx="4" fill="#fde8e4" stroke="#c9584a"/>
+    <text x="628" y="435" fill="#8a2a1e" font-size="12">25 commits behind</text>
+    <text x="622" y="456" fill="#555" font-size="11">binds an in-memory warp only</text>
+  </g>
+</svg>
