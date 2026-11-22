@@ -21,7 +21,7 @@ non-affine grid work.
 | Item | What | State at 2026-10-28 |
 |---|---|---|
 | [deck.gl#10739](https://github.com/visgl/deck.gl/issues/10739) | Tracker: custom projection. Per-view target CRS (`toCrs`) and per-layer source CRS (`coordinateSystem`, deck.gl#10874), CPU pre-projection, fp64 GPU projection as a v10 goal, math.gl mesh and raster pieces | Open. Generic raster reprojection, GPU projection families and cache invalidation for view-dependent geometry are listed as still open. #10874 (arbitrary CRS in `coordinateSystem`) and #10894 (PROJJSON) are on deck.gl master since 2026-10-21 and 2026-10-23, listed under Unreleased as "Layer source CRS (Experimental)"; not in 9.4.1 (correction made 2026-11-11). First released in deck.gl 10.0.0-alpha.1 (2026-11-12) |
-| [math.gl#367](https://github.com/visgl/math.gl/pull/367) | Qualified inverse-mesh recipe for polar and seam-crossing rasters: refines target triangles against source-texel interpolation error, rejects invalid samples or an exhausted budget, clips with math.gl mesh clipping while keeping target positions and source identity. 32 example tests (coverage, holes, conformity, provenance, budget failures), checked against pinned PROJ samples | PR page still shows open with no human review, but its content landed on math.gl master on 2026-10-28 (`4bc2d44e`, "(#367)") and ships in the 5.0 betas; now under `examples/geospatial/projection-domains/src/warp/`. Example-owned, not a public API (correction made 2026-11-08) |
+| [math.gl#367](https://github.com/visgl/math.gl/pull/367) | Qualified inverse-mesh recipe for polar and seam-crossing rasters: refines target triangles against source-texel interpolation error, rejects invalid samples or an exhausted budget, clips with math.gl mesh clipping while keeping target positions and source identity. 32 example tests (coverage, holes, conformity, provenance, budget failures), checked against pinned PROJ samples | PR page still shows open with no human review, but its content landed on math.gl master on 2026-10-28 (`4bc2d44e`, "(#367)") and ships in the 5.0 betas and in 5.0.0 (2026-11-21); now under `examples/geospatial/projection-domains/src/warp/`. Example-owned, not a public API (correction made 2026-11-08) |
 | [math.gl#368](https://github.com/visgl/math.gl/pull/368) | Stacked on #367: drives the refinement with asynchronous proj-wasm batches (one reused WGS84-to-source operation, including ellipsoidal EPSG:3031), cooperative cancellation between batches, hands the finished raster to a task worker | Same as #367: PR page open, content on master since 2026-10-28 (`3e9baa32`, "(#368)"). Published packages gain no dependencies |
 | [deck.gl-raster](https://github.com/developmentseed/deck.gl-raster) (Development Seed) | Client-side COG and Zarr layers with adaptive-mesh GPU reprojection (`raster-reproject`), added to this note 2026-11-05. Plans are tracked in GitHub milestones (0.10 open; no due dates) and issues; npm is the reliable release record, since GitHub releases lag | 0.9.0 (2026-10-23): mesh error in output pixels, antimeridian in output mode. 0.10.0-beta.2 (2026-10-30): COGSource, MultiCOGSource, coalescing range reader, GeoZarr via ZarrSource, classic `parseVRT` (see m25). 0.10.0 released 2026-11-09 (section 2.2) |
 
@@ -209,6 +209,22 @@ Decision triggers:
 
 ## 4. Log
 
+- **2026-11-22.** math.gl 5.0.0 is released (npm 2026-11-21, after
+  rc.1 and rc.2 on 2026-11-20); master is now 5.1.0-alpha.0. The release
+  publishes the projection engine and CRS tools (authority codes, WKT,
+  PROJ, PROJJSON), with `subdivideTriangleMesh` and `clipTriangleMesh` in
+  `@math.gl/geometry`, plus DGGS, terrain, GeoArrow and spatial SQL
+  packages. The raster mesh recipe (#367, #368) is still a documented
+  example ("Projecting Raster Meshes") over those public pieces, not a
+  raster warp API, so that trigger has not fired. proj-wasm 0.1.0 is
+  documented as a `CRSResolver` provider or an external engine through an
+  adapter the application writes. deck.gl master moved to math.gl 5.0.0
+  (#11274) and graduated `GlobeView` (#11244), but its CRS path still
+  uses math.gl's default `projectionEngine` singleton, which takes a
+  resolver only when constructed, so proj-wasm is not yet configurable in
+  deck.gl and that trigger has not fired either. No deck.gl release after
+  10.0.0-alpha.1; no deck.gl-raster release after 0.10.0 and no commits
+  since 2026-11-17.
 - **2026-11-18.** No deck.gl release after 10.0.0-alpha.1 and no
   deck.gl-raster release after 0.10.0 (three commits: a late-tile unload
   fix, #878, and docs). math.gl 5.0.0-beta.11 (2026-11-16), beta.12 and
