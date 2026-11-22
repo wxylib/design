@@ -59,6 +59,38 @@ than the monthly landscape refresh does.
 
 ## 4. Log
 
+### 2026-11-22 (RustGIS v0.8.0; terrio-crs rebuilds its CRS model)
+
+No terrio release after 0.9.0 (crates.io: terrio 0.9.0, terrio-crs
+0.2.4); 81 commits since the 2026-11-18 entry, from Dominik Strebel (32),
+Nicolas Karasiak (28), Guillermo Morales Sanchez, Qiusheng Wu (6),
+Benoit Tapia and others; none from Michael.
+- **terrio-crs:** most of the work is #1058, one CRS model read once from
+  the WKT tree, which now gives each CRS's PROJ string and its own
+  refusals (steps 2 to 6d), with identification as PROJ 9.9.0 does it
+  (#1119); many WKT 1 and WKT 2 methods and axis dialects read and written
+  as PROJ does (Krovak, LCC, Mercator_1SP, Hotine variant A); a code with
+  its own TOWGS84 kept in its own datum (#1187, #1195). wxylib's CRS cases
+  rerun on main, with and without the fallback, and with proj4rs 0.3.1
+  (2026-11-16): same verdicts as before, still 34 of 35 for terrio-crs
+  and 24 of 35 for proj4rs, so the grid is unchanged.
+- **Meets wxylib:** STACIT mosaics read at reduced size from their items'
+  overviews as GDAL does (#1182), eight remote items at a time (#1179);
+  warp reuse pieces: `RegionWarp::set_dst_gt` re-targets one warp to
+  another destination grid (#1198), an RPC transformer shared by several
+  warps (#1199), overview levels of GCP/RPC sources (#1200), and the 3.12
+  kernel scale for a full-turn chunk across the meridian (#1141); xarray
+  zonal statistics of cubes indexed by zone geometries (#1068);
+  `terrio-js/cog` opens a COG from the first bytes of its first block
+  (#1137). `docs/conformance.md` unchanged.
+- **Reuse:** still no zarrs, async-tiff, object_store or proj crate.
+- **RustGIS:** v0.8.0 (2026-11-22), 218 commits since v0.7.0; terrio-crs
+  pinned by git revision (2026-11-18). Layers now hold coordinates in
+  their own projected system, with a project CRS that new maps start in,
+  and analysis tools work from it (#2032 C2a to C3a); COGs with a header
+  past 2 GiB read in place (#2629); cloud-free STAC cube summaries
+  (#2596).
+
 ### 2026-11-18 (terrio-crs moves its references to PROJ 9.9.0; RustGIS v0.7.0)
 
 No terrio release after 0.9.0 (crates.io: terrio 0.9.0, terrio-crs
