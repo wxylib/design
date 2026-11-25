@@ -59,6 +59,34 @@ than the monthly landscape refresh does.
 
 ## 4. Log
 
+### 2026-11-25 (terrio 0.10.0 and terrio-crs 0.3.0; RustGIS on the release)
+
+terrio 0.10.0 and terrio-crs 0.3.0 are on crates.io (2026-11-25); 78
+commits since the 2026-11-22 entry, from Nicolas Karasiak (23), Dominik
+Strebel (16), Qiusheng Wu (15) and others; none from Michael.
+- **terrio-crs 0.3.0:** a semver bump over 0.2.4 that gathers the CRS
+  model work (#1058), EPSG v13.102 (PROJ 9.9.0), `to_proj4_gdal`,
+  `has_non_ballpark_operation`, the grids a transformation needs, and
+  geographic 3D, geocentric and compound CRSs transformed as PROJ does
+  (#1282, #1301). One change touches GDAL-oracle comparisons: a
+  deprecated EPSG code now keeps its own definition, as PROJ gives it,
+  where GDAL substitutes its replacement by default; GDAL's way is
+  `SpatialRef::from_epsg_non_deprecated` (#1040). wxylib's CRS cases
+  rerun on main (0.3.0), with and without the fallback: same verdicts,
+  still 34 of 35, grid unchanged. core's `terrio-crs` feature still asks
+  for 0.2.4, so it stays there until someone bumps it.
+- **Meets wxylib:** a performance matrix of GeoTIFF, Zarr and GeoParquet
+  reads timed against GDAL, run on pull requests (#1262, #1271), which is
+  GDAL as oracle for speed as well as values; the source window cached
+  per region and destination grid in warp (#1207); a remote window's
+  tile rows fetched in one round of requests (#1241); COGs that keep
+  supplied overview pixels (#1268); `terrio-js/geoparquet` at 0.91 MB
+  Brotli (#1246). `docs/conformance.md` unchanged.
+- **Reuse:** still no zarrs, async-tiff, object_store or proj crate.
+- **RustGIS:** no release after v0.8.0; 139 commits. It now takes
+  terrio-crs 0.3.0 from crates.io instead of a git pin (#2933); tool
+  outputs, grids and exports default to the project CRS (#2776).
+
 ### 2026-11-22 (RustGIS v0.8.0; terrio-crs rebuilds its CRS model)
 
 No terrio release after 0.9.0 (crates.io: terrio 0.9.0, terrio-crs

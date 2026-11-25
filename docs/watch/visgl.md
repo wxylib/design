@@ -209,6 +209,13 @@ Decision triggers:
 
 ## 4. Log
 
+- **2026-11-25.** Patch releases only. math.gl 5.0.1 to 5.0.3
+  (2026-11-23 and 2026-11-24, mostly spatial SQL and Arrow); deck.gl
+  10.0.0-alpha.2 and 9.4.2 (2026-11-24), with its CRS path still on
+  math.gl's default `projectionEngine`, so proj-wasm is still not
+  configurable. deck.gl-raster now requires deck.gl 9.4.2 and drops its
+  own tile unload overrides (#886); no release after 0.10.0. No trigger
+  fired.
 - **2026-11-22.** math.gl 5.0.0 is released (npm 2026-11-21, after
   rc.1 and rc.2 on 2026-11-20); master is now 5.1.0-alpha.0. The release
   publishes the projection engine and CRS tools (authority codes, WKT,
