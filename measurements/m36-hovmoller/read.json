@@ -1,0 +1,9 @@
+{
+ "lat": -42.0,
+ "level": 5,
+ "tiles": 1098,
+ "predicted": 205547537,
+ "fetched": 205547537,
+ "map_day": 182,
+ "map_url": "https://data.source.coop/ausantarctic/ghrsst-mur-v2/2024/07/01/20240701090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1_analysed_sst.tif"
+}
