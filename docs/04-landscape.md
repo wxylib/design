@@ -471,7 +471,7 @@ Rewrites of the warper's parts, by part (transformers, approximate transformer, 
 | [VRTMate](https://www.postholer.com/portfolio/notebook/VRTMate/) (Postholer) | JavaScript class, 2026-01-02 | **watch**. A browser footprint index over a classic VRT (source paths and world boxes, box query) behind a serverless Leaflet DEM map; the job `vrt-model` should answer from a world box ([watch/vrtmate.md](watch/vrtmate.md)) |
 | [EORST, rss_core](https://crates.io/crates/eorst) (JRSRP, Queensland) | Rust, 1.0.1, 2026-05-13, LGPL-3.0-or-later | **watch, offer**. GDAL-backed block processing of EO time series with STAC queries; aligns inputs by spawning `gdalwarp`, reads DEA COGs with async-tiff + object_store. Nearest outside user of rwarp and controlledburn-rs ([watch/eorst.md](watch/eorst.md)) |
 | [ganymede case studies](https://github.com/eugo-inc/ganymede) (Eugo) | Python notebooks, 2026-11-12, BSD-3-Clause | **watch, example source**. GOES-16 LST, NWM forecasts and Sentinel-2 resampling read whole files or COG windows with xarray, rasterio and Ray. Measured: regions touch 5 of 60 GOES chunks; a nested 20 m overview beats the default 40 m choice about 100 times for a 60 m average ([watch/pangeo-case-studies.md](watch/pangeo-case-studies.md)) |
-| GeoParquet 2.0 (rc.1) and native Parquet GEOMETRY/GEOGRAPHY types | adopted 2025; Apache blog 2026-02-13 | **adopt** for R6 storage |
+| GeoParquet 2.0 and native Parquet GEOMETRY/GEOGRAPHY types | v2.0.0 released 2026-11-24; native types adopted 2025 | **adopt** for R6 storage. Its convention-over-base-format pattern, CRS rule and validator are models for the byte-reference table ([watch/geoparquet-2.md](watch/geoparquet-2.md)) |
 | [Apache SedonaDB](https://github.com/apache/sedona-db) | Rust on DataFusion, 0.5.0, 2026-10-13. Its raster type is effectively R1 and "not quite ready to make a splash"; crates `sedona-raster`, `sedona-raster-zarr`, `sedona-raster-gdal` | **watch, contribute**. Offer the R2+ model and the conventions crate rather than compete. Update 2026-10-31: 0.5.0 adds `RS_Resample` and `RS_ReprojectMatch` (onto a reference raster's grid; both experimental), seven kernels, described in the post [Same ground, different pixels](https://sedona.apache.org/latest/blog/2026/10/23/same-ground-different-pixels/). The pixel work is GDAL loaded at run time: `GDALReprojectImage` with max error 0 (exact transformer, so output differs from gdalwarp's 0.125 default) and the target grid from `GDALSuggestedWarpOutput`. rwarp is the same pipeline in pure Rust, so it is a candidate GDAL-free backend for these two functions |
 | DuckDB `raster` (GDAL-backed), `raquet` | community extensions | **watch** |
 
@@ -662,7 +662,7 @@ Ranked by how directly each item can change a wxylib decision.
 | 13 | Rewrites of reference-library parts, starting with the warper (terrio `ops/warp.rs`, gridr, wbraster, warp-rs, xarray-spatial) | crates.io searches and versions listed in [watch/rewrites.md](watch/rewrites.md) section 6 | who else rebuilds what rwarp rebuilds; shared-oracle comparisons |
 
 Also on the radar: the Zarr Spec Committee and zarr-extensions, OGC DGGS
-and TMS work, CF-1.14, GeoParquet 2.0 final, Earthmover Zax and Flux,
+and TMS work, CF-1.14, Parquet Raster (alpha, in the GeoParquet repository), Earthmover Zax and Flux,
 xpublish-tiles, the CNG Forum and Zarr Summit (for 2027 talks), pyresample
 2.0, DGGAL and rs4dggs, Pangeo Discourse, and the R spatial community
 (r-spatial, rOpenSci, the r-universe `geozarr` package *(unverified)*),
