@@ -1,0 +1,19 @@
+{"case": "hov-world-30d", "rule": "rwarp-area", "unit": "day", "levels": [1], "tiles": 1080, "rows": 30, "mb": 245.3, "exact": true}
+{"case": "hov-world-30d", "rule": "rwarp-shortest", "unit": "day", "levels": [0], "tiles": 2130, "rows": 30, "mb": 352.1, "exact": true}
+{"case": "hov-world-30d", "rule": "per-axis", "unit": "day", "levels": [5], "tiles": 90, "rows": 30, "mb": 16.9, "exact": true}
+{"case": "hov-world-30d", "rule": "rwarp-area", "unit": "hour", "levels": [1], "tiles": 1080, "rows": 30, "mb": 245.3, "exact": true}
+{"case": "hov-world-30d", "rule": "rwarp-shortest", "unit": "hour", "levels": [0], "tiles": 2130, "rows": 30, "mb": 352.1, "exact": true}
+{"case": "hov-world-30d", "rule": "per-axis", "unit": "hour", "levels": [5], "tiles": 90, "rows": 30, "mb": 16.9, "exact": true}
+{"case": "hov-world-366d", "rule": "rwarp-area", "unit": "day", "levels": [4], "tiles": 1830, "rows": 366, "mb": 472.3, "exact": true}
+{"case": "hov-world-366d", "rule": "rwarp-shortest", "unit": "day", "levels": [3], "tiles": 3294, "rows": 366, "mb": 791.8, "exact": true}
+{"case": "hov-world-366d", "rule": "per-axis", "unit": "day", "levels": [5], "tiles": 1098, "rows": 366, "mb": 205.5, "exact": true}
+{"case": "hov-world-366d", "rule": "rwarp-area", "unit": "hour", "levels": [4], "tiles": 1830, "rows": 366, "mb": 472.3, "exact": true}
+{"case": "hov-world-366d", "rule": "rwarp-shortest", "unit": "hour", "levels": [0], "tiles": 25986, "rows": 366, "mb": 4164.0, "exact": true}
+{"case": "hov-world-366d", "rule": "per-axis", "unit": "hour", "levels": [5], "tiles": 1098, "rows": 366, "mb": 205.5, "exact": true}
+{"case": "hov-world-3653d", "rule": "rwarp-area", "unit": "day", "levels": [5], "tiles": 10836, "rows": 3612, "mb": 2028.5, "exact": false}
+{"case": "hov-world-3653d", "rule": "rwarp-shortest", "unit": "day", "levels": [3], "tiles": 32472, "rows": 3608, "mb": 7805.2, "exact": false}
+{"case": "hov-world-3653d", "rule": "per-axis", "unit": "day", "levels": [5], "tiles": 1566, "rows": 522, "mb": 293.2, "exact": false}
+{"case": "hov-world-3653d", "rule": "rwarp-area", "unit": "hour", "levels": [5], "tiles": 10818, "rows": 3606, "mb": 2025.1, "exact": false}
+{"case": "hov-world-3653d", "rule": "rwarp-shortest", "unit": "hour", "levels": [0], "tiles": 255884, "rows": 3604, "mb": 41003.2, "exact": false}
+{"case": "hov-world-3653d", "rule": "per-axis", "unit": "hour", "levels": [5], "tiles": 1566, "rows": 522, "mb": 293.2, "exact": false}
+{"case": "hov-world-366d", "rule": "level-0 slice", "unit": "-", "levels": [0], "tiles": 25986, "rows": 366, "mb": 4164.0, "exact": true}

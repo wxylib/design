@@ -1,0 +1,12 @@
+[package]
+name = "m36-plan"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+# Planner only: rwarp's view module, unchanged, at the commit this note read.
+[dependencies]
+rwarp = { git = "https://github.com/hypertidy/rwarp", rev = "62e11dd", default-features = false }
+serde_json = "1"
+
+[workspace]
